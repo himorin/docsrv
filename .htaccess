@@ -1,0 +1,3 @@
+<FilesMatch ^(.*\.pm|.*\.pl)$>
+  deny from all
+</FilesMatch>
