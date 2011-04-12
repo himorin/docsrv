@@ -48,6 +48,7 @@ use PSMT::Util;
     GetFilePath
     GetFileExt
 
+    RegNewDoc
     RegNewFile
     MoveNewFile
 );
@@ -333,6 +334,18 @@ sub GetFileInfo {
     $sth->execute($fileid);
     if ($sth->rows != 1) {return undef; }
     return $sth->fetchrow_hashref();
+}
+
+sub RegNewDoc {
+    my ($self, $pathid, $name, $desc) = @_;
+    my $docid = 0;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg WRITE');
+    my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description) VALUES (?, ?, ?)');
+    $sth->execute($pathid, $name, $desc);
+    $dbh->db_unlock_tables();
+    $docid = $dbh->db_last_key('docreg', 'docid');
+    return $docid;
 }
 
 sub RegNewFile {

@@ -1,0 +1,57 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>General path informations</h3>
+
+<ul>
+  <li>Path ID: [% path_info.pathid %]</li>
+  <li>Full path: [% full_path %]</li>
+  <li>Parenet: [% path_info.parent %]</li>
+  <li>Name: [% path_info.pathname %]</li>
+  <li>Description: [% path_info.description %]</li>
+  <li>Accessible groups: [% permission.keys.join(', ') %] </li>
+</ul>
+
+<h3>Current document list in this directory</h3>
+
+<ul>
+  [% FOREACH item = doc_list %]
+    <li>ID #[% item.docid %]: <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a> ([% item.description %])</li>
+  [% END %]
+</ul>
+
+<hr>
+
+<form action="docadd.cgi" method="POST">
+
+<ul>
+  <li>New document name: <input type="text" name="filename" value="" size="50"></li>
+  <li>Document descripion: <input type="text" name="docdesc" value="" size="50"></li>
+</ul>
+
+[% IF dav_file.defined %]
+  <p>
+    [% IF dav_file.keys.size == 0 %]
+      No source file in DAV
+    [% ELSE %]
+      <input type="checkbox" name="source" value="dav" /> Use file from DAV source<br />
+      <select name="dav_source">
+        [% FOREACH item IN dav_file.keys %]
+          <option value="[% item %]">[% item %] ([% dav_file.$item %] byte)</option>
+        [% END %]
+      </select>
+    [% END %]
+  </p>
+[% END %]
+
+<p>
+  <input type="checkbox" name="source" value="upload" disabled="disabled" />
+  File upload not avail
+</p>
+
+Comment: <input type="text" name="comment" value="" size="50"><br>
+<input type="hidden" name="pid" value="[% path_info.pathid %]">
+<input type="submit" value="Add document">
+<input type="reset" value="Reset">
+</form>
+
+[% PROCESS global/footer.html.tmpl %]
