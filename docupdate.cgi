@@ -38,7 +38,6 @@ if (PSMT::File->UserCanAccessDoc($did) != TRUE) {
 
 # Register file
 if ($obj_cgi->request_method() eq 'POST') {
-print $obj_cgi->header();
     my $source = $obj_cgi->param('source');
     my $desc = $obj_cgi->param('comment');
     my $ext;
@@ -61,6 +60,7 @@ print $obj_cgi->header();
         PSMT::Error->throw_error_user('file_register_failed');
     }
 
+    print $obj_cgi->header();
     $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
     $obj->template->set_vars('doc_info', $docinfo);
     $obj->template->set_vars('file_list', PSMT::File->GetDocFiles($did));
