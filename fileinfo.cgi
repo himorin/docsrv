@@ -45,7 +45,7 @@ $obj->template->set_vars('user_load', PSMT::File->ListUserLoad($fid));
 $obj->template->set_vars('file_info', PSMT::File->GetFileInfo($fid));
 $obj->template->set_vars('file_type', PSMT::File->GetFileExt($fid));
 
-$obj->template->process('fileinfo.html.tmpl');
+$obj->template->process('fileinfo', 'html');
 
 
 exit;

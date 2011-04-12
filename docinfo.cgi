@@ -41,11 +41,12 @@ if (PSMT::File->UserCanAccessDoc($did) != TRUE) {
 print $obj_cgi->header();
 
 # insert parameters
+$obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
 $obj->template->set_vars('doc_info', $docinfo);
 $obj->template->set_vars('file_list', PSMT::File->GetDocFiles($did));
 $obj->template->set_vars('group_list', PSMT::File->GetDocAccessGroup($did));
 
-$obj->template->process('docinfo.html.tmpl');
+$obj->template->process('docinfo', 'html');
 
 
 exit;

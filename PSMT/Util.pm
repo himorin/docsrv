@@ -28,6 +28,16 @@ use Encode;
     IpAddr
 );
 
+sub StrToIpaddr {
+    my ($str) = @_;
+    my $addr = sprintf('%08x', $str);
+    $str  = hex(substr($addr, 0, 2)) . '.';
+    $str .= hex(substr($addr, 2, 2)) . '.';
+    $str .= hex(substr($addr, 4, 2)) . '.';
+    $str .= hex(substr($addr, 6, 2));
+    return $str;
+}
+
 sub IpAddr {
     my $src = $ENV{'REMOTE_ADDR'};
     my @srcs = split(/\./, $src);

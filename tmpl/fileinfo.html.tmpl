@@ -12,6 +12,8 @@
   <li>Description: [% file_info.description %]</li>
 </ul>
 
+<p><a href="fileget.cgi?fid=[% file_info.fileid %]">DOWNLOAD</a></p>
+
 <h3>File access log</h3>
 
 <table border="1">
@@ -24,7 +26,7 @@
     <tr>
       <td>[% query.uname %]</td>
       <td>[% query.dltime %]</td>
-      <td>[% query.srcip %]</td>
+      <td>[% query.srcip FILTER ipaddr %]</td>
     </tr>
   [% END %]
 </table>

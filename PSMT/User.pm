@@ -25,6 +25,7 @@ use PSMT::NetLdap;
     new
 
     get_uid
+    get_gid
     user_data
 
     is_ingroup
@@ -42,6 +43,10 @@ sub new {
 
 sub get_uid {
     return $conf{'uid'};
+}
+
+sub get_gid {
+    return $ldap_gid;
 }
 
 sub user_data {
@@ -62,7 +67,10 @@ sub is_ingroup {
 sub fetch_userdata {
     my ($self);
     $conf{'uid'} = $ENV{'REMOTE_USER'};
-    $obj_ldap = new PSMT::NetLdap;
+    $obj_ldap = PSMT->ldap();
+    if (! defined($obj_ldap)) {
+        PSMT::Error->throw_error_code('ldap_connect');
+    }
     if (! $obj_ldap->bind) {
         PSMT::Error->throw_error_code('ldap_bind_anonymous');
     }

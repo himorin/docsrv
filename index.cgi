@@ -20,7 +20,7 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 }
 
 print $obj->cgi()->header();
-$obj->template->process('index.html.tmpl');
+$obj->template->process('index', 'html');
 
 
 exit;

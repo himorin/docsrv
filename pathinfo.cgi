@@ -20,20 +20,41 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
     exit;
 }
 
-my $pid = $obj_cgi->param('pid');
-if (! defined($pid)) {
-    PSMT::Error->throw_error_user('invalid_path_id');
-    exit;
-}
+my $pathinfo = undef;
 
-my $pathinfo = PSMT::File->GetPathInfo($pid);
-if (! defined($pathinfo)) {
+# definition : pid > path
+my $pid = $obj_cgi->param('pid');
+my $path = $obj_cgi->param('path');
+if (defined($pid)) {
+    if ($pid == 0) {$path = undef; }
+    else {
+        # first check pid is valid; if valid clear path
+        $pathinfo = PSMT::File->GetPathInfo($pid);
+        if (defined($pathinfo)) {$path = undef; }
+    }
+}
+if (defined($path)) {
+    # if path != undef, make path/pid from path
+    $pid = PSMT::File->GetIdFromFullPath($path);
+    # not allow '/' for path (if not pid=0 mode)
+    if ($pid == 0) {
+        PSMT::Error->throw_error_user('invalid_path_id');
+        exit;
+    }
+    $pathinfo = PSMT::File->GetPathInfo($pid);
+} elsif (defined($pid)) {
+    if ($pid == 0) {$path = '/'; }
+    else {
+        # create path from pid
+        $path = PSMT::File->GetFullPathFromId($pid);
+    }
+} else {
     PSMT::Error->throw_error_user('invalid_path_id');
     exit;
 }
 
 # check permission
-if (PSMT::File->UserCanAccessPath($pid) != TRUE) {
+if (($pid != 0) && (PSMT::File->UserCanAccessPath($pid) != TRUE)) {
     PSMT::Error->throw_error_user('permission_error');
     exit;
 }
@@ -41,6 +62,8 @@ if (PSMT::File->UserCanAccessPath($pid) != TRUE) {
 print $obj_cgi->header();
 
 # insert parameters
+$obj->template->set_vars('pid', $pid);
+$obj->template->set_vars('full_path', $path);
 $obj->template->set_vars('path_info', $pathinfo);
 $obj->template->set_vars('permission', PSMT::File->GetPathAccessGroup($pid));
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
@@ -54,7 +77,7 @@ foreach (@$subpath) {
 $obj->template->set_vars('spath_list', $subpath);
 $obj->template->set_vars('spath_access', \%subpath_access);
 
-$obj->template->process('pathinfo.html.tmpl');
+$obj->template->process('pathinfo', 'html');
 
 
 exit;

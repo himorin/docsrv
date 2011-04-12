@@ -17,6 +17,8 @@ use base qw(Exporter);
     new
     bind
 
+    GetAvailGroups
+
     SearchUID
     SearchMemberGroups
     GetDNFromUID
@@ -125,6 +127,22 @@ sub GetAttrsFromUID {
         }
     }
     return \%ret;
+}
+
+sub GetAvailGroups {
+    my ($self) = @_;
+    if (! $ldap_bind) {return undef; }
+    my @groups;
+    my %ldap_attr;
+    $ldap_attr{base} = PSMT::Config->GetParam('ldap_basedn');
+    $ldap_attr{filter} = "(objectClass=posixGroup)";
+    $ldap_attr{scope} = "sub";
+    my $ldap_res = $obj_ldap->search(%ldap_attr);
+    if ($ldap_res->code != 0) {return undef; }
+    foreach ($ldap_res->entries) {
+        push(@groups, $_->get_value('cn'));
+    }
+    return \@groups;
 }
 
 

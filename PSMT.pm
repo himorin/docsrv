@@ -15,12 +15,16 @@ use strict;
 
 use base qw(Exporter);
 
-use PSMT::Constants;
-use PSMT::Template;
 use PSMT::Config;
+use PSMT::Constants;
 use PSMT::CGI;
 use PSMT::DB;
+#use PSMT::Error;
+#use PSMT::File;
+use PSMT::NetLdap;
+use PSMT::Template;
 use PSMT::User;
+#use PSMT::Util;
 
 %PSMT::EXPORT = qw(
     new
@@ -33,12 +37,14 @@ use PSMT::User;
     dbh
     user
     error
+    ldap
 );
 
 our $_request = {};
 
 sub new {
     my ($this) = @_;
+    binmode STDOUT, ':utf8';
     return $this;
 }
 
@@ -80,6 +86,12 @@ sub error {
     my $this = shift;
     $this->request->{error} ||= new PSMT::Error;
     return $this->request->{error};
+}
+
+sub ldap {
+    my $this = shift;
+    $this->request->{ldap} ||= new PSMT::NetLdap;
+    return $this->request->{ldap};
 }
 
 ################################################################## PRIVATE

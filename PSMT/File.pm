@@ -16,7 +16,6 @@ use base qw(Exporter);
 
 use PSMT::DB;
 use PSMT::Constants;
-use PSMT::NetLdap;
 use PSMT::Util;
 
 %PSMT::File::EXPORT = qw(
@@ -29,11 +28,14 @@ use PSMT::Util;
     ListDocsInPath
     ListPathInPath
     ListFilesInDoc
-    ListPath
     ListUserLoad
 
     GetPathInfo
     GetPathAccessGroup
+    SetPathAccessGroup
+
+    GetFullPathFromId
+    GetIdFromFullPath
 
     GetDocInfo
     GetDocFiles
@@ -65,13 +67,47 @@ sub GetDocFiles {
     my ($self, $docid) = @_;
     my @flist;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ?');
+    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ?');
     $sth->execute($docid);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {
-        push(@flist, $ref->{fileid});
+        push(@flist, $ref);
     }
     return \@flist;
+}
+
+sub GetFullPathFromId {
+    my ($self, $pid) = @_;
+    my $path;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid = ?');
+    my $ref;
+    while ($pid != 0) {
+        $sth->execute($pid);
+        if ($sth->rows != 1) {return undef; }
+        $ref = $sth->fetchrow_hashref();
+        $pid = $ref->{parent};
+        $path = $ref->{pathname} . '/' . $path;
+    }
+    return $path;
+}
+
+sub GetIdFromFullPath {
+    my ($self, $path) = @_;
+    my $pid = 0;
+    my $cdir;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT * FROM path WHERE pathname = ? AND parent = ?');
+    my $ref;
+    my @dirs = split(/\//, $path);
+    while ($#dirs > -1) {
+        $cdir = shift(@dirs);
+        $sth->execute($cdir, $pid);
+        if ($sth->rows != 1) {return 0; }
+        $ref = $sth->fetchrow_hashref();
+        $pid = $ref->{pathid};
+    }
+    return $pid;
 }
 
 sub GetDocAccessGroup {
@@ -79,11 +115,11 @@ sub GetDocAccessGroup {
     my $dbh = PSMT->dbh;
     my $sth = $dbh->prepare('SELECT access_path.gname AS gname FROM access_path LEFT JOIN docreg ON access_path.pathid = docreg.pathid WHERE docreg.docid = ?');
     $sth->execute($docid);
-    my ($ref, @glist);
+    my ($ref, %glist);
     while ($ref = $sth->fetchrow_hashref()) {
-        push(@glist, $ref->{gname});
+        $glist{$ref->{gname}} = $ref;
     }
-    return \@glist;
+    return \%glist;
 }
 
 sub GetPathAccessGroup {
@@ -91,11 +127,41 @@ sub GetPathAccessGroup {
     my $dbh = PSMT->dbh;
     my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
     $sth->execute($pathid);
-    my ($ref, @glist);
+    my ($ref, %glist);
     while ($ref = $sth->fetchrow_hashref()) {
-        push(@glist, $ref->{gname});
+        $glist{$ref->{gname}} = $ref;
     }
-    return \@glist;
+    return \%glist;
+}
+
+sub SetPathAccessGroup {
+    my ($self, $pathid, $group) = @_;
+    my $dbh = PSMT->dbh;
+    my %gconf;
+    foreach (@{PSMT->ldap->GetAvailGroups}) {$gconf{$_} = 0; }
+    # check group valid (via ldap)
+    foreach (@$group) {$gconf{$_} = 1; }
+    # check current
+    my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
+    my $ref;
+    $sth->execute($pathid);
+    while ($ref = $sth->fetchrow_hashref()) {
+        if (defined($gconf{$ref->{gname}})) {
+            if ($gconf{$ref->{gname}} == 0) {$gconf{$ref->{gname}} = 2; }
+            else {$gconf{$ref->{gname}} = 0; }
+        }
+    }
+    # update
+    foreach (keys %gconf) {
+        if ($gconf{$_} == 1) {
+            $sth = $dbh->prepare('INSERT access_path (pathid, gname) VALUES (?, ?)');
+            $sth->execute($pathid, $_);
+        } elsif ($gconf{$_} == 2) {
+            $sth = $dbh->prepare('DELETE FROM access_path WHERE pathid = ? AND gname = ?');
+            $sth->execute($pathid, $_);
+        }
+    }
+    return TRUE;
 }
 
 sub GetDocidFromFileid {

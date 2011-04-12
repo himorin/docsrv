@@ -45,6 +45,7 @@ sub new {
         EVAL_PERL    => 1,
         COMPILE_DIR  => PSMT::Constants::LOCATIONS()->{'datacache'},
 #        DEBUG => 'parser, undef',
+        ENCODING     => 'UTF-8',
         PRE_PROCESS  => 'initialize.none.tmpl',
         FILTERS      => {
             none       => \&PSMT::Util::filter_none,
@@ -54,6 +55,7 @@ sub new {
             html       => \&PSMT::Util::filter_html,
             text       => \&PSMT::Util::filter_text,
             url_quote  => \&PSMT::Util::filter_url_quote,
+            ipaddr     => \&PSMT::Util::StrToIpaddr,
         },
         CONSTANTS => _load_constants(),
         VARIABLES => {
@@ -65,13 +67,14 @@ sub new {
 }
 
 sub process {
-    my ($this, $template, $cur_vars, $out) = @_;
+    my ($this, $template, $ext, $cur_vars, $out) = @_;
     my $obj_template = Template->new($conf_template);
     if (defined($cur_vars)) {
         foreach (keys(%$cur_vars)) {
             PSMT->template->set_vars($_, $cur_vars->{$_});
         }
     }
+    $template .= '.' . $ext . '.tmpl';
     $obj_template->process($template, PSMT->template->vars(), $out);
 }
 

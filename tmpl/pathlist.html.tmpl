@@ -1,7 +1,5 @@
 [% PROCESS global/header.html.tmpl %]
 
-<h3>General current path informations</h3>
-
 [% IF pid == 0 %]
   <p>ROOT PATH</p>
 [% ELSE %]
@@ -15,23 +13,16 @@
   </ul>
 [% END %]
 
-<h3>Sub path list</h3>
 
 <ul>
   [% FOREACH item = spath_list %]
-    <li>ID #[% item.pathid %]: <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname %]</a>
-      <ul>
-        <li>Description: [% item.description %]</li>
-        <li>Accessible groups: [% spath_access.${item.pathid}.keys.join(', ') %]</li>
-      </ul></li>
+    <li>[DIR] <a href="pathlist.cgi?pid=[% item.pathid %]">[% item.pathname %]</a>
+      : [% item.description %]
+      (Accessible groups: [% spath_access.${item.pathid}.keys.join(', ') %])</li>
   [% END %]
-</ul>
-
-<h3>Documnts in this path</h3>
-
-<ul>
   [% FOREACH item = doc_list %]
-    <li>ID #[% item.docid %]: <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a> ([% item.description %])</li>
+    <li>[DOC] <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a>
+      ([% item.description %])</li>
   [% END %]
 </ul>
 
