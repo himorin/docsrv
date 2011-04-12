@@ -54,7 +54,6 @@ sub new {
             html       => \&PSMT::Util::filter_html,
             text       => \&PSMT::Util::filter_text,
             url_quote  => \&PSMT::Util::filter_url_quote,
-                }, 1 ],
         },
         CONSTANTS => _load_constants(),
         VARIABLES => {

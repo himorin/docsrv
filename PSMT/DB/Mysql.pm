@@ -47,7 +47,7 @@ sub db_lock_tables {
                 new => join(', ', @tables),
             });
     } else {
-        $self->do('LOCK TABLE ' . join(', ', @tables));
+        $self->do('LOCK TABLES ' . join(', ', @tables));
         $self->{private_table_locked} = join(', ', @tables);
     }
 }

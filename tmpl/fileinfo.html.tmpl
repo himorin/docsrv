@@ -1,0 +1,33 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>General file informations</h3>
+
+<ul>
+  <li>File ID: [% file_info.fileid %]</li>
+  <li>Extension: [% file_info.fileext %] / [% file_type %]</li>
+  <li>Document ID: [% file_info.docid %]</li>
+  <li>Uploaded date: [% file_info.uptime %]</li>
+  <li>Uploaded user: [% file_info.uname %]</li>
+  <li>Uploaded from: [% file_info.srcip %]</li>
+  <li>Description: [% file_info.description %]</li>
+</ul>
+
+<h3>File access log</h3>
+
+<table border="1">
+  <tr>
+    <th>User name</th>
+    <th>Date</th>
+    <th>From</th>
+  </tr>
+  [% FOREACH query = user_load %]
+    <tr>
+      <td>[% query.uname %]</td>
+      <td>[% query.dltime %]</td>
+      <td>[% query.srcip %]</td>
+    </tr>
+  [% END %]
+</table>
+
+
+[% PROCESS global/footer.html.tmpl %]

@@ -40,6 +40,7 @@ use constant PSMT_DOCSRV_VERSION => "0.1";
 use constant contenttypes =>
   {
     "html" => "text/html" ,
+    "pdf"  => "application/pdf" ,
     "rdf"  => "application/rdf+xml" ,
     "atom" => "application/atom+xml" ,
     "xml"  => "application/xml" ,
@@ -49,6 +50,7 @@ use constant contenttypes =>
     "gif"  => "image/gif" ,
     "png"  => "image/png" ,
     "ics"  => "text/calendar" ,
+    "default" => 'application/octet-stream',
   };
 
 use constant SAFE_PROTOCOLS => (

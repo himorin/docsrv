@@ -1,0 +1,33 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>General current path informations</h3>
+
+<ul>
+  <li>Path ID: [% path_info.pathid %]</li>
+  <li>Parenet: [% path_info.parent %]</li>
+  <li>Name: [% path_info.pathname %]</li>
+  <li>Description: [% path_info.description %]</li>
+  <li>Accessible groups: [% permission.join(', ') %] </li>
+</ul>
+
+<h3>Sub path list</h3>
+
+<ul>
+  [% FOREACH item = spath_list %]
+    <li>ID #[% item.pathid %]: [% item.pathname %]
+      <ul>
+        <li>Description: [% item.description %]</li>
+        <li>Accessible groups: [% spath_access.${item.pathid}.join(', ') %]</li>
+      </ul></li>
+  [% END %]
+</ul>
+
+<h3>Documnts in this path</h3>
+
+<ul>
+  [% FOREACH item = doc_list %]
+    <li>ID #[% item.docid %]: [% item.filename %] ([% item.description %])</li>
+  [% END %]
+</ul>
+
+[% PROCESS global/footer.html.tmpl %]

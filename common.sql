@@ -1,14 +1,15 @@
 CREATE TABLE activity (
   uname         text                 NOT NULL                            ,
   fileid        text                 NOT NULL                            ,
-  when          datetime             NOT NULL                            ,
+  dltime        datetime             NOT NULL                            ,
   srcip         int         UNSIGNED NOT NULL                            
 );
 
 CREATE TABLE docinfo (
-  fileid        text                 NOT NULL                PRIMARY KEY ,
+  fileid        text                 NOT NULL                            ,
+  fileext       text                 NOT NULL                            ,
   docid         int         UNSIGNED NOT NULL                            ,
-  when          datetime             NOT NULL                            ,
+  uptime        datetime             NOT NULL                            ,
   uname         text                 NOT NULL                            ,
   srcip         int         UNSIGNED NOT NULL                            ,
   description   text                     NULL                            

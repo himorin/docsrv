@@ -1,0 +1,22 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>General document informations</h3>
+
+<ul>
+  <li>Document ID: [% doc_info.docid %]</li>
+  <li>Path ID: [% doc_info.pathid %]</li>
+  <li>File name: [% doc_info.filename %]</li>
+  <li>Description: [% doc_info.description %]</li>
+  <li>Accessible groups: [% group_list.join(', ') %] </li>
+</ul>
+
+<h3>File list</h3>
+
+<ul>
+  [% FOREACH item = file_list %]
+    <li>[% item %]</li>
+  [% END %]
+</ul>
+
+
+[% PROCESS global/footer.html.tmpl %]

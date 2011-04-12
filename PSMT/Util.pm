@@ -24,7 +24,23 @@ use Encode;
     filter_html
     filter_text
     filter_url_quote
+
+    IpAddr
 );
+
+sub IpAddr {
+    my $src = $ENV{'REMOTE_ADDR'};
+    my @srcs = split(/\./, $src);
+    my $addr = $srcs[0];
+    $addr *= 256;
+    $addr += $srcs[1];
+    $addr *= 256;
+    $addr += $srcs[2];
+    $addr *= 256;
+    $addr += $srcs[3];
+    return $addr;
+}
+
 
 sub filter_none {
     return $_[0];

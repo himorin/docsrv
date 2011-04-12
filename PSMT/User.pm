@@ -26,9 +26,13 @@ use PSMT::NetLdap;
 
     get_uid
     user_data
+
+    is_ingroup
 );
 
 our %conf;
+our $ldap_gid;
+our $obj_ldap;
 
 sub new {
     my ($self) = @_;
@@ -44,12 +48,30 @@ sub user_data {
     return \%conf;
 }
 
-sub fetch_userdata {
-    my ($self);
+sub is_ingroup {
+    my ($self, $gid) = @_;
+    foreach (@$ldap_gid) {
+        if ($_ eq $gid) {return TRUE; }
+    }
+    return FALSE;
 }
 
 
 ################################################################## PRIVATE
+
+sub fetch_userdata {
+    my ($self);
+    $conf{'uid'} = $ENV{'REMOTE_USER'};
+    $obj_ldap = new PSMT::NetLdap;
+    if (! $obj_ldap->bind) {
+        PSMT::Error->throw_error_code('ldap_bind_anonymous');
+    }
+    $conf{'dn'} = $obj_ldap->GetDNFromUID($conf{'uid'});
+    if (! defined($conf{'dn'})) {
+        PSMT::Error->throw_error_user('ldap_uid_notfound');
+    }
+    $ldap_gid = $obj_ldap->SearchMemberGroups($conf{'uid'});
+}
 
 1;
 
