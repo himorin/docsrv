@@ -24,11 +24,14 @@ sub new {
     my $dsn = "DBI:mysql:host=$host;database=$dbname";
     $dsn .= ";port=$port" if $port;
     $dsn .= ";mysql_socket=$sock" if $sock;
-    my $self = $class->db_new_conn($dsn, $user, $pass);
+    my %attrs = (
+        mysql_enable_utf8 => 1,
+    );
+    my $self = $class->db_new_conn($dsn, $user, $pass, \%attrs);
 
     $self->{private_table_locked} = "";
     bless($self, $class);
-
+    $self->do("SET NAMES utf8");
     return $self;
 }
 

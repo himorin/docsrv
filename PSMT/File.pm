@@ -11,6 +11,7 @@ package PSMT::File;
 use strict;
 
 use Digest::MD5;
+use File::Path;
 
 use base qw(Exporter);
 
@@ -30,6 +31,8 @@ use PSMT::Util;
     ListFilesInDoc
     ListUserLoad
 
+    ListDavFile
+
     GetPathInfo
     GetPathAccessGroup
     SetPathAccessGroup
@@ -43,8 +46,10 @@ use PSMT::Util;
 
     GetFileInfo
     GetFilePath
-    RegNewFile
     GetFileExt
+
+    RegNewFile
+    MoveNewFile
 );
 
 my $hash_each = 2;
@@ -52,6 +57,21 @@ my $hash_each = 2;
 sub new {
     my ($self) = @_;
     return $self;
+}
+
+sub ListDavFile {
+    my ($self) = @_;
+    my $path;
+    if (($path = PSMT::Config->GetParam('dav_path')) eq '') {return undef; }
+    my %files;
+    opendir(INDIR, $path);
+    my $fname;
+    foreach (readdir(INDIR)) {
+        $fname = $path . '/' . $_;
+        if ((-f $fname) && (-s $fname > 0)) {$files{$_} = -s $fname; }
+    }
+    closedir(INDIR);
+    return \%files;
 }
 
 sub GetDocInfo {
@@ -340,6 +360,17 @@ sub RegNewFile {
     return $fileid;
 }
 
+sub MoveNewFile {
+    my ($self, $src, $fid) = @_;
+    my $newpath = $self->GetFilePath($fid);
+    eval {
+        File::Path::mkpath($newpath);
+    };
+    if ($@) {
+        PSMT::Error->throw_error_user('file_move_failed');
+    }
+    rename($src, $newpath . $fid);
+}
 
 ################################################################## PRIVATE
 

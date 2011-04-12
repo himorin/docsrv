@@ -47,6 +47,5 @@ $obj->template->set_vars('file_type', PSMT::File->GetFileExt($fid));
 
 $obj->template->process('fileinfo', 'html');
 
-
 exit;
 

@@ -40,6 +40,7 @@ use constant PSMT_DOCSRV_VERSION => "0.1";
 use constant contenttypes =>
   {
     "html" => "text/html" ,
+    "txt"  => "text/plain" ,
     "pdf"  => "application/pdf" ,
     "rdf"  => "application/rdf+xml" ,
     "atom" => "application/atom+xml" ,
