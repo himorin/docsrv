@@ -75,6 +75,15 @@ sub process {
     $this->set_vars('def_label', PSMT::Label->ListAllLabel());
     $this->set_vars('def_group', PSMT->ldap->GetAvailGroups());
     # Append via method
+    if (defined($cur_vars->{non_urls})) {
+        my %ref;
+        foreach (@{PSMT::Constants::HEADER_LINKS}) {$ref{$_} = 0; }
+        foreach (@{$cur_vars->{non_urls}}) {delete($ref{$_}); }
+        $this->set_vars('header_links', keys %ref);
+        delete($cur_vars->{non_urls});
+    } else {
+        $this->set_vars('header_links', PSMT::Constants::HEADER_LINKS);
+    }
     if (defined($cur_vars)) {
         foreach (keys(%$cur_vars)) {
             PSMT->template->set_vars($_, $cur_vars->{$_});

@@ -20,6 +20,7 @@ use Cwd;
 @PSMT::Constants::EXPORT = qw(
   PSMT_DOCSRV_VERSION
 
+  HEADER_LINKS
   LOCATIONS
 
   TRUE
@@ -36,6 +37,10 @@ use constant TRUE         => 1;
 use constant FALSE        => 0;
 
 use constant PSMT_DOCSRV_VERSION => "0.1";
+
+use constant HEADER_LINKS => (
+  'index',
+);
 
 use constant contenttypes =>
   {

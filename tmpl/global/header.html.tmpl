@@ -18,11 +18,18 @@
     >
 
 <div id="header">
-  <p id="titles">
-    <span id="sitename">[% terms.sitename %]</span>
-    <span id="subtitle">[% page_title %]</span>
-    [% IF header_addl %]<span id="header_addl">[% header_addl %]</span>[% END %]
-  </p>
+  <div id="titles">
+    <p id="sitename">[% terms.sitename %]</p>
+    <p id="subtitle">
+      [% IF page_title%][% page_title %]
+        [% IF header_addl %]
+          &mdash; <span id="header_addl">[% header_addl %]</span>
+        [% END %]
+      [% ELSE %]
+        &nbsp;
+      [% END %]
+    </p>
+  </div>
   <ul class="links">
     [% FOREACH item = header_links %]
       <li>
