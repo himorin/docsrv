@@ -4,7 +4,36 @@
     <meta charset="utf-8">
     <title>[% page_title %] - [% terms.sitename %]</title>
     <link rel="stylesheet" href="skins/global.css">
+    [% FOREACH item = stylesheet %]
+      <link rel="stylesheer" href="skins/[% item %]">
+    [% END %]
     <script src="skins/global.js"></script>
+    [% FOREACH item = javascript %]
+      <script src="skins/[% item %]"></script>
+    [% END %]
   </head>
-  <body>
+  <body
+    [% IF onload.defined %]onload="[% onload %]"[% END %]
+    [% IF bodyclass.size > 0 %]class="[% FOREACH item = bodyclass %][% item %][% END %]"[% END %]
+    >
 
+<div id="header">
+  <p id="titles">
+    <span id="sitename">[% terms.sitename %]</span>
+    <span id="subtitle"><p>[% page_title %]</span>
+    [% IF header_addl %]<span id="header_addl">[% header_addl %]</span>[% END %]
+  </p>
+  <ul class="links">
+    [% FOREACH item = header_links %]
+      <li>
+        [% IF NOT loop.first %]<span class="separator">|</span>[% END %]
+        [% IF header_links_def.$item.defined %]
+          <a href="[% header_links_def.$item.url %]">[% header_links_def.$item.name %]</a>
+        [% END %]
+      </li>
+    [% END %]
+  </ul>
+</div>
+
+<div id="body">
+[% PROCESS site_announce %]
