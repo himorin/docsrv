@@ -1,0 +1,23 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "Label list"
+%]
+
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Access restriction</th>
+  </tr>
+[% FOREACH item = labels.keys %]
+  <tr>
+    <td>[% item %]</td>
+    <td>[% labels.$item.name %]</td>
+    <td>[% labels.$item.description %]</td>
+    <td>[% IF labels.$item.group.size == 0 %]No Access Restriction[% ELSE %]
+        [% labels.$item.group.join(', ') %][% END %]</td>
+  </tr>
+[% END %]
+</table>
+
+[% PROCESS global/footer.html.tmpl %]

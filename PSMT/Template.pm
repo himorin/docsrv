@@ -20,6 +20,8 @@ use PSMT::Constants;
 use PSMT::Config;
 use PSMT::Util;
 use PSMT::User;
+use PSMT::Label;
+use PSMT::NetLdap;
 
 %PSMT::Template::EXPORT = qw(
     new
@@ -69,6 +71,10 @@ sub new {
 sub process {
     my ($this, $template, $ext, $cur_vars, $out) = @_;
     my $obj_template = Template->new($conf_template);
+    # Pre appended values (global)
+    $this->set_vars('def_label', PSMT::Label->ListAllLabel());
+    $this->set_vars('def_group', PSMT->ldap->GetAvailGroups());
+    # Append via method
     if (defined($cur_vars)) {
         foreach (keys(%$cur_vars)) {
             PSMT->template->set_vars($_, $cur_vars->{$_});

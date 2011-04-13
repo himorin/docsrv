@@ -12,6 +12,7 @@ use PSMT::User;
 use PSMT::Util;
 use PSMT::File;
 use PSMT::NetLdap;
+use PSMT::Access;
 
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
@@ -46,7 +47,7 @@ if (! defined($pathinfo)) {
 my @newgroup;
 if ($obj_cgi->request_method() eq 'POST') {
     @newgroup = $obj_cgi->param('newgroup');
-    PSMT::File->SetPathAccessGroup($pid, \@newgroup);
+    PSMT::Access->SetPathAccessGroup($pid, \@newgroup);
 }
 
 # elsewise, show config UI
@@ -59,7 +60,7 @@ $obj->template->set_vars('all_groups', $obj->ldap()->GetAvailGroups());
 $obj->template->set_vars('pid', $pid);
 $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($pid));
 $obj->template->set_vars('path_info', $pathinfo);
-$obj->template->set_vars('permission', PSMT::File->GetPathAccessGroup($pid));
+$obj->template->set_vars('permission', PSMT::Access->ListPathRestrict($pid));
 
 $obj->template->process('pathgroup', 'html');
 

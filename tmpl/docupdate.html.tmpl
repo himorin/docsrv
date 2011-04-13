@@ -1,5 +1,10 @@
 [% PROCESS global/header.html.tmpl %]
 
+[% IF added.defined %]
+<h3>Updated file added to document '[% full_path %][% doc_info.filename %]'</h3>
+<p>New file : [% added %]</p>
+[% END %]
+
 <h3>General document informations</h3>
 
 <ul>

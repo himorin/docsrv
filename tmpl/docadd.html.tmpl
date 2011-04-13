@@ -1,5 +1,10 @@
 [% PROCESS global/header.html.tmpl %]
 
+[% IF added.defined %]
+<h3>New document added to path '[% full_path %]'</h3>
+<p>New document : [% added %]</p>
+[% END %]
+
 <h3>General path informations</h3>
 
 <ul>
@@ -8,7 +13,7 @@
   <li>Parenet: [% path_info.parent %]</li>
   <li>Name: [% path_info.pathname %]</li>
   <li>Description: [% path_info.description %]</li>
-  <li>Accessible groups: [% permission.keys.join(', ') %] </li>
+  <li>Accessible groups: [% permission.join(', ') %] </li>
 </ul>
 
 <h3>Current document list in this directory</h3>
@@ -26,6 +31,15 @@
 <ul>
   <li>New document name: <input type="text" name="filename" value="" size="50"></li>
   <li>Document descripion: <input type="text" name="docdesc" value="" size="50"></li>
+</ul>
+
+<p>Apply label to this document
+
+<ul>
+  [% FOREACH item = def_label.keys %]
+    <li><input type="checkbox" name="label" value="[% item %]" />
+      [% def_label.$item.name %] ([% def_label.$item.description %])</li>
+  [% END %]
 </ul>
 
 [% IF dav_file.defined %]
@@ -48,7 +62,11 @@
   File upload not avail
 </p>
 
-Comment: <input type="text" name="comment" value="" size="50"><br>
+<p>
+Comment: <input type="text" name="comment" value="" size="50">
+</p>
+
+
 <input type="hidden" name="pid" value="[% path_info.pathid %]">
 <input type="submit" value="Add document">
 <input type="reset" value="Reset">

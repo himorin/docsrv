@@ -11,6 +11,7 @@ use PSMT::DB;
 use PSMT::User;
 use PSMT::Util;
 use PSMT::File;
+use PSMT::Access;
 
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
@@ -32,9 +33,7 @@ if (! defined($docinfo)) {
 }
 
 # check permission
-if (PSMT::File->UserCanAccessDoc($did) != TRUE) {
-    PSMT::Error->throw_error_user('permission_error');
-}
+PSMT::Access->CheckForDoc($did);
 
 # Register file
 if ($obj_cgi->request_method() eq 'POST') {
@@ -60,13 +59,7 @@ if ($obj_cgi->request_method() eq 'POST') {
         PSMT::Error->throw_error_user('file_register_failed');
     }
 
-    print $obj_cgi->header();
-    $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
-    $obj->template->set_vars('doc_info', $docinfo);
-    $obj->template->set_vars('file_list', PSMT::File->GetDocFiles($did));
-    $obj->template->set_vars('group_list', PSMT::File->GetDocAccessGroup($did));
-    $obj->template->process('docupdate_success', 'html');
-    exit;
+    $obj->template->set_vars('added', $fid);
 }
 
 print $obj_cgi->header();
@@ -76,7 +69,7 @@ $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
 $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
 $obj->template->set_vars('doc_info', $docinfo);
 $obj->template->set_vars('file_list', PSMT::File->GetDocFiles($did));
-$obj->template->set_vars('group_list', PSMT::File->GetDocAccessGroup($did));
+$obj->template->set_vars('group_list', PSMT::Access->ListDocRestrict($did));
 
 $obj->template->process('docupdate', 'html');
 

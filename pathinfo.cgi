@@ -11,6 +11,7 @@ use PSMT::DB;
 use PSMT::User;
 use PSMT::Util;
 use PSMT::File;
+use PSMT::Access;
 
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
@@ -54,10 +55,7 @@ if (defined($path)) {
 }
 
 # check permission
-if (($pid != 0) && (PSMT::File->UserCanAccessPath($pid) != TRUE)) {
-    PSMT::Error->throw_error_user('permission_error');
-    exit;
-}
+PSMT::Access->CheckForPath($pid);
 
 print $obj_cgi->header();
 
@@ -65,14 +63,14 @@ print $obj_cgi->header();
 $obj->template->set_vars('pid', $pid);
 $obj->template->set_vars('full_path', $path);
 $obj->template->set_vars('path_info', $pathinfo);
-$obj->template->set_vars('permission', PSMT::File->GetPathAccessGroup($pid));
+$obj->template->set_vars('permission', PSMT::Access->ListPathRestrict($pid));
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
 
 my $subpath = PSMT::File->ListPathInPath($pid);
 my (%subpath_access, $cpid);
 foreach (@$subpath) {
     $cpid = $_->{pathid};
-    $subpath_access{$cpid} = PSMT::File->GetPathAccessGroup($cpid);
+    $subpath_access{$cpid} = PSMT::Access->ListPathRestrict($cpid);
 }
 $obj->template->set_vars('spath_list', $subpath);
 $obj->template->set_vars('spath_access', \%subpath_access);

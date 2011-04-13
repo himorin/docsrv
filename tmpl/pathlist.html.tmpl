@@ -9,7 +9,7 @@
     <li>Parenet: [% path_info.parent %]</li>
     <li>Name: [% path_info.pathname %]</li>
     <li>Description: [% path_info.description %]</li>
-    <li>Accessible groups: [% permission.keys.join(', ') %] </li>
+    <li>Accessible groups: [% permission.join(', ') %] </li>
   </ul>
 [% END %]
 
@@ -18,7 +18,7 @@
   [% FOREACH item = spath_list %]
     <li>[DIR] <a href="pathlist.cgi?pid=[% item.pathid %]">[% item.pathname %]</a>
       : [% item.description %]
-      (Accessible groups: [% spath_access.${item.pathid}.keys.join(', ') %])</li>
+      (Accessible groups: [% spath_access.${item.pathid}.join(', ') %])</li>
   [% END %]
   [% FOREACH item = doc_list %]
     <li>[DOC] <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a>

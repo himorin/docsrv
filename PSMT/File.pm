@@ -19,11 +19,13 @@ use PSMT::DB;
 use PSMT::Constants;
 use PSMT::Util;
 
+# purged
+#    UserCanAccessDoc
+#    UserCanAccessPath
+
 %PSMT::File::EXPORT = qw(
     new
 
-    UserCanAccessDoc
-    UserCanAccessPath
     RegUserAccess
 
     ListDocsInPath
@@ -34,15 +36,12 @@ use PSMT::Util;
     ListDavFile
 
     GetPathInfo
-    GetPathAccessGroup
-    SetPathAccessGroup
 
     GetFullPathFromId
     GetIdFromFullPath
 
     GetDocInfo
     GetDocFiles
-    GetDocAccessGroup
 
     GetFileInfo
     GetFilePath
@@ -131,60 +130,6 @@ sub GetIdFromFullPath {
     return $pid;
 }
 
-sub GetDocAccessGroup {
-    my ($self, $docid) = @_;
-    my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT access_path.gname AS gname FROM access_path LEFT JOIN docreg ON access_path.pathid = docreg.pathid WHERE docreg.docid = ?');
-    $sth->execute($docid);
-    my ($ref, %glist);
-    while ($ref = $sth->fetchrow_hashref()) {
-        $glist{$ref->{gname}} = $ref;
-    }
-    return \%glist;
-}
-
-sub GetPathAccessGroup {
-    my ($self, $pathid) = @_;
-    my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
-    $sth->execute($pathid);
-    my ($ref, %glist);
-    while ($ref = $sth->fetchrow_hashref()) {
-        $glist{$ref->{gname}} = $ref;
-    }
-    return \%glist;
-}
-
-sub SetPathAccessGroup {
-    my ($self, $pathid, $group) = @_;
-    my $dbh = PSMT->dbh;
-    my %gconf;
-    foreach (@{PSMT->ldap->GetAvailGroups}) {$gconf{$_} = 0; }
-    # check group valid (via ldap)
-    foreach (@$group) {$gconf{$_} = 1; }
-    # check current
-    my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
-    my $ref;
-    $sth->execute($pathid);
-    while ($ref = $sth->fetchrow_hashref()) {
-        if (defined($gconf{$ref->{gname}})) {
-            if ($gconf{$ref->{gname}} == 0) {$gconf{$ref->{gname}} = 2; }
-            else {$gconf{$ref->{gname}} = 0; }
-        }
-    }
-    # update
-    foreach (keys %gconf) {
-        if ($gconf{$_} == 1) {
-            $sth = $dbh->prepare('INSERT access_path (pathid, gname) VALUES (?, ?)');
-            $sth->execute($pathid, $_);
-        } elsif ($gconf{$_} == 2) {
-            $sth = $dbh->prepare('DELETE FROM access_path WHERE pathid = ? AND gname = ?');
-            $sth->execute($pathid, $_);
-        }
-    }
-    return TRUE;
-}
-
 sub GetDocidFromFileid {
     my ($self, $fileid) = @_;
     my $dbh = PSMT->dbh;
@@ -193,42 +138,6 @@ sub GetDocidFromFileid {
     if ($sth->rows != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
     return $ref->{docid};
-}
-
-sub UserCanAccessDoc {
-    my ($self, $docid) = @_;
-    my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT access_path.gname AS gname FROM access_path LEFT JOIN docreg ON docreg.pathid = access_path.pathid WHERE docreg.docid = ?');
-    $sth->execute($docid);
-    my $ref;
-    if ($sth->rows == 0) {
-        # if access restriction is NULL, public
-        return TRUE;
-    }
-    while ($ref = $sth->fetchrow_hashref()) {
-        if (PSMT->user()->is_ingroup($ref->{'gname'}) == TRUE) {
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
-sub UserCanAccessPath {
-    my ($self, $pathid) = @_;
-    my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
-    $sth->execute($pathid);
-    my $ref;
-    if ($sth->rows == 0) {
-        # if access restriction is NULL, public
-        return TRUE;
-    }
-    while ($ref = $sth->fetchrow_hashref()) {
-        if (PSMT->user()->is_ingroup($ref->{'gname'}) == TRUE) {
-            return TRUE;
-        }
-    }
-    return FALSE;
 }
 
 sub RegUserAccess {
@@ -342,9 +251,9 @@ sub RegNewDoc {
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docreg WRITE');
     my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description) VALUES (?, ?, ?)');
-    $sth->execute($pathid, $name, $desc);
-    $dbh->db_unlock_tables();
+    if ($sth->execute($pathid, $name, $desc) == 0) {return $docid; }
     $docid = $dbh->db_last_key('docreg', 'docid');
+    $dbh->db_unlock_tables();
     return $docid;
 }
 

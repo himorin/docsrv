@@ -39,4 +39,19 @@ CREATE TABLE deny_file (
   gname         text                 NOT NULL                            
 );
 
+CREATE TABLE label (
+  labelid       int         UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+  name          text                 NOT NULL                            ,
+  description   text                     NULL                            
+);
+
+CREATE TABLE label_doc (
+  labelid       int         UNSIGNED NOT NULL                            ,
+  docid         int         UNSIGNED NOT NULL                            
+);
+
+CREATE TABLE access_label (
+  labelid       int         UNSIGNED NOT NULL                            ,
+  gname         text                 NOT NULL                            
+);
 

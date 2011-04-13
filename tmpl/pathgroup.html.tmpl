@@ -14,7 +14,7 @@
   <li>Parenet: [% path_info.parent %]</li>
   <li>Name: [% path_info.pathname %]</li>
   <li>Description: [% path_info.description %]</li>
-  <li>Accessible groups: [% permission.keys.join(', ') %] </li>
+  <li>Accessible groups: [% permission.join(', ') %] </li>
 </ul>
 
 <h3>Update</h3>
@@ -22,7 +22,7 @@
 <p>
 [% FOREACH item = all_groups %]
   <input type="checkbox" name="newgroup" value="[% item %]"
-    [% IF permission.$item.defined %]checked="checked"[% END %]
+    [% IF permission.defined($item) %]checked="checked"[% END %]
     >[% item %]</input><br />
 [% END %]
 <input type="hidden" name="pid" value="[% path_info.pathid %]" />

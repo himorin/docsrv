@@ -11,7 +11,7 @@
     <li>Parenet: [% path_info.parent %]</li>
     <li>Name: [% path_info.pathname %]</li>
     <li>Description: [% path_info.description %]</li>
-    <li>Accessible groups: [% permission.keys.join(', ') %] </li>
+    <li>Accessible groups: [% permission.join(', ') %] </li>
   </ul>
 [% END %]
 
@@ -22,7 +22,7 @@
     <li>ID #[% item.pathid %]: <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname %]</a>
       <ul>
         <li>Description: [% item.description %]</li>
-        <li>Accessible groups: [% spath_access.${item.pathid}.keys.join(', ') %]</li>
+        <li>Accessible groups: [% spath_access.${item.pathid}.join(', ') %]</li>
       </ul></li>
   [% END %]
 </ul>
