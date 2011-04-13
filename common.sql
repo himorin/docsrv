@@ -55,3 +55,9 @@ CREATE TABLE access_label (
   gname         text                 NOT NULL                            
 );
 
+CREATE TABLE favorite (
+  uname         text                 NOT NULL                            ,
+  docid         int         UNSIGNED NOT NULL                            
+);
+
+

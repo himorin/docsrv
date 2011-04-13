@@ -14,7 +14,7 @@
   </head>
   <body
     [% IF onload.defined %]onload="[% onload %]"[% END %]
-    [% IF bodyclass.size > 0 %]class="[% FOREACH item = bodyclass %][% item %][% END %]"[% END %]
+    [% IF bodyclass.defined AND bodyclass.size > 0 %]class="[% FOREACH item = bodyclass %][% item %][% END %]"[% END %]
     >
 
 <div id="header">

@@ -2,6 +2,27 @@
   page_title = "Main Page"
 %]
 
+<h3>Your favorite documents</h3>
+
+<table border="1">
+  <tr>
+    <th>Document ID</th>
+    <th>Full name</th>
+    <th>File name</th>
+    <th>Description</th>
+    <th>Un-fav</th>
+  </tr>
+[% FOREACH item IN favs.keys %]
+  <tr>
+    <td>[% favs.$item.docid %]</td>
+    <td><tt>[% favs.$item.full_path %][% favs.$item.filename %]</tt></td>
+    <td>[% favs.$item.filename %]</td>
+    <td>[% favs.$item.description %]</td>
+    <td><a href="docfav.cgi?did=[% favs.$item.docid %]&amp;op=remove">Un-fav</a></td>
+  </tr>
+[% END %]
+</table>
+
 <h3>Action Items on development</h3>
 
 <ul>

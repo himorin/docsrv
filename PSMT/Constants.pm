@@ -39,7 +39,7 @@ use constant FALSE        => 0;
 use constant PSMT_DOCSRV_VERSION => "0.1";
 
 use constant HEADER_LINKS => (
-  'index',
+  'index', 'dir', 'labels',
 );
 
 use constant contenttypes =>

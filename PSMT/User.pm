@@ -29,6 +29,10 @@ use PSMT::NetLdap;
     user_data
 
     is_ingroup
+    is_infav
+    MakeFav
+    RemoveFav
+    ListFavs
 );
 
 our %conf;
@@ -59,6 +63,44 @@ sub is_ingroup {
         if ($_ eq $gid) {return TRUE; }
     }
     return FALSE;
+}
+
+sub is_infav {
+    my ($self, $docid) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT docid FROM favorite WHERE docid = ? AND uname = ?');
+    $sth->execute($docid, $conf{'uid'});
+    if ($sth->rows() == 0) {return FALSE; }
+    return TRUE;
+}
+
+sub MakeFav {
+    my ($self, $docid) = @_;
+    if ($self->is_infav($docid) == TRUE) {return ; }
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('INSERT INTO favorite (docid, uname) VALUES (?, ?)');
+    $sth->execute($docid, $conf{'uid'});
+}
+
+sub RemoveFav {
+    my ($self, $docid) = @_;
+    if ($self->is_infav($docid) == FALSE) {return ; }
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('DELETE FROM favorite WHERE docid = ? AND uname = ?');
+    $sth->execute($docid, $conf{'uid'});
+}
+
+sub ListFavs {
+    my ($self) = @_;
+    my @docs;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT docid FROM favorite WHERE uname = ?');
+    $sth->execute($conf{'uid'});
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {
+        push(@docs, $ref->{docid});
+    }
+    return \@docs;
 }
 
 

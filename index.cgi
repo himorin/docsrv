@@ -20,6 +20,16 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 }
 
 print $obj->cgi()->header();
+
+# favorites
+my %favdocs;
+my $favs = PSMT->user->ListFavs();
+foreach (@$favs) {
+    $favdocs{$_} = PSMT::File->GetDocInfo($_);
+    $favdocs{$_}->{full_path} = PSMT::File->GetFullPathFromId($favdocs{$_}->{pathid});
+}
+
+$obj->template->set_vars('favs', \%favdocs);
 $obj->template->process('index', 'html');
 
 

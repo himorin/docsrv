@@ -52,12 +52,13 @@ body {
 #header ul.links li {
     display: inline;
     white-space: nowrap;
-    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 #body {
     -moz-border-radius: 5px;
-    background-color: white;
+    background-color: #F3F3F3;
     padding: 0.5em;
 }
 
