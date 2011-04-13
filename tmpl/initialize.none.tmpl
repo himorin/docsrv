@@ -1,9 +1,11 @@
 [% terms = {
-    "sitename"       => "Document Server For PSMT",
+    "sitename"       => "PSMT - 岡山望遠鏡プロジェクト - ドキュメントサーバ",
  }
 %]
 [% header_links_def = {
-    "index"    => { "name" => "Index", "url" => "index.cgi" },
+    "index"    => { "name" => "メインページ", "url" => "index.cgi" },
+    "dir"      => { "name" => "トップディレクトリ", "url" => "pathlist.cgi?pid=0" },
+    "labels"   => { "name" => "ラベル一覧", "url" => "labellist.cgi"},
  }
 %]
 [% BLOCK site_announce %]
