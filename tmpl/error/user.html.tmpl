@@ -1,4 +1,11 @@
-<h3>Error on user access</h3>
+[% PROCESS global/header.html.tmpl
+  page_title = "操作エラー"
+%]
 
-[% error %]
+<div id="error">
+あなたの要求を正常に解釈できませんでした。
+このエラーが発生した画面のURLおよびどういう操作を行ったかを、
+エラーコード '[% error %]' とともにシステム管理者に通知してください。
+</div>
 
+[% PROCESS global/footer.html.tmpl %]

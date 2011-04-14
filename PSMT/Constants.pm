@@ -21,6 +21,7 @@ use Cwd;
   PSMT_DOCSRV_VERSION
 
   HEADER_LINKS
+  AVAIL_FORMATS
   LOCATIONS
 
   TRUE
@@ -39,8 +40,29 @@ use constant FALSE        => 0;
 use constant PSMT_DOCSRV_VERSION => "0.1";
 
 use constant HEADER_LINKS => (
-  'index', 'dir', 'labels',
+  'index', 'dir', 'labels', 'favs'
 );
+
+use constant AVAIL_FORMATS => {
+  'docadd'             => ['html'],
+  'docfav'             => ['html', 'json'],
+  'docinfo'            => ['html'],
+  'docupdate'          => ['html'],
+  'favlist'            => ['html'],
+  'fileinfo'           => ['html'],
+  'index'              => ['html'],
+  'labellist'          => ['html'],
+  'pathgroup'          => ['html'],
+  'pathinfo'           => ['html'],
+
+  'error/code'         => ['html', 'json'],
+  'error/user'         => ['html', 'json'],
+
+  'favorite/table'     => ['html'],
+
+  'global/footer'      => ['html'],
+  'global/header'      => ['html'],
+};
 
 use constant contenttypes =>
   {

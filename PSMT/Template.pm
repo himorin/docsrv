@@ -22,12 +22,14 @@ use PSMT::Util;
 use PSMT::User;
 use PSMT::Label;
 use PSMT::NetLdap;
+use PSMT::Error;
 
 %PSMT::Template::EXPORT = qw(
     new
 
     process
 
+    add_avail_format
     set_vars
     vars
 );
@@ -35,10 +37,13 @@ use PSMT::NetLdap;
 our $obj_config;
 our $conf_template;
 our %hash_vars = {};
+our %avail_format;
+our $def_format;
 
 sub new {
     my ($this) = @_;
 
+    $def_format = undef;
     $obj_config = PSMT->config;
     $conf_template = {
         INCLUDE_PATH => PSMT::Constants::LOCATIONS()->{'rel_tmpl'},
@@ -62,6 +67,8 @@ sub new {
         CONSTANTS => _load_constants(),
         VARIABLES => {
             'Param'    => sub { return $obj_config->GetHash(); },
+            'User'     => PSMT->user()->user_data(),
+            'Label'    => PSMT::Label->ListAllLabel(),
         },
     };
 
@@ -90,8 +97,28 @@ sub process {
             PSMT->template->set_vars($_, $cur_vars->{$_});
         }
     }
+    my $formats = AVAIL_FORMATS;
+    if (defined($formats->{$template})) {
+        $this->add_avail_format(@{$formats->{$template}});
+    }
+    if ((! defined($ext)) || ($ext eq '')) {
+        $ext = PSMT->cgi()->param('format');
+        if (! defined($ext)) {$ext = $def_format; }
+    }
+    if (! defined($avail_format{$ext})) {
+        PSMT::Error->throw_error_code('template_format_missing');
+    }
     $template .= '.' . $ext . '.tmpl';
+    if (! defined($out)) {print PSMT->cgi()->header(); }
     $obj_template->process($template, PSMT->template->vars(), $out);
+}
+
+sub add_avail_format {
+    my ($self, @format) = @_;
+    if (! defined($def_format)) {$def_format = $format[0]; }
+    foreach (@format) {
+        if (! defined($avail_format{$_})) {$avail_format{$_} = 1; }
+    }
 }
 
 sub set_vars {

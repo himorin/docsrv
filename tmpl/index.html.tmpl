@@ -1,27 +1,15 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "Main Page"
+  current_page = "index"
+  page_title = "メインページ"
 %]
 
-<h3>Your favorite documents</h3>
+<h3>あなたの [% terms.favorite %][% terms.document %]</h3>
 
-<table border="1">
-  <tr>
-    <th>Document ID</th>
-    <th>Full name</th>
-    <th>File name</th>
-    <th>Description</th>
-    <th>Un-fav</th>
-  </tr>
-[% FOREACH item IN favs.keys %]
-  <tr>
-    <td>[% favs.$item.docid %]</td>
-    <td><tt>[% favs.$item.full_path %][% favs.$item.filename %]</tt></td>
-    <td>[% favs.$item.filename %]</td>
-    <td>[% favs.$item.description %]</td>
-    <td><a href="docfav.cgi?did=[% favs.$item.docid %]&amp;op=remove">Un-fav</a></td>
-  </tr>
-[% END %]
-</table>
+[% PROCESS favorite/table.html.tmpl    favlist = favs %]
+
+<h3>[% terms.path %]リスト</h3>
+
+[% PROCESS entry/table.html.tmpl       paths = topdirs %]
 
 <h3>Action Items on development</h3>
 
@@ -32,19 +20,6 @@
   <li>Simple search</li>
 </ul>
 
-<h4>DONE</h4>
-
-<ul>
-  <li>Documnt listing in directory</li>
-  <li>Document information page</li>
-  <li>File download page with permission check</li>
-  <li>File information page with access log</li>
-  <li><a href="pathlist.cgi?pid=0">Directory listing</a></li>
-  <li>Manage permissions for directory</li>
-  <li>File register page (from webdav)</li>
-  <li>Page to add document</li>
-  <li><a href="labellist.cgi">Label list</a></li>
-</ul>
 
 <h3>Sample : id <tt>1</tt> / file id <tt>_CrNkGp9m8XnRhMZ3-PMtw</tt></h3>
 

@@ -36,7 +36,6 @@ use PSMT::NetLdap;
 );
 
 our %conf;
-our $ldap_gid;
 our $obj_ldap;
 
 sub new {
@@ -50,7 +49,7 @@ sub get_uid {
 }
 
 sub get_gid {
-    return $ldap_gid;
+    return $conf{'gid'};
 }
 
 sub user_data {
@@ -59,7 +58,7 @@ sub user_data {
 
 sub is_ingroup {
     my ($self, $gid) = @_;
-    foreach (@$ldap_gid) {
+    foreach (@{$conf{'gid'}}) {
         if ($_ eq $gid) {return TRUE; }
     }
     return FALSE;
@@ -107,7 +106,7 @@ sub ListFavs {
 ################################################################## PRIVATE
 
 sub fetch_userdata {
-    my ($self);
+    my ($self) = @_;
     $conf{'uid'} = $ENV{'REMOTE_USER'};
     $obj_ldap = PSMT->ldap();
     if (! defined($obj_ldap)) {
@@ -120,7 +119,8 @@ sub fetch_userdata {
     if (! defined($conf{'dn'})) {
         PSMT::Error->throw_error_user('ldap_uid_notfound');
     }
-    $ldap_gid = $obj_ldap->SearchMemberGroups($conf{'uid'});
+    $conf{'gid'} = $obj_ldap->SearchMemberGroups($conf{'uid'});
+    $conf{'favs'} = $self->ListFavs();
 }
 
 1;

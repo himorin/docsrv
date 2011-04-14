@@ -18,10 +18,8 @@ use base qw(Exporter);
 use PSMT::DB;
 use PSMT::Constants;
 use PSMT::Util;
-
-# purged
-#    UserCanAccessDoc
-#    UserCanAccessPath
+use PSMT::Label;
+use PSMT::Access;
 
 %PSMT::File::EXPORT = qw(
     new
@@ -42,6 +40,7 @@ use PSMT::Util;
 
     GetDocInfo
     GetDocFiles
+    GetDocLastPostFile
 
     GetFileInfo
     GetFilePath
@@ -80,7 +79,9 @@ sub GetDocInfo {
     my $sth = $dbh->prepare('SELECT * FROM docreg WHERE docid = ?');
     $sth->execute($docid);
     if ($sth->rows != 1) {return undef; }
-    return $sth->fetchrow_hashref();
+    my $ref = $sth->fetchrow_hashref();
+    $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
+    return $ref;
 }
 
 sub GetDocFiles {
@@ -94,6 +95,16 @@ sub GetDocFiles {
         push(@flist, $ref);
     }
     return \@flist;
+}
+
+sub GetDocLastPostFile {
+    my ($self ,$docid) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC LIMIT 1');
+    $sth->execute($docid);
+    if ($sth->rows() != 1) {return undef; }
+    my $ref = $sth->fetchrow_hashref();
+    return $ref->{fileid};
 }
 
 sub GetFullPathFromId {
@@ -151,11 +162,11 @@ sub RegUserAccess {
 sub ListDocsInPath {
     my ($self, $pathid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT * FROM docreg WHERE pathid = ?');
+    my $sth = $dbh->prepare('SELECT docid FROM docreg WHERE pathid = ?');
     $sth->execute($pathid);
     my (@docs, $ref);
     while ($ref = $sth->fetchrow_hashref()) {
-        push(@docs, $ref);
+        push(@docs, $self->GetDocInfo($ref->{docid}));
     }
     return \@docs;
 }
@@ -163,11 +174,11 @@ sub ListDocsInPath {
 sub ListPathInPath {
     my ($self, $pathid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT * FROM path WHERE parent = ?');
+    my $sth = $dbh->prepare('SELECT pathid FROM path WHERE parent = ?');
     $sth->execute($pathid);
     my (@path, $ref);
     while ($ref = $sth->fetchrow_hashref()) {
-        push(@path, $ref);
+        push(@path, $self->GetPathInfo($ref->{pathid}));
     }
     return \@path;
 }
@@ -175,11 +186,11 @@ sub ListPathInPath {
 sub ListFilesInDoc {
     my ($self, $docid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ?');
+    my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ?');
     $sth->execute($docid);
     my (@files, $ref);
     while ($ref = $sth->fetchrow_hashref()) {
-        push(@files, $ref);
+        push(@files, $self->GetFileInfo($ref->{fileid}));
     }
     return \@files;
 }
@@ -202,7 +213,9 @@ sub GetPathInfo {
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid = ?');
     $sth->execute($pathid);
     if ($sth->rows != 1) {return undef; }
-    return $sth->fetchrow_hashref();
+    my $ref = $sth->fetchrow_hashref();
+    $ref->{gname} = PSMT::Access->ListPathRestrict($pathid);
+    return $ref;
 }
 
 # NOT filename BUT "PATH"

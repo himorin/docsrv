@@ -1,0 +1,26 @@
+
+<table class="favlist">
+  <tr>
+    <th>Doc ID</th>
+    <th>ドキュメント名</th>
+    <th>説明</th>
+    <th>解除</th>
+    <th>最新版ダウンロード</th>
+  </tr>
+
+[% FOREACH item IN favlist.keys %]
+  [% count = loop.count() %]
+  <tr 
+    class="
+      doc_[% item %]
+      [% count % 2 == 1 ? "row_odd" : "row_even" %]
+     ">
+    <td class="docid"><a href="docinfo.cgi?did=[% favlist.$item.docid %]">[% favlist.$item.docid %]</a></td>
+    <td class="docpath"><tt>[% favlist.$item.full_path %][% favlist.$item.filename %]</tt></td>
+    <td class="docfav">[% favlist.$item.description %]</td>
+    <td class="docfav_rm"><a href="docfav.cgi?did=[% favlist.$item.docid %]&amp;op=remove">解除</a></td>
+    <td class="docdl">[% IF favlist.$item.fid.defined %]<a href="fileget.cgi?fid=[% favlist.$item.fid %]">ダウンロード</a>[% ELSE %]存在しません[% END %]</td>
+  </tr>
+[% END %]
+</table>
+

@@ -18,23 +18,16 @@ my $obj_cgi = $obj->cgi();
 
 if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
-    exit;
 }
 
 my $fid = $obj_cgi->param('fid');
-if (! defined($fid)) {
-    PSMT::Error->throw_error_user('invalid_fileid');
-    exit;
-}
+if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 
 my $fileinfo = PSMT::File->GetFileInfo($fid);
-if (! defined($fileinfo)) {
-    PSMT::Error->throw_error_user('invalid_fileid');
-    exit;
-}
+if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 
 # check permission
-PSMT::CheckForFile($fid);
+PSMT::Access->CheckForFile($fid);
 
 print $obj_cgi->header();
 

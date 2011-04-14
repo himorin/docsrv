@@ -28,8 +28,7 @@ foreach (@$favs) {
 }
 
 $obj->template->set_vars('favs', \%favdocs);
-$obj->template->set_vars('topdirs', PSMT::File->ListPathInPath(0));
-$obj->template->process('index', 'html');
+$obj->template->process('favlist', 'html');
 
 
 exit;

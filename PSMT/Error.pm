@@ -16,6 +16,7 @@ use strict;
 use base qw(Exporter);
 
 use PSMT::Constants;
+use PSMT::Template;
 
 %PSMT::Config::EXPORT = qw(
     new
@@ -31,13 +32,13 @@ sub new {
 
 sub throw_error_code {
     my ($self, $err_id, $ext) = @_;
-    if (! defined($ext)) {$ext = 'html'; }
+    if (! defined($ext)) {$ext = ''; }
     $self->_throw_error('error/code', $ext, $err_id);
 }
 
 sub throw_error_user {
     my ($self, $err_id, $ext) = @_;
-    if (! defined($ext)) {$ext = 'html'; }
+    if (! defined($ext)) {$ext = ''; }
     $self->_throw_error('error/user', $ext, $err_id);
 }
 
@@ -45,12 +46,10 @@ sub throw_error_user {
 
 sub _throw_error {
     my ($self, $fname, $ext, $err_id) = @_;
-    PSMT->dbh->db_unlock_tables(PSMT::Constants::DB_UNLOCK_ABORT);
-
+    if (! defined($ext)) {$ext = ''; }
     PSMT->template->set_vars('error', $err_id);
-    print PSMT->cgi->header();
     PSMT->template->process($fname, $ext, PSMT->template->vars);
-
+    PSMT->dbh->db_unlock_tables(PSMT::Constants::DB_UNLOCK_ABORT);
     exit;
 }
 

@@ -8,7 +8,7 @@ body {
     background-color: #FFD8CB;
 }
 
-#titles {
+#header #titles {
     border-left: 1px solid black;
     border-right: 1px solid black;
     border-top: 1px solid black;
@@ -39,6 +39,19 @@ body {
 }
 
 #header ul.links {
+    margin: 0px 5px 0px 5px;
+    padding: 0px;
+    width: 60%;
+    float: left;
+}
+
+#header ul.account {
+    margin: 0px 5px 0px 5px;
+    padding: 0px;
+    text-align: right;
+}
+
+#header #gmenu {
     border-left: 1px solid black;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
@@ -47,13 +60,22 @@ body {
     margin: 0px;
     padding: 0.5em;
     list-style-type: none;
+    clear: both;
 }
 
-#header ul.links li {
+#header #gmenu ul li {
     display: inline;
     white-space: nowrap;
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+#header .target {
+    color: gray;
+}
+
+#header .data {
+    font-weight: bolder;
 }
 
 #body {
@@ -61,4 +83,45 @@ body {
     background-color: #F3F3F3;
     padding: 0.5em;
 }
+
+tr.row_odd {
+    background-color: #F7F7F7;
+    color: #000000;
+}
+
+tr.row_even {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+.favlist {
+    width: 94%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.favlist .docid {
+    text-align: center;
+}
+
+.favlist .docdl {
+    text-align: center;
+}
+
+.favlist .docfav_rm {
+    text-align: center;
+}
+
+.dirlist {
+    width: 94%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.labellist {
+    width: 94%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
 

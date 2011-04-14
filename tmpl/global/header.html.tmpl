@@ -30,16 +30,27 @@
       [% END %]
     </p>
   </div>
-  <ul class="links">
-    [% FOREACH item = header_links %]
-      <li>
-        [% IF NOT loop.first %]<span class="separator">|</span>[% END %]
-        [% IF header_links_def.$item.defined %]
-          <a href="[% header_links_def.$item.url %]">[% header_links_def.$item.name %]</a>
-        [% END %]
-      </li>
-    [% END %]
-  </ul>
+  <div id="gmenu">
+    <ul class="links">
+      [% FOREACH item = header_links %]
+        <li>
+          [% IF NOT loop.first %]<span class="separator">|</span>[% END %]
+          [% IF header_links_def.$item.defined %]
+            [% IF item == current_page %]
+              [% header_links_def.$item.name %]
+            [% ELSE %]
+              <a href="[% header_links_def.$item.url %]">[% header_links_def.$item.name %]</a>
+            [% END %]
+          [% END %]
+        </li>
+      [% END %]
+    </ul>
+    <ul class="account">
+      <li><span class="target">ユーザ</span> <span class="data">[% User.uid %]</span></li>
+      <li><span class="target">所属グループ</span> <span class="data">[% User.gid.join(',') %]</span></li>
+      <li><span class="target">[% terms.favorite %]数</span> <span class="data">[% User.favs.size %]</span></li>
+    </ul>
+  </div>
 </div>
 
 <div id="body">

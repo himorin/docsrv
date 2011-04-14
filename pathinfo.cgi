@@ -18,7 +18,6 @@ my $obj_cgi = $obj->cgi();
 
 if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
-    exit;
 }
 
 my $pathinfo = undef;
@@ -38,10 +37,7 @@ if (defined($path)) {
     # if path != undef, make path/pid from path
     $pid = PSMT::File->GetIdFromFullPath($path);
     # not allow '/' for path (if not pid=0 mode)
-    if ($pid == 0) {
-        PSMT::Error->throw_error_user('invalid_path_id');
-        exit;
-    }
+    if ($pid == 0) {PSMT::Error->throw_error_user('invalid_path_id'); }
     $pathinfo = PSMT::File->GetPathInfo($pid);
 } elsif (defined($pid)) {
     if ($pid == 0) {$path = '/'; }
@@ -49,21 +45,15 @@ if (defined($path)) {
         # create path from pid
         $path = PSMT::File->GetFullPathFromId($pid);
     }
-} else {
-    PSMT::Error->throw_error_user('invalid_path_id');
-    exit;
-}
+} else {PSMT::Error->throw_error_user('invalid_path_id'); }
 
 # check permission
 PSMT::Access->CheckForPath($pid);
-
-print $obj_cgi->header();
 
 # insert parameters
 $obj->template->set_vars('pid', $pid);
 $obj->template->set_vars('full_path', $path);
 $obj->template->set_vars('path_info', $pathinfo);
-$obj->template->set_vars('permission', PSMT::Access->ListPathRestrict($pid));
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
 
 my $subpath = PSMT::File->ListPathInPath($pid);
@@ -76,7 +66,6 @@ $obj->template->set_vars('spath_list', $subpath);
 $obj->template->set_vars('spath_access', \%subpath_access);
 
 $obj->template->process('pathinfo', 'html');
-
 
 exit;
 

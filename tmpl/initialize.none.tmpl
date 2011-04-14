@@ -1,11 +1,17 @@
 [% terms = {
     "sitename"       => "PSMT - 岡山望遠鏡プロジェクト - ドキュメントサーバ",
+
+    "path"           => "ディレクトリ",
+    "document"       => "ドキュメント",
+    "file"           => "ファイル",
+    "favorite"       => "お気に入り",
  }
 %]
 [% header_links_def = {
     "index"    => { "name" => "メインページ", "url" => "index.cgi" },
-    "dir"      => { "name" => "トップディレクトリ", "url" => "pathlist.cgi?pid=0" },
+    "dir"      => { "name" => "トップディレクトリ", "url" => "pathinfo.cgi?pid=0" },
     "labels"   => { "name" => "ラベル一覧", "url" => "labellist.cgi"},
+    "favs"     => { "name" => "$terms.favorite 一覧", "url" => "favlist.cgi"},
  }
 %]
 [% BLOCK site_announce %]

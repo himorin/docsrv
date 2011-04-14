@@ -18,19 +18,13 @@ my $obj_cgi = $obj->cgi();
 
 if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
-    exit;
 }
 
 my $did = $obj_cgi->param('did');
-if (! defined($did)) {
-    PSMT::Error->throw_error_user('invalid_document_id');
-    exit;
-}
+if (! defined($did)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 
 my $docinfo = PSMT::File->GetDocInfo($did);
-if (! defined($docinfo)) {
-    PSMT::Error->throw_error_user('invalid_document_id');
-}
+if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 
 # check permission
 PSMT::Access->CheckForDoc($did);
@@ -46,9 +40,7 @@ if ($obj_cgi->request_method() eq 'POST') {
         if (rindex($src, '.') == -1) {$ext = 'dat'; }
         else {$ext = substr($src, rindex($src, '.') + 1); }
     } elsif ($source eq 'upload') {
-    } else {
-        PSMT::Error->throw_error_user('invalid_file_source');
-    }
+    } else {PSMT::Error->throw_error_user('invalid_file_source'); }
 
     my $fid = PSMT::File->RegNewFile($ext, $did, $desc);
     if (! defined($fid)) {
@@ -61,8 +53,6 @@ if ($obj_cgi->request_method() eq 'POST') {
 
     $obj->template->set_vars('added', $fid);
 }
-
-print $obj_cgi->header();
 
 # insert parameters
 $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());

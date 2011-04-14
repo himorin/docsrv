@@ -18,7 +18,6 @@ my $obj_cgi = $obj->cgi();
 
 if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
-    exit;
 }
 
 my $labels = PSMT::Label->ListAllLabel();

@@ -90,10 +90,10 @@ sub ModLabelOnDoc {
     foreach (keys %labels) {
         if ($labels{$_} == 1) {
             $sth = $dbh->prepare('INSERT label_doc (labelid, docid) VALUES (?, ?)');
-            $sth->execute($docid, $_);
+            $sth->execute($_, $docid);
         } elsif ($labels{$_} == 2) {
             $sth = $dbh->prepare('DELETE FROM label_doc WHERE labelid = ? AND docid = ?');
-            $sth->execute($docid, $_);
+            $sth->execute($_, $docid);
         }
     }
     return TRUE;

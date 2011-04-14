@@ -1,38 +1,24 @@
-[% PROCESS global/header.html.tmpl %]
+[% PROCESS global/header.html.tmpl
+  current_page = "pathinfo"
+  page_title = "$terms.path 表示 - $full_path"
+%]
 
-<h3>General current path informations</h3>
+<h3>現在の [% terms.path %] ([% full_path %]) の情報</h3>
 
 [% IF pid == 0 %]
-  <p>ROOT PATH</p>
+  <p>トップ [% terms.path %]</p>
 [% ELSE %]
   <ul>
-    <li>Path ID: [% path_info.pathid %]</li>
-    <li>Full path: [% full_path %]</li>
-    <li>Parenet: [% path_info.parent %]</li>
-    <li>Name: [% path_info.pathname %]</li>
-    <li>Description: [% path_info.description %]</li>
-    <li>Accessible groups: [% permission.join(', ') %] </li>
+    <li>ID: [% path_info.pathid %]</li>
+    <li>フルパス: [% full_path %]</li>
+    <li>一つ上: <a href="pathinfo.cgi?pid=[% path_info.parent %]">[% path_info.parent %]</a></li>
+    <li>名前: [% path_info.pathname %]</li>
+    <li>説明: [% path_info.description %]</li>
+    <li>アクセス可能グループ: [% path_info.gname.join(', ') %]</li>
   </ul>
 [% END %]
 
-<h3>Sub path list</h3>
+[% PROCESS entry/table.html.tmpl       paths = spath_list  docs = doc_list %]
 
-<ul>
-  [% FOREACH item = spath_list %]
-    <li>ID #[% item.pathid %]: <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname %]</a>
-      <ul>
-        <li>Description: [% item.description %]</li>
-        <li>Accessible groups: [% spath_access.${item.pathid}.join(', ') %]</li>
-      </ul></li>
-  [% END %]
-</ul>
-
-<h3>Documnts in this path</h3>
-
-<ul>
-  [% FOREACH item = doc_list %]
-    <li>ID #[% item.docid %]: <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a> ([% item.description %])</li>
-  [% END %]
-</ul>
 
 [% PROCESS global/footer.html.tmpl %]
