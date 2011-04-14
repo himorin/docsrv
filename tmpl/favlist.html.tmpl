@@ -1,0 +1,10 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "favs"
+  page_title = "$terms.favorite 一覧"
+%]
+
+<h3>あなたの [% terms.favorite %][% terms.document %]</h3>
+
+[% PROCESS favorite/table.html.tmpl    favlist = favs %]
+
+[% PROCESS global/footer.html.tmpl %]

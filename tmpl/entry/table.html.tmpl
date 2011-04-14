@@ -1,0 +1,37 @@
+
+<table class="dirlist">
+  <tr>
+    <th>名前</th>
+    <th>説明</th>
+    <th>グループまたはラベル</th>
+  </tr>
+
+[% FOREACH item IN paths %]
+  [% count = loop.count() %]
+  <tr 
+    class="
+      path_[% item %]
+      [% count % 2 == 1 ? "row_odd" : "row_even" %]
+     ">
+    <td class="path">[DIR] <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname %]</a></td>
+    <td class="pathdesc">[% item.description %]</td>
+    <td class="group">[% IF item.gname.defined %][% item.gname.join(',') %][% ELSE %]制限なし[% END %]</td>
+  </tr>
+[% END %]
+
+[% FOREACH item IN docs %]
+  [% count = loop.count() %]
+  <tr 
+    class="
+      doc_[% item %]
+      [% count % 2 == 1 ? "row_odd" : "row_even" %]
+     ">
+    <td class="path">[DOC] <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a></td>
+    <td class="pathdesc">[% item.description %]</td>
+    <td class="group">[% IF item.labelid.defined %]
+      [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name %][% END %]
+      [% ELSE %]ラベルなし[% END %]</td>
+  </tr>
+[% END %]
+
+</table>
