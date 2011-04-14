@@ -29,6 +29,8 @@ use PSMT::NetLdap;
     user_data
 
     is_ingroup
+    is_inadmin
+
     is_infav
     MakeFav
     RemoveFav
@@ -62,6 +64,11 @@ sub is_ingroup {
         if ($_ eq $gid) {return TRUE; }
     }
     return FALSE;
+}
+
+sub is_inadmin {
+    my ($self) = @_;
+    return $self->is_ingroup(PSMT::Config->GetParam('admingroup'));
 }
 
 sub is_infav {

@@ -16,7 +16,7 @@
       label_[% item %]
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
-    <td>[% item %]</td>
+    <td><a href="labeledit.cgi?lid=[% item %]">[% item %]</a></td>
     <td>[% labels.$item.name %]</td>
     <td>[% labels.$item.description %]</td>
     <td>[% IF labels.$item.group.size == 0 %]No Access Restriction[% ELSE %]

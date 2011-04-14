@@ -19,6 +19,10 @@ use PSMT::Util;
 %PSMT::Label::EXPORT = qw(
     new
 
+    GetLabelInfo
+    AddNewLabel
+    UpdateLabel
+
     ListAllLabel
     CreateLabel
 
@@ -41,6 +45,34 @@ sub ListAllLabel {
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {$labels{$ref->{labelid}} = $ref; }
     return \%labels;
+}
+
+sub GetLabelInfo {
+    my ($self, $lid) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT * FROM label WHERE labelid = ?');
+    $sth->execute($lid);
+    if ($sth->rows() != 1) {return undef; }
+    return $sth->fetchrow_hashref();
+}
+
+sub AddNewLabel {
+    my ($self, $name, $desc) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('label WRITE');
+    my $sth = $dbh->prepare('INSERT INTO label (name, description) VALUES (?, ?)');
+    if ($sth->execute($name, $desc) == 0) {return 0; }
+    my $lid = $dbh->db_last_key('label', 'labelid');
+    $dbh->db_unlock_tables();
+    return $lid;
+}
+
+sub UpdateLabel {
+    my ($self, $lid, $name, $desc) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('UPDATE label SET name = ?, description = ? WHERE labelid = ?');
+    if ($sth->execute($name, $desc, $lid) == 0) {return FALSE; }
+    return TRUE;
 }
 
 sub ListLabelOnDoc {

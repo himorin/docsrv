@@ -22,7 +22,7 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 }
 
 # check permission - in group admin
-if ($obj->user()->is_ingroup('all') != TRUE) {
+if ($obj->user()->is_inadmin() != TRUE) {
     PSMT::Error->throw_error_user('permission_error');
 }
 

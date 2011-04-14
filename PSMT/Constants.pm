@@ -52,6 +52,7 @@ use constant AVAIL_FORMATS => {
   'favlist'            => ['html'],
   'fileinfo'           => ['html'],
   'index'              => ['html'],
+  'labeledit'          => ['html'],
   'labellist'          => ['html'],
   'pathadd'            => ['html'],
   'pathgroup'          => ['html'],
