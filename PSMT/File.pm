@@ -41,7 +41,8 @@ use PSMT::Access;
 
     GetDocInfo
     GetDocFiles
-    GetDocLastPostFile
+    GetDocLastPostFileId
+    GetDocLastPostFileInfo
 
     GetFileInfo
     GetFilePathSize
@@ -49,6 +50,7 @@ use PSMT::Access;
     GetFileFullPath
     GetFileExt
 
+    RegNewPath
     RegNewDoc
     RegNewFile
     MoveNewFile
@@ -85,6 +87,7 @@ sub GetDocInfo {
     if ($sth->rows != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
     $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
+    $ref->{lastfile} = $self->GetDocLastPostFileInfo($docid);
     return $ref;
 }
 
@@ -101,7 +104,7 @@ sub GetDocFiles {
     return \@flist;
 }
 
-sub GetDocLastPostFile {
+sub GetDocLastPostFileId {
     my ($self ,$docid) = @_;
     my $dbh = PSMT->dbh;
     my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC LIMIT 1');
@@ -109,6 +112,15 @@ sub GetDocLastPostFile {
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
     return $ref->{fileid};
+}
+
+sub GetDocLastPostFileInfo {
+    my ($self ,$docid) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC LIMIT 1');
+    $sth->execute($docid);
+    if ($sth->rows() != 1) {return undef; }
+    return $sth->fetchrow_hashref();
 }
 
 sub GetFullPathFromId {
@@ -315,6 +327,18 @@ sub RegNewFile {
     $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
     $dbh->db_unlock_tables();
     return $fileid;
+}
+
+sub RegNewPath {
+    my ($self, $cur, $path, $desc, $group) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path WRITE');
+    my $sth = $dbh->prepare('INSERT INTO path (parent, pathname, description) VALUES (?, ?, ?)');
+    if ($sth->execute($cur, $path, $desc) == 0) {return 0; }
+    my $pathid = $dbh->db_last_key('path', 'pathid');
+    $dbh->db_unlock_tables();
+    PSMT::Access->SetPathAccessGroup($pathid, $group);
+    return $pathid;
 }
 
 sub MoveNewFile {

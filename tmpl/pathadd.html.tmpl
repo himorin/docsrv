@@ -1,9 +1,9 @@
 [% PROCESS global/header.html.tmpl
   current_page = "pathinfo"
-  page_title = "$terms.path 表示 - $full_path"
+  page_title = "$terms.path 追加成功 - $full_path"
 %]
 
-<h3>現在の [% terms.path %] ([% full_path %]) の情報</h3>
+<h3>現在の <a href="pathinfo.cgi?pid=[% path_info.pathid %]">[% terms.path %] ([% full_path %])</a> の情報</h3>
 
 [% IF pid == 0 %]
   <p>トップ [% terms.path %]</p>
@@ -18,8 +18,5 @@
   </ul>
 [% END %]
 
-[% PROCESS entry/table.html.tmpl       paths = spath_list  docs = doc_list %]
-
-[% PROCESS entry/diradd.html.tmpl      cur_pid = path_info.pathid %]
 
 [% PROCESS global/footer.html.tmpl %]

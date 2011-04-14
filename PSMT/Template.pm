@@ -68,7 +68,13 @@ sub new {
         VARIABLES => {
             'Param'    => sub { return $obj_config->GetHash(); },
             'User'     => PSMT->user()->user_data(),
+            'Group'    => PSMT->ldap()->GetAvailGroups(),
             'Label'    => PSMT::Label->ListAllLabel(),
+            'InList'   => sub {
+                my ($list, $value) = @_;
+                foreach (@$list) {if ($value eq $_) {return TRUE; } }
+                return FALSE;
+            },
         },
     };
 

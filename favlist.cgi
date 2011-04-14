@@ -24,7 +24,7 @@ my $favs = PSMT->user->ListFavs();
 foreach (@$favs) {
     $favdocs{$_} = PSMT::File->GetDocInfo($_);
     $favdocs{$_}->{full_path} = PSMT::File->GetFullPathFromId($favdocs{$_}->{pathid});
-    $favdocs{$_}->{fid} = PSMT::File->GetDocLastPostFile($_);
+    $favdocs{$_}->{fid} = PSMT::File->GetDocLastPostFileInfo($_);
 }
 
 $obj->template->set_vars('favs', \%favdocs);

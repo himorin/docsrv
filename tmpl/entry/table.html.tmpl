@@ -4,7 +4,8 @@
     <th>名前</th>
     <th>説明</th>
     <th>グループまたはラベル</th>
-    <th>操作</th>
+    <th colspan="3">最新版</th>
+    <th>[% terms.document %]操作</th>
   </tr>
 
 [% FOREACH item IN paths %]
@@ -20,6 +21,7 @@
       [% IF item.gname.defined %][% item.gname.join(',') %][% ELSE %]制限なし[% END %]
       [<a href="pathgroup.cgi?pid=[% item.pathid %]">更新</a>]
       </td>
+    <th colspan="3"></th>
     <td class="adddoc"><a href="docadd.cgi?pid=[% item.pathid %]">追加</a></td>
   </tr>
 [% END %]
@@ -35,8 +37,23 @@
     <td class="pathdesc">[% item.description %]</td>
     <td class="group">[% IF item.labelid.defined %]
       [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name %][% END %]
-      [% ELSE %]ラベルなし[% END %]</td>
-    <td class="adddoc"><a href="docupdate.cgi?did=[% item.docid %]">更新</a></td>
+      [% ELSE %]ラベルなし[% END %]
+      [<a href="doclabel.cgi?did=[% item.docid %]">更新</a>]
+      </td>
+    [% IF item.lastfile.defined %]
+      <td>[% item.lastfile.uname %]</td>
+      <td>[% item.lastfile.uptime %]</td>
+      <td class="docdl"><a href="fileget.cgi?fid=[% item.lastfile.fileid %]">ダウンロード</a></td>
+    [% ELSE %]
+      <td colspan="3">存在しません</td>
+    [% END %]
+    <td class="adddoc">
+      <a href="docupdate.cgi?did=[% item.docid %]">更新</a>
+      [% IF NOT InList(User.favs, item.docid) %]
+        <span class="separator">|</span>
+        <a href="docfav.cgi?did=[% item.docid %]&op=add">[% terms.favorite %]</a>
+      [% END %]
+      </td>
   </tr>
 [% END %]
 

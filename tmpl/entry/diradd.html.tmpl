@@ -1,0 +1,22 @@
+
+<form action="pathadd.cgi" method="POST">
+
+<h3>[% terms.path %]の追加</h3>
+<ul>
+  <li>名前: <input type="text" name="newpath" value="" size="50"></li>
+  <li>説明: <input type="text" name="newdesc" value="" size="50"></li>
+</ul>
+
+<p>チェックを付けたグループのどれかに所属しているユーザのみが閲覧可能になります。
+全てのチェックを外すと、どのユーザも閲覧できるようになります。</p>
+
+<ul>
+[% FOREACH item = Group %]
+  <li><input type="checkbox" name="newgroup" value="[% item %]">[% item %]</input></li>
+[% END %]
+</ul>
+
+<input type="hidden" name="cur_pid" value="[% cur_pid %]">
+<input type="submit" value="追加">
+<input type="reset" value="リセット">
+</form>

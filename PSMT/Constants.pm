@@ -47,11 +47,13 @@ use constant AVAIL_FORMATS => {
   'docadd'             => ['html'],
   'docfav'             => ['html', 'json'],
   'docinfo'            => ['html'],
+  'doclabel'           => ['html'],
   'docupdate'          => ['html'],
   'favlist'            => ['html'],
   'fileinfo'           => ['html'],
   'index'              => ['html'],
   'labellist'          => ['html'],
+  'pathadd'            => ['html'],
   'pathgroup'          => ['html'],
   'pathinfo'           => ['html'],
 
