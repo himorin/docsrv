@@ -34,11 +34,18 @@ PSMT::Access->CheckForFile($fid);
 # download
 my $file = PSMT::File->GetFilePath($fid) . $fid;
 if (! -f $file) {PSMT::Error->throw_error_user('invalid_filepath'); }
+my $fname = PSMT::File->GetFileFullPath($fid);
+if (! defined($fname)) {$fname = $fid; }
 
 my $ext = PSMT::File->GetFileExt($fid);
 PSMT::File->RegUserAccess($fid);
 
-print $obj_cgi->header($ext);
+print $obj_cgi->header(
+        -type => "$ext; name=\"$fname\"",
+        -content_disposition => "attachment; filename=\"$fname\"",
+        -content_length => PSMT::File->GetFilePathSize($fid),
+    );
+binmode STDOUT, ':bytes';
 open(INDAT, $file);
 print <INDAT>;
 close(INDAT);

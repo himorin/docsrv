@@ -26,14 +26,14 @@
 
 <hr>
 
-<form action="docupdate.cgi" method="POST">
+<form action="docupdate.cgi" method="POST" enctype="multipart/form-data">
 
 [% IF dav_file.defined %]
   <p>
     [% IF dav_file.keys.size == 0 %]
       No source file in DAV
     [% ELSE %]
-      <input type="checkbox" name="source" value="dav" /> Use file from DAV source<br />
+      <input type="radio" name="source" value="dav" /> Use file from DAV source :
       <select name="dav_source">
         [% FOREACH item IN dav_file.keys %]
           <option value="[% item %]">[% item %] ([% dav_file.$item %] byte)</option>
@@ -44,9 +44,11 @@
 [% END %]
 
 <p>
-  <input type="checkbox" name="source" value="upload" disabled="disabled" />
-  File upload not avail
+  <input type="radio" name="source" value="upload" /> ローカルファイルを利用: 
+  <input type="file" name="target_file" />
 </p>
+
+
 
 Comment: <input type="text" name="comment" value="" size="50"><br>
 <input type="hidden" name="did" value="[% doc_info.docid %]">

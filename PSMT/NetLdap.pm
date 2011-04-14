@@ -18,6 +18,7 @@ use base qw(Exporter);
     bind
 
     GetAvailGroups
+    GetHashAvailGroups
 
     SearchUID
     SearchMemberGroups
@@ -143,6 +144,15 @@ sub GetAvailGroups {
         push(@groups, $_->get_value('cn'));
     }
     return \@groups;
+}
+
+sub GetHashAvailGroups {
+    my ($self, $exist) = @_;
+    my %hash;
+    my $arr = $self->GetAvailGroups();
+    foreach (@$arr) {$hash{$_} = 0; }
+    foreach (@$exist) {$hash{$_} = 1; }
+    return \%hash;
 }
 
 

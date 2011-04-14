@@ -12,6 +12,7 @@ use strict;
 
 use Digest::MD5;
 use File::Path;
+use File::Temp qw/ tempfile /;
 
 use base qw(Exporter);
 
@@ -43,12 +44,15 @@ use PSMT::Access;
     GetDocLastPostFile
 
     GetFileInfo
+    GetFilePathSize
     GetFilePath
+    GetFileFullPath
     GetFileExt
 
     RegNewDoc
     RegNewFile
     MoveNewFile
+    SaveToDav
 );
 
 my $hash_each = 2;
@@ -233,6 +237,24 @@ sub GetFilePath {
     return $path;
 }
 
+sub GetFilePathSize {
+    my ($self, $fileid) = @_;
+    my $fname = $self->GetFilePath($fileid) . $fileid;
+    return (-s $fname);
+}
+
+# fullpath = path_names/doc_name.file_ext
+sub GetFileFullPath {
+    my ($self, $fileid) = @_;
+    my $finfo = $self->GetFileInfo($fileid);
+    if (! defined($finfo)) {return undef; }
+    my $docinfo = $self->GetDocInfo($finfo->{docid});
+    if (! defined($docinfo)) {return undef; }
+    my $fname = $self->GetFullPathFromId($docinfo->{pathid});
+    $fname .= '/' . $docinfo->{filename} . '.' . $finfo->{fileext};
+    return $fname;
+}
+
 sub GetFileExt {
     my ($self, $fileid) = @_;
     my $ext = 'default';
@@ -305,6 +327,16 @@ sub MoveNewFile {
         PSMT::Error->throw_error_user('file_move_failed');
     }
     rename($src, $newpath . $fid);
+}
+
+sub SaveToDav {
+    my ($self, $fh) = @_;
+    my ($out, $fname) = tempfile( DIR => PSMT::Config->GetParam('dav_path') );
+    my $buf;
+    binmode $out;
+    while (read($fh, $buf, 1024)) {print $out $buf; }
+    close $out;
+    return $fname;
 }
 
 ################################################################## PRIVATE

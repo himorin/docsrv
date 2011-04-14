@@ -33,20 +33,27 @@ PSMT::Access->CheckForDoc($did);
 if ($obj_cgi->request_method() eq 'POST') {
     my $source = $obj_cgi->param('source');
     my $desc = $obj_cgi->param('comment');
-    my $ext;
+
+    my $ext = '.dat';
     my $src = undef;
     if ($source eq 'dav') {
         $src = $obj_cgi->param('dav_source');
-        if (rindex($src, '.') == -1) {$ext = 'dat'; }
-        else {$ext = substr($src, rindex($src, '.') + 1); }
+        if (rindex($src, '.') != -1) {$ext = substr($src, rindex($src, '.') + 1); }
+        $src = PSMT::Config->GetParam('dav_path') . '/' . $src;
     } elsif ($source eq 'upload') {
-    } else {PSMT::Error->throw_error_user('invalid_file_source'); }
+        my $fh = $obj_cgi->upload('target_file');
+        my $fname = $obj_cgi->param('target_file');
+        if (! defined($fh)) {PSMT::Error->throw_error_user('null_file_upload'); }
+        $src = PSMT::File->SaveToDav($fh);
+        if (rindex($fname, '.') != -1) {$ext = substr($fname, rindex($fname, '.') + 1); }
+    } else {
+        PSMT::Error->throw_error_user('invalid_file_source');
+    }
 
     my $fid = PSMT::File->RegNewFile($ext, $did, $desc);
     if (! defined($fid)) {
         PSMT::Error->throw_error_user('file_register_failed');
     }
-    $src = PSMT::Config->GetParam('dav_path') . '/' . $src;
     if (PSMT::File->MoveNewFile($src, $fid) != TRUE) {
         PSMT::Error->throw_error_user('file_register_failed');
     }

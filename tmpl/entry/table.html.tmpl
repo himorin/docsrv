@@ -4,6 +4,7 @@
     <th>名前</th>
     <th>説明</th>
     <th>グループまたはラベル</th>
+    <th>操作</th>
   </tr>
 
 [% FOREACH item IN paths %]
@@ -15,7 +16,11 @@
      ">
     <td class="path">[DIR] <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname %]</a></td>
     <td class="pathdesc">[% item.description %]</td>
-    <td class="group">[% IF item.gname.defined %][% item.gname.join(',') %][% ELSE %]制限なし[% END %]</td>
+    <td class="group">
+      [% IF item.gname.defined %][% item.gname.join(',') %][% ELSE %]制限なし[% END %]
+      [<a href="pathgroup.cgi?pid=[% item.pathid %]">更新</a>]
+      </td>
+    <td class="adddoc"><a href="docadd.cgi?pid=[% item.pathid %]">追加</a></td>
   </tr>
 [% END %]
 
@@ -31,6 +36,7 @@
     <td class="group">[% IF item.labelid.defined %]
       [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name %][% END %]
       [% ELSE %]ラベルなし[% END %]</td>
+    <td class="adddoc"><a href="docupdate.cgi?did=[% item.docid %]">更新</a></td>
   </tr>
 [% END %]
 

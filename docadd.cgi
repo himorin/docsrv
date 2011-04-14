@@ -43,29 +43,34 @@ if ($obj_cgi->request_method() eq 'POST') {
     my $docdesc = $obj_cgi->param('docdesc');
     my @labels = $obj_cgi->param('label');
 
+    # Add new file from source
+    my $ext = '.dat';
+    my $src = undef;
+    if ($source eq 'dav') {
+        $src = $obj_cgi->param('dav_source');
+        if (rindex($src, '.') != -1) {$ext = substr($src, rindex($src, '.') + 1); }
+        $src = PSMT::Config->GetParam('dav_path') . '/' . $src;
+    } elsif ($source eq 'upload') {
+        my $fh = $obj_cgi->upload('target_file');
+        my $fname = $obj_cgi->param('target_file');
+        if (! defined($fh)) {PSMT::Error->throw_error_user('null_file_upload'); }
+        $src = PSMT::File->SaveToDav($fh);
+        if (rindex($fname, '.') != -1) {$ext = substr($fname, rindex($fname, '.') + 1); }
+    } else {
+        PSMT::Error->throw_error_user('invalid_file_source');
+    }
+
     # Fiest register new document to path
     my $did = PSMT::File->RegNewDoc($pid, $filename, $docdesc);
     if ($did == 0) {
         PSMT::Error->throw_error_user('doc_add_failed');
     }
 
-    # Add new file from source
-    my $ext;
-    my $src = undef;
-    if ($source eq 'dav') {
-        $src = $obj_cgi->param('dav_source');
-        if (rindex($src, '.') == -1) {$ext = 'dat'; }
-        else {$ext = substr($src, rindex($src, '.') + 1); }
-    } elsif ($source eq 'upload') {
-    } else {
-        PSMT::Error->throw_error_user('invalid_file_source');
-    }
-
+    # second register new file to doc
     my $fid = PSMT::File->RegNewFile($ext, $did, $desc);
     if (! defined($fid)) {
         PSMT::Error->throw_error_user('file_register_failed');
     }
-    $src = PSMT::Config->GetParam('dav_path') . '/' . $src;
     if (PSMT::File->MoveNewFile($src, $fid) != TRUE) {
         PSMT::Error->throw_error_user('file_register_failed');
     }
@@ -73,8 +78,6 @@ if ($obj_cgi->request_method() eq 'POST') {
 
     $obj->template->set_vars('added', $did);
 }
-
-print $obj_cgi->header();
 
 # insert parameters
 $obj->template->set_vars('pid', $pid);
