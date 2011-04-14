@@ -68,12 +68,28 @@ sub new {
         VARIABLES => {
             'Param'    => sub { return $obj_config->GetHash(); },
             'User'     => PSMT->user()->user_data(),
+            'Admin'    => PSMT->user()->is_inadmin(),
             'Group'    => PSMT->ldap()->GetAvailGroups(),
             'Label'    => PSMT::Label->ListAllLabel(),
             'InList'   => sub {
                 my ($list, $value) = @_;
                 foreach (@$list) {if ($value eq $_) {return TRUE; } }
                 return FALSE;
+            },
+            'SizeDisp' => sub {
+                my ($size) = @_;
+                my %units = (
+                    'kB'   => 1024,
+                    'MB'   => 1024 * 1024,
+                    'GB'   => 1024 * 1024 * 1024,
+                );
+                my $unit;
+                foreach $unit ('GB', 'MB', 'kB') {
+                    if ($size >= $units{$unit}) {
+                        return sprintf("%.2f %s", $size / $units{$unit}, $unit);
+                    }
+                }
+                return $size . ' bytes';
             },
         },
     };

@@ -43,9 +43,9 @@
     [% IF item.lastfile.defined %]
       <td>[% item.lastfile.uname %]</td>
       <td>[% item.lastfile.uptime %]</td>
-      <td class="docdl"><a href="fileget.cgi?fid=[% item.lastfile.fileid %]">ダウンロード</a></td>
+      <td class="docsize"><a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% SizeDisp(item.lastfile.size) %]</a></td>
     [% ELSE %]
-      <td colspan="3">存在しません</td>
+      <td colspan="3" class="center">存在しません</td>
     [% END %]
     <td class="adddoc">
       <a href="docupdate.cgi?did=[% item.docid %]">更新</a>

@@ -43,7 +43,7 @@ PSMT::File->RegUserAccess($fid);
 print $obj_cgi->header(
         -type => "$ext; name=\"$fname\"",
         -content_disposition => "attachment; filename=\"$fname\"",
-        -content_length => PSMT::File->GetFilePathSize($fid),
+        -content_length => PSMT::File->GetFileSize($fid),
     );
 binmode STDOUT, ':bytes';
 open(INDAT, $file);

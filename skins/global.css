@@ -41,7 +41,7 @@ body {
 #header ul.links {
     margin: 0px 5px 0px 5px;
     padding: 0px;
-    width: 60%;
+    width: 45%;
     float: left;
 }
 
@@ -104,8 +104,8 @@ tr.row_even {
     text-align: center;
 }
 
-.favlist .docdl {
-    text-align: center;
+td.docsize {
+    text-align: right;
 }
 
 .favlist .docfav_rm {
@@ -122,6 +122,10 @@ tr.row_even {
     width: 94%;
     margin-left: 3%;
     margin-right: 3%;
+}
+
+td.center {
+    text-align: center;
 }
 
 

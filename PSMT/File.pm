@@ -45,7 +45,7 @@ use PSMT::Access;
     GetDocLastPostFileInfo
 
     GetFileInfo
-    GetFilePathSize
+    GetFileSize
     GetFilePath
     GetFileFullPath
     GetFileExt
@@ -120,7 +120,9 @@ sub GetDocLastPostFileInfo {
     my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC LIMIT 1');
     $sth->execute($docid);
     if ($sth->rows() != 1) {return undef; }
-    return $sth->fetchrow_hashref();
+    my $ref = $sth->fetchrow_hashref();
+    $ref->{size} = $self->GetFileSize($ref->{fileid});
+    return $ref;
 }
 
 sub GetFullPathFromId {
@@ -249,7 +251,7 @@ sub GetFilePath {
     return $path;
 }
 
-sub GetFilePathSize {
+sub GetFileSize {
     my ($self, $fileid) = @_;
     my $fname = $self->GetFilePath($fileid) . $fileid;
     return (-s $fname);

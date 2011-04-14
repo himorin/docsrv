@@ -22,9 +22,9 @@
     [% IF favlist.$item.fid.defined %]
       <td>[% favlist.$item.fid.uname %]</td>
       <td>[% favlist.$item.fid.uptime %]</td>
-      <td class="docdl"><a href="fileget.cgi?fid=[% favlist.$item.fid.fileid %]">ダウンロード</a></td>
+      <td class="docsize"><a href="fileget.cgi?fid=[% favlist.$item.fid.fileid %]">[% SizeDisp(favlist.$item.fid.size) %]</a></td>
     [% ELSE %]
-      <td colspan="3">存在しません</td>
+      <td colspan="3" class="center">存在しません</td>
     [% END %]
   </tr>
 [% END %]
