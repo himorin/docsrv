@@ -44,7 +44,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     my @labels = $obj_cgi->param('label');
 
     # Add new file from source
-    my $ext = '.dat';
+    my $ext = 'dat';
     my $src = undef;
     if ($source eq 'dav') {
         $src = $obj_cgi->param('dav_source');

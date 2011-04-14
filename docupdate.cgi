@@ -34,7 +34,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     my $source = $obj_cgi->param('source');
     my $desc = $obj_cgi->param('comment');
 
-    my $ext = '.dat';
+    my $ext = 'dat';
     my $src = undef;
     if ($source eq 'dav') {
         $src = $obj_cgi->param('dav_source');
