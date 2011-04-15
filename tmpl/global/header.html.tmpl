@@ -7,10 +7,15 @@
     [% FOREACH item = stylesheet %]
       <link rel="stylesheer" href="skins/[% item %]">
     [% END %]
+
+    <!-- yui -->
+    <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js"></script>
+
     <script src="skins/global.js"></script>
     [% FOREACH item = javascript %]
       <script src="skins/[% item %]"></script>
     [% END %]
+    
   </head>
   <body
     [% IF onload.defined %]onload="[% onload %]"[% END %]
