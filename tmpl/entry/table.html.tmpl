@@ -1,11 +1,13 @@
+[% paths_exist = 1 IF paths.size > 0 %]
+[% docs_exist = 1  IF docs.size > 0 %]
 
 <table class="dirlist">
   <tr>
     <th></th>
     <th>名前</th>
     <th>説明</th>
-    <th colspan="4">最新版</th>
-    <th>[% IF paths.size > 0 %]グループ[% END %][% IF paths.size > 0 AND docs.size > 0 %]または[% END %][% IF docs.size > 0 %]ラベル[% END %]</th>
+    [% IF docs_exist %]<th colspan="4">最新版</th>[% END %]
+    <th>[% IF paths_exist %]グループ[% END %][% IF paths_exist AND docs_exist %]または[% END %][% IF docs_exist %]ラベル[% END %]</th>
   </tr>
 
 [% FOREACH item IN paths %]
@@ -19,7 +21,7 @@
     <td class="path"><img src="skins/images/twotone/green/closed-folder.gif">
       <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname FILTER html %]</a></td>
     <td class="pathdesc">[% item.description FILTER html %]</td>
-    <th colspan="4"></th>
+    [% IF docs_exist %]<th colspan="4"></th>[% END %]
     <td class="group">
       [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]制限なし[% END %]
       [<a href="pathgroup.cgi?pid=[% item.pathid %]">更新</a>]
@@ -52,7 +54,8 @@
       <td class="docsize">[% SizeDisp(item.lastfile.size) %]</td>
       <td><a href="docupdate.cgi?did=[% item.docid %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
     [% ELSE %]
-      <td colspan="4" class="center">存在しません</td>
+      <td colspan="3" class="center">存在しません</td>
+      <td><a href="docupdate.cgi?did=[% item.docid %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
     [% END %]
     <td class="group">[% IF item.labelid.defined %]
       [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name FILTER html %][% END %]

@@ -11,7 +11,29 @@
 <a href="https://psmt.kusastro.kyoto-u.ac.jp/bugzilla/enter_bug.cgi?product=PSMT">Bugzilla</a>
 に登録してください。
 </p>
-<div class="info"></div>
+<div class="info">
+  [% IF error == 'already_locked' %]
+    すでにロックしているデータベースを再度ロックしようとしました。
+  [% ELSIF error == 'failed_to_add_label' %]
+    ラベルの追加操作に失敗しました。
+  [% ELSIF error == 'ldap_bind_anonymous' %]
+    LDAPサーバに匿名接続できませんでした。
+  [% ELSIF error == 'ldap_connect' %]
+    LDAPサーバに接続できません。
+  [% ELSIF error == 'nested_transaction' %]
+    データベースへのトランザクションを再度開始しようとしました。
+  [% ELSIF error == 'not_in_transaction' %]
+    トランザクションが開始されていないのにデータベースへのトランザクションを終了しようとしました。
+  [% ELSIF error == 'not_locked' %]
+    データベースはロックしていない状態です。
+  [% ELSIF error == 'path_add_failed' %]
+    パスの追加操作に失敗しました。
+  [% ELSIF error == 'template_format_missing' %]
+    要求されたテンプレートの形式が見つかりません。
+  [% ELSE %]
+    このエラーコード [% error %] は未定義です。
+  [% END %]
+</div>
 </div>
 
 [% PROCESS global/footer.html.tmpl %]

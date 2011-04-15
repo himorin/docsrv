@@ -1,11 +1,11 @@
 
 <table class="favlist">
   <tr>
-    <th>Doc ID</th>
+    <th></th>
     <th>ドキュメント名</th>
     <th>説明</th>
     <th>解除</th>
-    <th colspan="3">最新版</th>
+    <th colspan="4">最新版</th>
   </tr>
 
 [% FOREACH item IN favlist.keys %]
@@ -15,16 +15,20 @@
       doc_[% item %]
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
-    <td class="docid"><a href="docinfo.cgi?did=[% favlist.$item.docid %]">[% favlist.$item.docid %]</a></td>
+    <td class="docmanage"
+      <a href="fileget.cgi?fid=[% item.lastfile.fileid %]"><img src="skins/images/woofunction/16/arrow_down.png"></a>
+      </td>
     <td class="docpath"><tt>[% favlist.$item.full_path %][% favlist.$item.filename %]</tt></td>
     <td class="docfav">[% favlist.$item.description %]</td>
     <td class="docfav_rm"><a href="docfav.cgi?did=[% favlist.$item.docid %]&amp;op=remove">解除</a></td>
     [% IF favlist.$item.fid.defined %]
       <td>[% favlist.$item.fid.uname %]</td>
       <td>[% favlist.$item.fid.uptime %]</td>
-      <td class="docsize"><a href="fileget.cgi?fid=[% favlist.$item.fid.fileid %]">[% SizeDisp(favlist.$item.fid.size) %]</a></td>
+      <td class="docsize">[% SizeDisp(favlist.$item.fid.size) %]</td>
+      <td><a href="docupdate.cgi?did=[% item %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
     [% ELSE %]
       <td colspan="3" class="center">存在しません</td>
+      <td><a href="docupdate.cgi?did=[% item %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
     [% END %]
   </tr>
 [% END %]

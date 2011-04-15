@@ -27,9 +27,9 @@ if ($obj->user()->is_inadmin() != TRUE) {
 }
 
 my $did = $obj_cgi->param('did');
-if (! defined($did)) {PSMT::Error->throw_error_user('invalid_doc_id'); }
+if (! defined($did)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 my $docinfo = PSMT::File->GetDocInfo($did);
-if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_doc_id'); }
+if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 PSMT::Access->CheckForDoc($did);
 
 # for update
