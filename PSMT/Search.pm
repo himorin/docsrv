@@ -42,7 +42,7 @@ sub Search {
     $sql =
         'SELECT docreg.*
          FROM docreg
-         INNER JOIN label_doc ON docreg.docid = label_doc.docid
+         LEFT JOIN label_doc ON docreg.docid = label_doc.docid
          WHERE 
         ';
     my ($arr, $cond, $app);
@@ -68,6 +68,11 @@ sub Search {
     my $sth = $dbh->prepare($sql);
     $sth->execute(@data);
     if ($sth->rows() == 0) {return undef; }
+    return $self->CreateResult($sth);
+}
+
+sub CreateResult {
+    my ($self, $sth) = @_;
     my (@result, $ref, $cid);
     while ($ref = $sth->fetchrow_hashref()) {
         # exclude non-permitted documents
