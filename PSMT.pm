@@ -40,6 +40,13 @@ use PSMT::User;
     ldap
 );
 
+BEGIN {
+    if ($ENV{SERVER_SOFTWARE}) {
+        require CGI::Carp;
+        CGI::Carp->import('fatalsToBrowser');
+    }
+}
+
 our $_request = {};
 
 sub new {

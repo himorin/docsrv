@@ -1,0 +1,3 @@
+[% IF Debug.defined %]
+  [% FOREACH item IN Debug %]<input type="hidden" name="debug" value="[% item %]"></input>[% END %]
+[% END %]

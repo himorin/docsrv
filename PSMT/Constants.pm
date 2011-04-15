@@ -40,7 +40,7 @@ use constant FALSE        => 0;
 use constant PSMT_DOCSRV_VERSION => "0.1";
 
 use constant HEADER_LINKS => (
-  'index', 'dir', 'labels', 'favs'
+  'index', 'dir', 'labels', 'favs', 'search'
 );
 
 use constant AVAIL_FORMATS => {
@@ -57,6 +57,9 @@ use constant AVAIL_FORMATS => {
   'pathadd'            => ['html'],
   'pathgroup'          => ['html'],
   'pathinfo'           => ['html'],
+
+  'search/query'       => ['html'],
+  'search/search'      => ['html'],
 
   'error/code'         => ['html', 'json'],
   'error/user'         => ['html', 'json'],

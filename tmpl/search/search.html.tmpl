@@ -1,0 +1,71 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "search"
+  page_title = "検索条件設定"
+%]
+
+<form action="query.cgi" method="POST">
+[% PROCESS global/formopt.html.tmpl %]
+
+<p>検索条件は、それぞれのカテゴリに対して AND もしくは OR の複数設定可能で、
+それらのカテゴリを AND もしくは OR でつないで検索を行います。</p>
+
+<h3>全体設定</h3>
+
+<div>各カテゴリの条件に合致した結果の
+<select name="global_cond">
+  <option value="AND" selected="selected">AND</option>
+  <option value="OR">OR</option>
+</select>
+を結果として表示する。</div>
+
+<div>
+<input type="submit" value="検索実行">
+<input type="reset">
+</div>
+
+
+<h3>カテゴリへの検索条件指定</h3>
+
+<p>各[% terms.document %]の名前、説明、[% terms.document %]に付けたラベルに
+対して検索条件を指定可能です。
+検索条件を指定しなかったカテゴリについては条件付けは行われません。</p>
+
+<h4>[% terms.document %]の名前</h4>
+
+<div>調整中</div>
+
+<h4>[% terms.document %]の説明</h4>
+
+<div>
+<input type="text" name="docreg_desc" value="[% linfo.name %]" size="100"></input>
+の各単語を
+<select name="docreg_desc_cond">
+  <option value="and" selected="selected">全て含む</option>
+  <option value="or">いずれか含む</option>
+</select>
+説明を持つ[% terms.documenet %]を検索する。
+</div>
+
+<div>半角空白区切りで単語を入力してください。
+""で囲むことによる複数単語の一括指定には対応していません。</div>
+
+<h4>[% terms.document %]に付けたラベル</h4>
+
+<div>次のラベルについて
+<select name="doc_label_cond">
+  <option value="and" selected="selected">AND</option>
+  <option value="or">OR</option>
+</select>
+を結果として表示する :
+
+<select name="doc_label" size="5" multiple="multiple">
+  [% FOREACH item = Label.keys %]
+    <option value="[% item %]">[% Label.$item.name %]</option>
+  [% END %]
+</select>
+</div>
+
+
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

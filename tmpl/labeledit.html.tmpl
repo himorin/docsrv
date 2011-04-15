@@ -3,6 +3,7 @@
 <h3>[% IF lid == 0 %]ラベルの追加[% ELSE %]ラベルの更新[% END %]</h3>
 
 <form action="labeledit.cgi" method="POST">
+[% PROCESS global/formopt.html.tmpl %]
 
 <ul>
   [% IF lid != 0 %]<li>ID : [% linfo.labelid %]</li>[% END %]

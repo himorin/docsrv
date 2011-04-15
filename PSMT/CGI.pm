@@ -45,6 +45,19 @@ sub new {
     return $self;
 }
 
+sub param {
+    my ($self, @args) = @_;
+    if (scalar(@args) == 1) {
+        # for parameter valur request, check utf8 flag
+        my @result = $self->SUPER::param(@args);
+        for (0 ... $#result) {
+            if (! utf8::is_utf8($result[$_])) {utf8::decode($result[$_]); }
+        }
+        return wantarray ? @result : $result[0];
+    }
+    return $self->SUPER::param(@args);
+}
+
 sub header {
     my $self = shift;
     if (scalar(@{$self->{psmt_cookie}})) {

@@ -14,6 +14,7 @@
 
 
 <form action="doclabel.cgi" method="POST">
+[% PROCESS global/formopt.html.tmpl %]
 <ul>
 [% FOREACH item = Label.keys %]
   <li><input type="checkbox" name="newlabel" value="[% Label.$item.labelid %]"

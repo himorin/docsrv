@@ -41,41 +41,47 @@ sub new {
 }
 
 sub CheckForPath {
-    my ($self, $pathid) = @_;
-    if ($pathid == 0) {return ; }
+    my ($self, $pathid, $is_throw) = @_;
+    if (! defined($is_throw)) {$is_throw = TRUE; }
+    if ($pathid == 0) {return TRUE; }
     # check for path
     my $path_group = $self->ListPathRestrict($pathid);
-    if ($self->MatchGroupList($path_group) == TRUE) {return ; }
+    if ($self->MatchGroupList($path_group) == TRUE) {return TRUE; }
     # raise error
-    PSMT::Error->throw_error_user('permission_error');
+    if ($is_throw) {PSMT::Error->throw_error_user('permission_error'); }
+    return FALSE;
 }
 
 sub CheckForDoc {
-    my ($self, $docid) = @_;
+    my ($self, $docid, $is_throw) = @_;
+    if (! defined($is_throw)) {$is_throw = TRUE; }
     # check for path, label
     my $path_group = $self->ListDocRestrict($docid);
     my $labels = PSMT::Label->ListLabelOnDoc($docid);
     my $label_group = $self->ListLabelRestrict(@$labels);
     if (($self->MatchGroupList($path_group) == TRUE) &&
         ($self->MatchGroupList($label_group) == TRUE))
-        {return ; }
+        {return TRUE; }
     # raise error
-    PSMT::Error->throw_error_user('permission_error');
+    if ($is_throw) {PSMT::Error->throw_error_user('permission_error'); }
+    return FALSE;
 }
 
 sub CheckForFile {
-    my ($self, $fileid) = @_;
+    my ($self, $fileid, $is_throw) = @_;
+    if (! defined($is_throw)) {$is_throw = TRUE; }
     my $finfo = PSMT::File->GetFileInfo($fileid);
-    if (! defined($finfo)) {return ;}
+    if (! defined($finfo)) {return TRUE; }
     # check for path, label
     my $path_group = $self->ListDocRestrict($finfo->{docid});
     my $labels = PSMT::Label->ListLabelOnDoc($finfo->{docid});
     my $label_group = $self->ListLabelRestrict(@$labels);
     if (($self->MatchGroupList($path_group) == TRUE) &&
         ($self->MatchGroupList($label_group) == TRUE))
-        {return ; }
+        {return TRUE; }
     # raise error
-    PSMT::Error->throw_error_user('permission_error');
+    if ($is_throw) {PSMT::Error->throw_error_user('permission_error'); }
+    return FALSE;
 }
 
 sub ListDocRestrict {

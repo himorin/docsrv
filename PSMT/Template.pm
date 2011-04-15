@@ -100,9 +100,19 @@ sub new {
 sub process {
     my ($this, $template, $ext, $cur_vars, $out) = @_;
     my $obj_template = Template->new($conf_template);
-    # Pre appended values (global)
-    $this->set_vars('def_label', PSMT::Label->ListAllLabel());
-    $this->set_vars('def_group', PSMT->ldap->GetAvailGroups());
+    # debug
+    my @debug = PSMT->cgi()->param('debug');
+    if ($#debug > -1) {
+        $this->set_vars('Debug', \@debug);
+        my %params;
+        foreach (PSMT->cgi()->param()) {
+            my @param = ();
+            @param = PSMT->cgi()->param($_);
+            $params{$_} = \@param;
+        }
+        $this->set_vars('debug_param', \%params);
+        PSMT->dbh()->DebugSQL();
+    }
     # Append via method
     my @linklist = PSMT::Constants::HEADER_LINKS;
     if (defined($cur_vars->{non_urls})) {

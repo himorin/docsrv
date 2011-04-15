@@ -20,6 +20,8 @@ use PSMT::Constants;
 use PSMT::Config;
 use PSMT::Util;
 
+my @prepare_sql;
+
 BEGIN {
     if ($ENV{SERVER_SOFTWARE}) {
         require CGI::Carp;
@@ -108,6 +110,17 @@ sub db_new_conn {
     $self->{private_db_in_transaction} = 0;
     bless($self, $class);
     return $self;
+}
+
+sub prepare {
+    my ($self, $sql, @opts) = @_;
+    push(@prepare_sql, $sql);
+    return $self->SUPER::prepare($sql, @opts);
+}
+
+sub DebugSQL {
+    my ($self) = @_;
+    PSMT->template->set_vars('debug_sql', \@prepare_sql);
 }
 
 
