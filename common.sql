@@ -1,3 +1,6 @@
+-- CREATE DATABASE docsrv DEFAULT CHARACTER SET utf8;
+
+
 CREATE TABLE activity (
   uname         text                 NOT NULL                            ,
   fileid        text                 NOT NULL                            ,
