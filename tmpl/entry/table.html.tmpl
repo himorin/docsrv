@@ -1,11 +1,11 @@
 
 <table class="dirlist">
   <tr>
+    <th></th>
     <th>名前</th>
     <th>説明</th>
+    <th colspan="4">最新版</th>
     <th>グループまたはラベル</th>
-    <th colspan="3">最新版</th>
-    <th>[% terms.document %]操作</th>
   </tr>
 
 [% FOREACH item IN paths %]
@@ -15,14 +15,15 @@
       path_[% item %]
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
-    <td class="path">[DIR] <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname %]</a></td>
+    <td class="docmanage"><a href="docadd.cgi?pid=[% item.pathid %]"><img src="skins/images/woofunction/16/add.png"></a></td>
+    <td class="path"><img src="skins/images/twotone/green/closed-folder.gif">
+      <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname %]</a></td>
     <td class="pathdesc">[% item.description %]</td>
+    <th colspan="4"></th>
     <td class="group">
       [% IF item.gname.defined %][% item.gname.join(',') %][% ELSE %]制限なし[% END %]
       [<a href="pathgroup.cgi?pid=[% item.pathid %]">更新</a>]
       </td>
-    <th colspan="3"></th>
-    <td class="adddoc"><a href="docadd.cgi?pid=[% item.pathid %]">追加</a></td>
   </tr>
 [% END %]
 
@@ -33,26 +34,29 @@
       doc_[% item %]
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
-    <td class="path">[DOC] <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a></td>
+    <td class="docmanage">
+      [% IF InList(User.favs, item.docid) %]
+        <a href="docfav.cgi?did=[% item.docid %]&op=remove"><img src="skins/images/woofunction/16/star.png"></a>
+      [% ELSE %]
+        <a href="docfav.cgi?did=[% item.docid %]&op=add"><img src="skins/images/woofunction/16/star_off.png"></a>
+      [% END %]
+      <a href="fileget.cgi?fid=[% item.lastfile.fileid %]"><img src="skins/images/woofunction/16/arrow_down.png"></a>
+      </td>
+    <td class="path"><img src="skins/images/twotone/green/document.gif">
+      <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a></td>
     <td class="pathdesc">[% item.description %]</td>
+    [% IF item.lastfile.defined %]
+      <td>[% item.lastfile.uname %]</td>
+      <td>[% item.lastfile.uptime %]</td>
+      <td class="docsize">[% SizeDisp(item.lastfile.size) %]</td>
+      <td><a href="docupdate.cgi?did=[% item.docid %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
+    [% ELSE %]
+      <td colspan="4" class="center">存在しません</td>
+    [% END %]
     <td class="group">[% IF item.labelid.defined %]
       [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name %][% END %]
       [% ELSE %]ラベルなし[% END %]
       [<a href="doclabel.cgi?did=[% item.docid %]">更新</a>]
-      </td>
-    [% IF item.lastfile.defined %]
-      <td>[% item.lastfile.uname %]</td>
-      <td>[% item.lastfile.uptime %]</td>
-      <td class="docsize"><a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% SizeDisp(item.lastfile.size) %]</a></td>
-    [% ELSE %]
-      <td colspan="3" class="center">存在しません</td>
-    [% END %]
-    <td class="adddoc">
-      <a href="docupdate.cgi?did=[% item.docid %]">更新</a>
-      [% IF NOT InList(User.favs, item.docid) %]
-        <span class="separator">|</span>
-        <a href="docfav.cgi?did=[% item.docid %]&op=add">[% terms.favorite %]</a>
-      [% END %]
       </td>
   </tr>
 [% END %]

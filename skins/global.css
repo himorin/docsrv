@@ -150,6 +150,10 @@ td.docsize {
     margin-right: 3%;
 }
 
+.dirlist .docmanage {
+    text-align: center;
+}
+
 .labellist {
     width: 94%;
     margin-left: 3%;
@@ -159,5 +163,29 @@ td.docsize {
 td.center {
     text-align: center;
 }
+
+#error .errico {
+    float: left;
+    margin: 1em;
+}
+
+#error .desc {
+    margin: 0px;
+    padding: 1em;
+}
+
+#error .info {
+    clear: both;
+}
+
+
+.ui_hidden {
+    display: none;
+}
+
+.ui_clickable {
+    text-decoration: underline;
+}
+
 
 
