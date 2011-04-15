@@ -370,6 +370,7 @@ sub SaveToDav {
 sub GetHashString {
     my ($self, $string) = @_;
     my $ctx = Digest::MD5->new;
+    utf8::encode($string);
     $ctx->add(time() . $string);
     my $hash = $ctx->b64digest;
     $hash =~ s/\+/\_/g;
