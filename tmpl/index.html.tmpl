@@ -3,13 +3,17 @@
   page_title = "メインページ"
 %]
 
+<h3>[% terms.path %]リスト</h3>
+
+[% PROCESS entry/table.html.tmpl       paths = topdirs   docs = {} %]
+
+<h3>最近更新された[% terms.document %]</h3>
+
+[% PROCESS entry/table.html.tmpl       paths = {}        docs = recent %]
+
 <h3>あなたの [% terms.favorite %][% terms.document %]</h3>
 
 [% PROCESS favorite/table.html.tmpl    favlist = favs %]
-
-<h3>[% terms.path %]リスト</h3>
-
-[% PROCESS entry/table.html.tmpl       paths = topdirs %]
 
 
 

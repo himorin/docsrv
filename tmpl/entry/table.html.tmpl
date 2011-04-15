@@ -5,46 +5,47 @@
     <th>名前</th>
     <th>説明</th>
     <th colspan="4">最新版</th>
-    <th>グループまたはラベル</th>
+    <th>[% IF paths.size > 0 %]グループ[% END %][% IF paths.size > 0 AND docs.size > 0 %]または[% END %][% IF docs.size > 0 %]ラベル[% END %]</th>
   </tr>
 
 [% FOREACH item IN paths %]
   [% count = loop.count() %]
   <tr 
     class="
-      path_[% item %]
+      path_[% item.pathid %]
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
     <td class="docmanage"><a href="docadd.cgi?pid=[% item.pathid %]"><img src="skins/images/woofunction/16/add.png"></a></td>
     <td class="path"><img src="skins/images/twotone/green/closed-folder.gif">
-      <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname %]</a></td>
-    <td class="pathdesc">[% item.description %]</td>
+      <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname FILTER html %]</a></td>
+    <td class="pathdesc">[% item.description FILTER html %]</td>
     <th colspan="4"></th>
     <td class="group">
-      [% IF item.gname.defined %][% item.gname.join(',') %][% ELSE %]制限なし[% END %]
+      [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]制限なし[% END %]
       [<a href="pathgroup.cgi?pid=[% item.pathid %]">更新</a>]
       </td>
   </tr>
 [% END %]
 
+
 [% FOREACH item IN docs %]
   [% count = loop.count() %]
   <tr 
     class="
-      doc_[% item %]
+      doc_[% item.docid %]
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
     <td class="docmanage">
       [% IF InList(User.favs, item.docid) %]
-        <a href="docfav.cgi?did=[% item.docid %]&op=remove"><img src="skins/images/woofunction/16/star.png"></a>
+        <img id="fav_[% item.docid %]" class="fav_on" src="skins/images/woofunction/16/star.png">
       [% ELSE %]
-        <a href="docfav.cgi?did=[% item.docid %]&op=add"><img src="skins/images/woofunction/16/star_off.png"></a>
+        <img id="fav_[% item.docid %]" class="" src="skins/images/woofunction/16/star_off.png">
       [% END %]
       <a href="fileget.cgi?fid=[% item.lastfile.fileid %]"><img src="skins/images/woofunction/16/arrow_down.png"></a>
       </td>
     <td class="path"><img src="skins/images/twotone/green/document.gif">
-      <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a></td>
-    <td class="pathdesc">[% item.description %]</td>
+      <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename FILTER html %]</a></td>
+    <td class="pathdesc">[% item.description FILTER html %]</td>
     [% IF item.lastfile.defined %]
       <td>[% item.lastfile.uname %]</td>
       <td>[% item.lastfile.uptime %]</td>
@@ -54,11 +55,15 @@
       <td colspan="4" class="center">存在しません</td>
     [% END %]
     <td class="group">[% IF item.labelid.defined %]
-      [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name %][% END %]
+      [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name FILTER html %][% END %]
       [% ELSE %]ラベルなし[% END %]
       [<a href="doclabel.cgi?did=[% item.docid %]">更新</a>]
       </td>
   </tr>
+<script type="text/javascript">
+  var fav_mod_[% item.docid %] = function() { tweak_ToggleFav('[% item.docid %]'); }
+  YAHOO.util.Event.on('fav_[% item.docid %]', 'click', fav_mod_[% item.docid %]);
+</script>
 [% END %]
 
 </table>

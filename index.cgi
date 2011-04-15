@@ -11,6 +11,7 @@ use PSMT::DB;
 use PSMT::User;
 use PSMT::Util;
 use PSMT::File;
+use PSMT::Search;
 
 my $obj = new PSMT;
 
@@ -29,6 +30,7 @@ foreach (@$favs) {
 
 $obj->template->set_vars('favs', \%favdocs);
 $obj->template->set_vars('topdirs', PSMT::File->ListPathInPath(0));
+$obj->template->set_vars('recent', PSMT::Search->RecentUpdate(1));
 $obj->template->process('index', 'html');
 
 

@@ -43,7 +43,7 @@ $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{p
 $obj->template->set_vars('file_list', PSMT::File->GetDocFiles($did));
 $obj->template->set_vars('group_list', PSMT::Access->ListDocRestrict($did));
 
-$obj->template->process('docfav', 'html');
+$obj->template->process('docfav');
 
 exit;
 

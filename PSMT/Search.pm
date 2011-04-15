@@ -23,6 +23,7 @@ use PSMT::File;
     new
 
     Search
+    RecentUpdate
 );
 
 sub new {
@@ -34,6 +35,25 @@ sub Cond {
     my ($self, $cond) = @_;
     if ((! defined($cond)) || (lc($cond) ne 'and')) {return 'OR'; }
     return 'AND';
+}
+
+sub RecentUpdate {
+    my ($self, $days) = @_;
+    if ($days == 0) {return undef; }
+    $days = - $days;
+    my ($sql);
+    $sql =
+        'SELECT docreg.*
+         FROM docreg
+         LEFT JOIN docinfo ON docreg.docid = docinfo.docid
+         WHERE docinfo.uptime > ADDDATE(NOW(), ?)
+         GROUP BY docreg.docid
+        ';
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare($sql);
+    $sth->execute($days);
+    if ($sth->rows() == 0) {return undef; }
+    return $self->CreateResult($sth);
 }
 
 sub Search {
