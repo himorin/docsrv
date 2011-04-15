@@ -16,20 +16,6 @@
 
 <h3>File access log</h3>
 
-<table border="1">
-  <tr>
-    <th>User name</th>
-    <th>Date</th>
-    <th>From</th>
-  </tr>
-  [% FOREACH query = user_load %]
-    <tr>
-      <td>[% query.uname %]</td>
-      <td>[% query.dltime %]</td>
-      <td>[% query.srcip FILTER ipaddr %]</td>
-    </tr>
-  [% END %]
-</table>
-
+[% PROCESS entry/activity.html.tmpl   activity = user_load %]
 
 [% PROCESS global/footer.html.tmpl %]

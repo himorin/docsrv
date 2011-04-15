@@ -31,6 +31,7 @@ use PSMT::Access;
     ListPathInPath
     ListFilesInDoc
     ListUserLoad
+    ListUserLoadForDoc
 
     ListDavFile
 
@@ -204,7 +205,7 @@ sub ListPathInPath {
 sub ListFilesInDoc {
     my ($self, $docid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ?');
+    my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ? ORDER BY docinfo.uptime DESC');
     $sth->execute($docid);
     my (@files, $ref);
     while ($ref = $sth->fetchrow_hashref()) {
@@ -213,10 +214,22 @@ sub ListFilesInDoc {
     return \@files;
 }
 
+sub ListUserLoadForDoc {
+    my ($self, $docid) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT activity.* FROM activity LEFT JOIN docinfo ON activity.fileid = docinfo.fileid WHERE docid = ? ORDER BY activity.dltime DESC');
+    my (@dl, $ref);
+    $sth->execute($docid);
+    while ($ref = $sth->fetchrow_hashref()) {
+        push(@dl, $ref);
+    }
+    return \@dl;
+}
+
 sub ListUserLoad {
     my ($self, $fileid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT uname, dltime, srcip FROM activity WHERE fileid = ?');
+    my $sth = $dbh->prepare('SELECT uname, dltime, srcip FROM activity WHERE fileid = ? ORDER BY dltime DESC');
     my (@dl, $ref);
     $sth->execute($fileid);
     while ($ref = $sth->fetchrow_hashref()) {

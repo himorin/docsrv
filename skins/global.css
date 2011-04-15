@@ -183,6 +183,15 @@ td.center {
     padding: 1.5em;
 }
 
+.activity {
+    width: 94%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.activity td {
+    text-align: center;
+}
 
 .ui_hidden {
     display: none;

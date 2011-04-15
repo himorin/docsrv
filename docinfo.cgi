@@ -33,6 +33,7 @@ PSMT::Access->CheckForDoc($did);
 $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
 $obj->template->set_vars('doc_info', $docinfo);
 $obj->template->set_vars('file_list', PSMT::File->GetDocFiles($did));
+$obj->template->set_vars('activity', PSMT::File->ListUserLoadForDoc($did));
 $obj->template->set_vars('group_list', PSMT::Access->ListDocRestrict($did));
 
 $obj->template->process('docinfo', 'html');
