@@ -1,0 +1,36 @@
+<table class="dirlist">
+  <tr>
+    <th></th>
+    <th>ID</th>
+    <th></th>
+    <th class="description">コメント</th>
+    <th colspan="3">アップロード</th>
+  </tr>
+
+
+[% FOREACH item IN files %]
+  [% count = loop.count() %]
+  <tr 
+    class="
+      doc_[% item.fileid %]
+      [% count % 2 == 1 ? "row_odd" : "row_even" %]
+     ">
+    <td class="filelist">
+      <a href="fileget.cgi?fid=[% item.fileid %]"><img src="skins/images/woofunction/16/arrow_down.png"></a>
+      </td>
+    <td class="path">
+      [% IF mime_icons.${item.fileext}.defined %]
+        <img src="[% mime_icons.${item.fileext} %]">
+      [% ELSE %]
+        <img src="[% mime_icon_def %]">
+      [% END %]
+      <a href="fileinfo.cgi?fid=[% item.fileid %]">[% item.fileid FILTER html %]</a></td>
+    <td>[% item.fileext %]</td>
+    <td class="filedesc">[% item.description FILTER html %]</td>
+    <td>[% item.uname %]</td>
+    <td>[% item.uptime %]</td>
+    <td class="docsize">[% SizeDisp(item.size) %]</td>
+  </tr>
+[% END %]
+
+</table>

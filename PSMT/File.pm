@@ -100,6 +100,7 @@ sub GetDocFiles {
     $sth->execute($docid);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {
+        $ref->{size} = $self->GetFileSize($ref->{fileid});
         push(@flist, $ref);
     }
     return \@flist;
@@ -229,7 +230,7 @@ sub ListUserLoadForDoc {
 sub ListUserLoad {
     my ($self, $fileid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT uname, dltime, srcip FROM activity WHERE fileid = ? ORDER BY dltime DESC');
+    my $sth = $dbh->prepare('SELECT * FROM activity WHERE fileid = ? ORDER BY dltime DESC');
     my (@dl, $ref);
     $sth->execute($fileid);
     while ($ref = $sth->fetchrow_hashref()) {

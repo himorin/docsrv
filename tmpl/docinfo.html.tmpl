@@ -13,12 +13,7 @@
 
 <h3>File list</h3>
 
-<ul>
-  [% FOREACH item = file_list %]
-    <li><a href="fileinfo.cgi?fid=[% item.fileid %]">[% item.fileid %]</a>: [% item.description %] (by [% item.uname %] at [% item.uptime %], from [% item.srcip FILTER ipaddr %])</li>
-  [% END %]
-</ul>
-
+[% PROCESS entry/filelist.html.tmpl   files = file_list %]
 
 <h3>ファイルアクセスログ</h3>
 

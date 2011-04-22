@@ -63,4 +63,22 @@ CREATE TABLE favorite (
   docid         int         UNSIGNED NOT NULL                            
 );
 
+CREATE TABLE disp_skin (
+  name          varchar(64)          NOT NULL                PRIMARY KEY ,
+  value         varchar(255)         NOT NULL                            ,
+  enabled       tinyint     UNSIGNED NOT NULL DEFAULT 0                  
+);
+
+CREATE TABLE setting (
+  name          varchar(64)          NOT NULL                            ,
+  default_value varchar(64)          NOT NULL                            ,
+  enabled       tinyint     UNSIGNED NOT NULL DEFAULT 0                  
+);
+
+CREATE TABLE profiles (
+  uname         varchar(64)          NOT NULL                            ,
+  name          varchar(64)          NOT NULL                            ,
+  value         varchar(64)          NOT NULL                            
+);
+
 

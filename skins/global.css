@@ -164,6 +164,10 @@ td.center {
     text-align: center;
 }
 
+th.description {
+    width: 40%;
+}
+
 #error .errico {
     float: left;
     margin: 1em;
@@ -201,5 +205,8 @@ td.center {
     text-decoration: underline;
 }
 
-
+a img {
+    border-width: 1px;
+    border-color: transparent;
+}
 

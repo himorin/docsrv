@@ -48,6 +48,7 @@ sub RecentUpdate {
          LEFT JOIN docinfo ON docreg.docid = docinfo.docid
          WHERE docinfo.uptime > ADDDATE(NOW(), ?)
          GROUP BY docreg.docid
+         ORDER BY docinfo.uptime DESC
         ';
     my $dbh = PSMT->dbh;
     my $sth = $dbh->prepare($sql);

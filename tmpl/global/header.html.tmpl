@@ -2,7 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8">
-    <title>[% page_title %] - [% terms.sitename %]</title>
+    <title>[% page_title %] - [% terms.sitename %] (ver. [% constants.PSMT_DOCSRV_VERSION %])</title>
     <link rel="stylesheet" href="skins/global.css">
     [% FOREACH item = stylesheet %]
       <link rel="stylesheer" href="skins/[% item %]">
@@ -28,7 +28,7 @@
 
 <div id="header">
   <div id="titles">
-    <p id="sitename">[% terms.sitename %]</p>
+    <p id="sitename">[% terms.sitename %] (ver. [% constants.PSMT_DOCSRV_VERSION %])</p>
     <p id="subtitle">
       [% IF page_title%][% page_title %]
         [% IF header_addl %]

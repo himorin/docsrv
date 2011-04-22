@@ -1,5 +1,6 @@
 <table class="activity">
   <tr>
+    <th>ファイル ID</th>
     <th>ユーザ名</th>
     <th>日時</th>
     <th>アクセス元</th>
@@ -7,6 +8,7 @@
   [% FOREACH query = activity %]
     [% count = loop.count() %]
     <tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">
+      <td>[% query.fileid %]</td>
       <td>[% query.uname %]</td>
       <td>[% query.dltime %]</td>
       <td>[% query.srcip FILTER ipaddr %]</td>

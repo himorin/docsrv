@@ -18,7 +18,13 @@
   </ul>
 [% END %]
 
-[% PROCESS entry/table.html.tmpl       paths = spath_list  docs = doc_list %]
+[% IF pid == 0 %]
+  [% PROCESS entry/table.html.tmpl       upper_path = -1
+                                         paths = spath_list  docs = doc_list %]
+[% ELSE %]
+  [% PROCESS entry/table.html.tmpl       upper_path = path_info.parent
+                                         paths = spath_list  docs = doc_list %]
+[% END %]
 
 [% PROCESS entry/diradd.html.tmpl      cur_pid = path_info.pathid %]
 
