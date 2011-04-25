@@ -20,11 +20,11 @@ function select_icon (target) {
 
 <form method="POST" action="editicon.cgi">
   <input type="hidden" name="class" value="[% class FILTER html %]">
-  <input type="hidden" name="icon" value="[% terms.mime_def %]" id="current_target">
+  <input type="hidden" name="icon" value="[% terms.icon_def %]" id="current_target">
 
   <ul>
     <li>対象拡張子: <input type="text" name="target"> (pdf, exe, doc など)</li>
-    <li>アイコン: <img src="skins/images/[% terms.mime_def %]" id="current_icon" /></li>
+    <li>アイコン: <img src="skins/images/[% terms.icon_def %]" id="current_icon" /></li>
     <li>ツールチップ: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
     <li>状態: <select name="enabled">
       <option value="1" selected="selected">有効</option>

@@ -6,7 +6,7 @@
     "file"           => "ファイル",
     "favorite"       => "お気に入り",
 
-    "mime_def"       => "crystal_project-16/mimetypes/unknown.png",
+    "icon_def"       => "crystal_project-16/mimetypes/unknown.png",
  }
 %]
 [% header_links_def = {
@@ -27,7 +27,7 @@
   [%- IF IcoTable.$id.defined -%]
     <img src="skins/images/[% IcoTable.$id.value %]" title="[% IcoTable.$id.tiphelp %]" />
   [%- ELSE -%]
-    <img src="skins/images/[% mime_def %]" title="アイコンが未定義です" />
+    <img src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です" />
   [%- END -%]
 [%- END -%]
 
@@ -35,6 +35,6 @@
   [%- IF IcoMime.$id.defined -%]
     <img src="skins/images/[% IcoMime.$id.value %]" title="[% IcoMime.$id.tiphelp %]" />
   [%- ELSE -%]
-    <img src="skins/images/[% mime_def %]" title="アイコンが未定義です" />
+    <img src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です" />
   [%- END -%]
 [% END %]
