@@ -1,1 +1,3 @@
-{"error":{"type":"code","code":"[% error %],"message":""}}
+{"error":{"type":"code","code":"[% error %],"message":"
+  [%- IF error == 'invalid_parameter' %][% method FILTER html %]
+  [% END %]"}}

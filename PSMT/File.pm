@@ -54,6 +54,7 @@ use PSMT::Access;
     RegNewPath
     RegNewDoc
     RegNewFile
+    ValidateNameInPath
     MoveNewFile
     SaveToDav
 );
@@ -310,6 +311,7 @@ sub GetFileInfo {
 
 sub RegNewDoc {
     my ($self, $pathid, $name, $desc) = @_;
+    $self->ValidateNameInPath($pathid, $name);
     my $docid = 0;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docreg WRITE');
@@ -347,6 +349,7 @@ sub RegNewFile {
 
 sub RegNewPath {
     my ($self, $cur, $path, $desc, $group) = @_;
+    $self->ValidateNameInPath($cur, $path);
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('path WRITE');
     my $sth = $dbh->prepare('INSERT INTO path (parent, pathname, description) VALUES (?, ?, ?)');
@@ -377,6 +380,37 @@ sub SaveToDav {
     while (read($fh, $buf, 1024)) {print $out $buf; }
     close $out;
     return $fname;
+}
+
+sub ValidateNameInPath {
+    my ($self, $pid, $name) = @_;
+    my $errid = '';
+    if (! defined($name)) {
+        PSMT::Template->set_vars('method', 'File::ValidateNameInPath');
+        PSMT::Error->throw_error_code('invalid_parameter');
+    }
+    # check name itself
+    if ($name eq '') {$errid = 'null_name'; }
+    my $inv_char = INVALID_NAME_CHAR;
+    if ($name =~ /[$inv_char]/g) {$errid = 'cannot_use_char'; }
+    if ($errid ne '') {
+        PSMT::Template->set_vars('new_name', $name);
+        PSMT::Template->set_vars('error_id', $errid);
+        PSMT::Error->throw_error_user('invalid_new_name');
+    }
+    # check the same in the target path
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT * FROM path WHERE pathname = ? AND parent = ?');
+    $sth->execute($name, $pid);
+    if ($sth->rows() > 0) {$errid = 'path'; }
+    $sth = $dbh->prepare('SELECT * FROM docreg WHERE filename = ? AND pathid = ?');
+    $sth->execute($name, $pid);
+    if ($sth->rows() > 0) {$errid = 'doc'; }
+    if ($errid ne '') {
+        PSMT::Template->set_vars('target', $errid);
+        PSMT::Template->set_vars('error_id', 'collision');
+        PSMT::Error->throw_error_user('invalid_new_name');
+    }
 }
 
 ################################################################## PRIVATE

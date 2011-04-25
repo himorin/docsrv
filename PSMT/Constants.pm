@@ -24,6 +24,8 @@ use Cwd;
   AVAIL_FORMATS
   LOCATIONS
 
+  INVALID_NAME_CHAR
+
   TRUE
   FALSE
 
@@ -69,6 +71,8 @@ use constant AVAIL_FORMATS => {
   'global/footer'      => ['html'],
   'global/header'      => ['html'],
 };
+
+use constant INVALID_NAME_CHAR => '\/\?\*\\';
 
 use constant contenttypes =>
   {

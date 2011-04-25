@@ -30,6 +30,8 @@
     パスの追加操作に失敗しました。
   [% ELSIF error == 'template_format_missing' %]
     要求されたテンプレートの形式が見つかりません。
+  [% ELSIF error == 'invalid_parameter' %]
+    メソッド [% method FILTER html %] が無効なパラメータで呼び出されました。
   [% ELSE %]
     このエラーコード [% error %] は未定義です。
   [% END %]

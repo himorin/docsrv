@@ -44,6 +44,20 @@
     システムの起動に失敗しました。
   [% ELSIF error == 'unknown_operation_method' %]
     未定義の操作を要求しました。
+  [% ELSIF error == 'invalid_new_name' %]
+    新規ディレクトリもしくはドキュメントを '[% new_name FILTER html %]' 
+    という名前では作成できません。
+    [% IF error_id == 'null_name' %]
+      名前が空白です。
+    [% ELSIF error_id == 'cannot_use_char' %]
+      名前として利用できない文字を含んでいます。
+    [% ELSIF error_id == 'collision' %]
+      既存の
+      [% IF target == 'path' %]ディレクトリ
+      [% ELSIF target == 'doc' %]ドキュメント
+      [% ELSE %][% target FILTER html %][% END %]
+      と同じ名前は利用できません。
+    [% END %]
   [% ELSE %]
     このエラーコード [% error %] は未定義です。
   [% END %]
