@@ -16,7 +16,7 @@
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
     <td class="docmanage"
-      <a href="fileget.cgi?fid=[% item.lastfile.fileid %]"><img src="skins/images/woofunction/16/arrow_down.png"></a>
+      <a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% PROCESS show_table_icon id = 'download' %]</a>
       </td>
     <td class="docpath"><tt>[% favlist.$item.full_path %][% favlist.$item.filename %]</tt></td>
     <td class="docfav">[% favlist.$item.description %]</td>
@@ -25,10 +25,10 @@
       <td>[% favlist.$item.fid.uname %]</td>
       <td>[% favlist.$item.fid.uptime %]</td>
       <td class="docsize">[% SizeDisp(favlist.$item.fid.size) %]</td>
-      <td><a href="docupdate.cgi?did=[% item %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
+      <td><a href="docupdate.cgi?did=[% item %]">[% PROCESS show_table_icon id = 'fileup' %]</a></td>
     [% ELSE %]
       <td colspan="3" class="center">存在しません</td>
-      <td><a href="docupdate.cgi?did=[% item %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
+      <td><a href="docupdate.cgi?did=[% item %]">[% PROCESS show_table_icon id = 'fileup' %]</a></td>
     [% END %]
   </tr>
 [% END %]

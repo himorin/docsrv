@@ -23,6 +23,7 @@ use PSMT::User;
 use PSMT::Label;
 use PSMT::NetLdap;
 use PSMT::Error;
+use PSMT::Skin;
 
 %PSMT::Template::EXPORT = qw(
     new
@@ -71,6 +72,8 @@ sub new {
             'Admin'    => PSMT->user()->is_inadmin(),
             'Group'    => PSMT->ldap()->GetAvailGroups(),
             'Label'    => PSMT::Label->ListAllLabel(),
+            'IcoTable' => PSMT::Skin->ListIconsTable(TRUE),
+            'IcoMime'  => PSMT::Skin->ListIconsMime(TRUE),
             'InList'   => sub {
                 my ($list, $value) = @_;
                 foreach (@$list) {if ($value eq $_) {return TRUE; } }

@@ -16,14 +16,10 @@
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
     <td class="filelist">
-      <a href="fileget.cgi?fid=[% item.fileid %]"><img src="skins/images/woofunction/16/arrow_down.png"></a>
+      <a href="fileget.cgi?fid=[% item.fileid %]">[% PROCESS show_table_icon id = 'download' %]</a>
       </td>
     <td class="path">
-      [% IF mime_icons.${item.fileext}.defined %]
-        <img src="[% mime_icons.${item.fileext} %]">
-      [% ELSE %]
-        <img src="[% mime_icon_def %]">
-      [% END %]
+      [%- PROCESS show_mime_icon id = item.fileext -%]
       <a href="fileinfo.cgi?fid=[% item.fileid %]">[% item.fileid FILTER html %]</a></td>
     <td>[% item.fileext %]</td>
     <td class="filedesc">[% item.description FILTER html %]</td>

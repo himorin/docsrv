@@ -58,6 +58,8 @@
       [% ELSE %][% target FILTER html %][% END %]
       と同じ名前は利用できません。
     [% END %]
+  [% ELSIF error == 'unknown_icon_target' %]
+    未定義のアイコンの分類を指定しました。オプションを確認してください。
   [% ELSE %]
     このエラーコード [% error %] は未定義です。
   [% END %]

@@ -70,6 +70,11 @@ use constant AVAIL_FORMATS => {
 
   'global/footer'      => ['html'],
   'global/header'      => ['html'],
+
+  'skins/index'             => ['html'],
+  'skins/list'              => ['html'],
+  'skins/list_new'          => ['html'],
+  'skins/select_target'     => ['html'],
 };
 
 use constant INVALID_NAME_CHAR => '\/\?\*\\';
@@ -127,6 +132,7 @@ sub LOCATIONS {
         'cgi_path'    => $inspath,
         'rel_tmpl'    => './tmpl/',
         'templates'   => "$inspath/tmpl",
+        'skins'       => "$inspath/skins",
         'datadir'     => $datapath,
         'datacache'   => "$datapath/cache",
     };

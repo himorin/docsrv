@@ -13,7 +13,7 @@
 [% IF upper_path.defined AND upper_path > -1 %]
   <tr class="upper_path">
     <td></td>
-    <td class="path"><img src="skins/images/twotone/green/home.gif">
+    <td class="path">[% PROCESS show_table_icon id = 'dir_up' %]
       <a href="pathinfo.cgi?pid=[% upper_path %]">一つ上</a></td>
     <td></td>
     [% IF docs_exist %]<td colspan="4"></td>[% END %]
@@ -28,8 +28,8 @@
       path_[% item.pathid %]
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
-    <td class="docmanage"><a href="docadd.cgi?pid=[% item.pathid %]"><img src="skins/images/woofunction/16/add.png"></a></td>
-    <td class="path"><img src="skins/images/twotone/green/closed-folder.gif">
+    <td class="docmanage"><a href="docadd.cgi?pid=[% item.pathid %]">[% PROCESS show_table_icon id = 'add_doc' %]</a></td>
+    <td class="path">[% PROCESS show_table_icon id = 'dir' %]
       <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname FILTER html %]</a></td>
     <td class="pathdesc">[% item.description FILTER html %]</td>
     [% IF docs_exist %]<th colspan="4"></th>[% END %]
@@ -54,24 +54,20 @@
       [% ELSE %]
         <img id="fav_[% item.docid %]" class="" src="skins/images/woofunction/16/star_off.png">
       [% END %]
-      <a href="fileget.cgi?fid=[% item.lastfile.fileid %]"><img src="skins/images/woofunction/16/arrow_down.png"></a>
+      <a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% PROCESS show_table_icon id = 'download' %]</a>
       </td>
     <td class="path">
-      [% IF mime_icons.${item.lastfile.fileext}.defined %]
-        <img src="[% mime_icons.${item.lastfile.fileext} %]">
-      [% ELSE %]
-        <img src="[% mime_icon_def %]">
-      [% END %]
+      [%- PROCESS show_mime_icon id = item.lastfile.fileext -%]
       <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename FILTER html %]</a></td>
     <td class="pathdesc">[% item.description FILTER html %]</td>
     [% IF item.lastfile.defined %]
       <td>[% item.lastfile.uname %]</td>
       <td>[% item.lastfile.uptime %]</td>
       <td class="docsize">[% SizeDisp(item.lastfile.size) %]</td>
-      <td><a href="docupdate.cgi?did=[% item.docid %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
+      <td><a href="docupdate.cgi?did=[% item.docid %]">[% PROCESS show_table_icon id = 'fileup' %]</a></td>
     [% ELSE %]
       <td colspan="3" class="center">存在しません</td>
-      <td><a href="docupdate.cgi?did=[% item.docid %]"><img src="skins/images/woofunction/16/arrow_up.png"></a></td>
+      <td><a href="docupdate.cgi?did=[% item.docid %]">[% PROCESS show_table_icon id = 'fileup' %]</a></td>
     [% END %]
     <td class="group">[% IF item.labelid.defined %]
       [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name FILTER html %][% END %]

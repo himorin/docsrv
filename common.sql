@@ -66,6 +66,7 @@ CREATE TABLE favorite (
 CREATE TABLE disp_skin (
   name          varchar(64)          NOT NULL                PRIMARY KEY ,
   value         varchar(255)         NOT NULL                            ,
+  tiphelp       varchar(255)             NULL                            ,
   enabled       tinyint     UNSIGNED NOT NULL DEFAULT 0                  
 );
 

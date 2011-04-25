@@ -210,3 +210,16 @@ a img {
     border-color: transparent;
 }
 
+table.icon_list {
+    width: 94%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+div.icon_disp {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+
