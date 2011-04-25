@@ -30,7 +30,6 @@ my $class = $obj_cgi->param('class');
 my $target = $obj_cgi->param('target');
 # for UPDATE
 if ($obj_cgi->request_method() eq 'POST') {
-    print $obj_cgi->header();
     my $icon = $obj_cgi->param('icon');
     my $tiphelp = $obj_cgi->param('tiphelp');
     my $enabled = $obj_cgi->param('enabled');

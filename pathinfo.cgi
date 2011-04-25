@@ -50,6 +50,15 @@ if (defined($path)) {
 # check permission
 PSMT::Access->CheckForPath($pid);
 
+if ($obj_cgi->request_method() eq 'POST') {
+    my $name = $obj_cgi->param('pathname');
+    my $desc = $obj_cgi->param('description');
+    if (defined($name) && defined($desc)) {
+        PSMT::File->UpdatePathInfo($pid, $name, $desc);
+    }
+    $pathinfo = PSMT::File->GetPathInfo($pid);
+}
+
 # insert parameters
 $obj->template->set_vars('pid', $pid);
 $obj->template->set_vars('full_path', $path);

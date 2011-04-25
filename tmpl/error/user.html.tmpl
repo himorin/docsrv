@@ -18,6 +18,10 @@
     ドキュメントへのファイル登録時にファイルを保存領域に移動できませんでした。
   [% ELSIF error == 'file_register_failed' %]
     ドキュメントへのファイル登録に失敗しました。
+  [% ELSIF error == 'update_permission' %]
+    登録情報を更新する権限がありません。
+    管理者権限を持っているユーザである、
+    またはファイルについてはアップロードした本人である必要があります。
   [% ELSIF error == 'invalid_document_id' %]
     無効な [% terms.document %] IDです。
   [% ELSIF error == 'invalid_file_source' %]

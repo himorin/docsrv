@@ -43,7 +43,7 @@ sub db_last_key {
 
 sub db_lock_tables {
     my ($self, @tables) = @_;
-    if ($self->{private_table_locked}) {
+    if ($self->{private_table_locked} ne '') {
         PSMT->error->throw_error_code("already_locked",
             {
                 current => $self->{private_table_locked},
@@ -57,8 +57,8 @@ sub db_lock_tables {
 
 sub db_unlock_tables {
     my ($self, $abort) = @_;
-    if (! $self->{private_table_locked}) {
-        return if $abort;
+    if ($self->{private_table_locked} eq '') {
+        return if defined($abort);
         PSMT->error->throw_error_code("not_locked");
     } else {
         $self->do('UNLOCK TABLES');

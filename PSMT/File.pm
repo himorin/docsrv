@@ -54,6 +54,10 @@ use PSMT::Access;
     RegNewPath
     RegNewDoc
     RegNewFile
+    UpdatePathInfo
+    UpdateDocInfo
+    UpdateFileInfo
+
     ValidateNameInPath
     MoveNewFile
     SaveToDav
@@ -97,7 +101,7 @@ sub GetDocFiles {
     my ($self, $docid) = @_;
     my @flist;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ?');
+    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC');
     $sth->execute($docid);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {
@@ -311,10 +315,10 @@ sub GetFileInfo {
 
 sub RegNewDoc {
     my ($self, $pathid, $name, $desc) = @_;
-    $self->ValidateNameInPath($pathid, $name);
     my $docid = 0;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg WRITE');
+    $dbh->db_lock_tables('path WRITE, docreg WRITE');
+    $self->ValidateNameInPath($pathid, $name);
     my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description) VALUES (?, ?, ?)');
     if ($sth->execute($pathid, $name, $desc) == 0) {return $docid; }
     $docid = $dbh->db_last_key('docreg', 'docid');
@@ -349,15 +353,75 @@ sub RegNewFile {
 
 sub RegNewPath {
     my ($self, $cur, $path, $desc, $group) = @_;
-    $self->ValidateNameInPath($cur, $path);
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path WRITE');
+    $dbh->db_lock_tables('path WRITE, docreg WRITE');
+    $self->ValidateNameInPath($cur, $path);
     my $sth = $dbh->prepare('INSERT INTO path (parent, pathname, description) VALUES (?, ?, ?)');
     if ($sth->execute($cur, $path, $desc) == 0) {return 0; }
     my $pathid = $dbh->db_last_key('path', 'pathid');
     $dbh->db_unlock_tables();
     PSMT::Access->SetPathAccessGroup($pathid, $group);
     return $pathid;
+}
+
+sub UpdatePathInfo {
+    my ($self, $pid, $name, $desc) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth;
+    my $pathinfo = $self->GetPathInfo($pid);
+    if (! defined($pathinfo)) {PSMT::Error->throw_error_user('invalid_path_id'); }
+    if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
+    $dbh->db_lock_tables('docreg WRITE, path WRITE');
+    # collision
+    if ($pathinfo->{pathname} ne $name) {
+        $self->ValidateNameInPath($pathinfo->{parent}, $name);
+    }
+    # update
+    $sth = $dbh->prepare('UPDATE path SET pathname = ?, description = ? WHERE pathid = ?');
+    if ($sth->execute($name, $desc, $pid) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    $dbh->db_unlock_tables();
+}
+
+sub UpdateDocInfo {
+    my ($self, $did, $name, $desc) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth;
+    my $docinfo = $self->GetDocInfo($did);
+    if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
+    if (! PSMT->user->is_inadmin()) {
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE uname = ? AND docid = ?');
+        $sth->execute(PSMT->user->get_uid(), $did);
+        if ($sth->rows == 0) {PSMT::Error->throw_error_user('update_permission'); }
+    }
+    $dbh->db_lock_tables('docreg WRITE, path WRITE');
+    # collision
+    if ($docinfo->{filename} ne $name) {
+        $self->ValidateNameInPath($docinfo->{pathid}, $name);
+    }
+    # update
+    $sth = $dbh->prepare('UPDATE docreg SET filename = ?, description = ? WHERE docid = ?');
+    if ($sth->execute($name, $desc, $did) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    $dbh->db_unlock_tables();
+}
+
+sub UpdateFileInfo {
+    my ($self, $fid, $desc) = @_;
+    my $finfo = $self->GetFileInfo($fid);
+    if (! defined($finfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
+    if ((! PSMT->user->is_inadmin()) && ($finfo->{uname} ne PSMT->user->get_uid())) {
+        PSMT::Error->throw_error_user('update_permission');
+    }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo WRITE');
+    my $sth = $dbh->prepare('UPDATE docinfo SET description = ? WHERE fileid = ?');
+    if ($sth->execute($desc, $fid) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    $dbh->db_unlock_tables();
 }
 
 sub MoveNewFile {
@@ -392,7 +456,7 @@ sub ValidateNameInPath {
     # check name itself
     if ($name eq '') {$errid = 'null_name'; }
     my $inv_char = INVALID_NAME_CHAR;
-    if ($name =~ /[$inv_char]/g) {$errid = 'cannot_use_char'; }
+    if ($name =~ /$inv_char/g) {$errid = 'cannot_use_char'; }
     if ($errid ne '') {
         PSMT::Template->set_vars('new_name', $name);
         PSMT::Template->set_vars('error_id', $errid);
@@ -407,6 +471,7 @@ sub ValidateNameInPath {
     $sth->execute($name, $pid);
     if ($sth->rows() > 0) {$errid = 'doc'; }
     if ($errid ne '') {
+        PSMT::Template->set_vars('new_name', $name);
         PSMT::Template->set_vars('target', $errid);
         PSMT::Template->set_vars('error_id', 'collision');
         PSMT::Error->throw_error_user('invalid_new_name');

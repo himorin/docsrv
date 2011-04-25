@@ -77,7 +77,7 @@ use constant AVAIL_FORMATS => {
   'skins/select_target'     => ['html'],
 };
 
-use constant INVALID_NAME_CHAR => '\/\?\*\\';
+use constant INVALID_NAME_CHAR => '[\\/\\?\\*\\\\]';
 
 use constant contenttypes =>
   {

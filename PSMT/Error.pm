@@ -47,9 +47,9 @@ sub throw_error_user {
 sub _throw_error {
     my ($self, $fname, $ext, $err_id) = @_;
     if (! defined($ext)) {$ext = ''; }
+    PSMT->dbh->db_unlock_tables(PSMT::Constants::DB_UNLOCK_ABORT);
     PSMT->template->set_vars('error', $err_id);
     PSMT->template->process($fname, $ext, PSMT->template->vars);
-    PSMT->dbh->db_unlock_tables(PSMT::Constants::DB_UNLOCK_ABORT);
     exit;
 }
 

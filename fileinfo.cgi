@@ -23,6 +23,11 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 my $fid = $obj_cgi->param('fid');
 if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 
+if ($obj_cgi->request_method() eq 'POST') {
+    my $desc = $obj_cgi->param('description');
+    if (defined($desc)) {PSMT::File->UpdateFileInfo($fid, $desc); }
+}
+
 my $fileinfo = PSMT::File->GetFileInfo($fid);
 if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 

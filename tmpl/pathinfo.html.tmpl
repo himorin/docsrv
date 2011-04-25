@@ -6,24 +6,44 @@
 <h3>現在の [% terms.path %] ([% full_path %]) の情報</h3>
 
 [% IF pid == 0 %]
-  <p>トップ [% terms.path %]</p>
-[% ELSE %]
-  <ul>
-    <li>ID: [% path_info.pathid %]</li>
-    <li>フルパス: [% full_path %]</li>
-    <li>一つ上: <a href="pathinfo.cgi?pid=[% path_info.parent %]">[% path_info.parent %]</a></li>
-    <li>名前: [% path_info.pathname %]</li>
-    <li>説明: [% path_info.description %]</li>
-    <li>アクセス可能グループ: [% path_info.gname.join(', ') %]</li>
-  </ul>
-[% END %]
-
-[% IF pid == 0 %]
   [% PROCESS entry/table.html.tmpl       upper_path = -1
                                          paths = spath_list  docs = doc_list %]
 [% ELSE %]
   [% PROCESS entry/table.html.tmpl       upper_path = path_info.parent
                                          paths = spath_list  docs = doc_list %]
+[% END %]
+
+[% IF pid != 0 %]
+  <form method="POST" action="pathinfo.cgi">
+  <ul>
+    <li id="path_name_edit" class="ui_hidden">ディレクトリ名: <input type="text" name="pathname" size="50" value="[% path_info.pathname FILTER html %]"></li>
+    <li>このディレクトリについて: 
+      <span id="path_desc_raw">[% path_info.description FILTER html %]</span>
+      <span id="path_desc_edit" class="ui_hidden"><input type="text" name="description" size="150" value="[% path_info.description FILTER html %]"></span>
+      [% IF Admin %]
+        <span id="update_link"><a href="javascript: doc_info_update();">更新</a></span>
+      [% END %]</li>
+    <li>アクセス可能グループ: 
+      [% IF path_info.gname.size > 0 %][% path_info.gname.join(', ') %]
+      [% ELSE %](誰でも)[% END %]</li>
+  </ul>
+  <div id="path_update" class="ui_hidden">
+    <input type="submit" value="更新">
+  </div>
+  <input type="hidden" name="pid" value="[% path_info.pathid %]">
+  </form>
+
+  <script type="text/javascript">
+  <!--
+  function doc_info_update () {
+    YAHOO.util.Dom.removeClass(document.getElementById('path_name_edit'), 'ui_hidden');
+    YAHOO.util.Dom.addClass(document.getElementById('path_desc_raw'), 'ui_hidden');
+    YAHOO.util.Dom.removeClass(document.getElementById('path_desc_edit'), 'ui_hidden');
+    YAHOO.util.Dom.removeClass(document.getElementById('path_update'), 'ui_hidden');
+    YAHOO.util.Dom.addClass(document.getElementById('update_link'), 'ui_hidden');
+  }
+  // -->
+  </script>
 [% END %]
 
 [% PROCESS entry/diradd.html.tmpl      cur_pid = path_info.pathid %]
