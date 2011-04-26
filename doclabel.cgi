@@ -21,16 +21,16 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
 }
 
-# check permission - in group admin
-if ($obj->user()->is_inadmin() != TRUE) {
-    PSMT::Error->throw_error_user('permission_error');
-}
-
 my $did = $obj_cgi->param('did');
 if (! defined($did)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 my $docinfo = PSMT::File->GetDocInfo($did);
 if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 PSMT::Access->CheckForDoc($did);
+
+# check permission - in group admin or file upload-ed user
+if (($obj->user()->is_inadmin() != TRUE) && (! PSMT::File->IsUserUpForDoc($did))) {
+    PSMT::Error->throw_error_user('permission_error');
+}
 
 # for update
 my @newlabel;
