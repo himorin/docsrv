@@ -1,3 +1,4 @@
+DirectoryIndex pathinfo.cgi
 <FilesMatch ^(.*\.pm|.*\.pl|.*\.sql)$>
   deny from all
 </FilesMatch>

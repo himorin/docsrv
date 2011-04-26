@@ -363,7 +363,7 @@ sub GetFileInfo {
         $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ?');
         $sth->execute($fileid);
     } else {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ? AND enabled = 1');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ? AND (enabled = 1 OR uname = ?)');
         $sth->execute($fileid, $uname);
     }
     if ($sth->rows != 1) {return undef; }

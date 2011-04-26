@@ -13,12 +13,9 @@
                                          paths = spath_list  docs = doc_list  %]
 [% END %]
 
-<p>このディレクトリにファイルを
-<a href="docadd.cgi?pid=[% pid %]">追加[% INCLUDE show_table_icon id = 'add_doc' %]</a>
-</p>
-
 [% IF pid != 0 %]
   <form method="POST" action="pathinfo.cgi">
+  [% PROCESS global/formopt.html.tmpl %]
   <ul>
     <li id="path_name_edit" class="ui_hidden">ディレクトリ名: <input type="text" name="pathname" size="50" value="[% path_info.pathname FILTER html %]"></li>
     <li>このディレクトリについて: 
@@ -50,6 +47,37 @@
   </script>
 [% END %]
 
-[% PROCESS entry/diradd.html.tmpl      cur_pid = path_info.pathid %]
+
+<h3 id="doc_add" class="ui_clickable">新しいドキュメントの追加</h3>
+<script type="text/javascript">
+  var doc_add_disp = function() { tweak_ToggleClass('doc_add', 'ui_hidden'); }
+  YAHOO.util.Event.on('doc_add', 'click', doc_add_disp);
+</script>
+
+<div class="doc_add">
+<form action="docadd.cgi" method="POST" enctype="multipart/form-data">
+  [% PROCESS global/formopt.html.tmpl %]
+  <ul>
+    <li>新しいドキュメントの名前: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
+    <li>新しいドキュメントの説明: <input type="text" name="docdesc" value="" size="150"></li>
+  </ul>
+  <h4>新規ドキュメントに付けるラベル</h4>
+  <ul>
+    [% FOREACH item = Label.keys %]
+      <li><input type="checkbox" name="label" value="[% item %]" />
+        [% Label.$item.name %] ([% Label.$item.description %])</li>
+    [% END %]
+  </ul>
+  [% INCLUDE entry/docform.html.tmpl %]
+  <input type="hidden" name="pid" value="[% pid %]">
+  <input type="submit" value="ドキュメント追加">
+  <input type="reset" value="リセット">
+</form>
+</div>
+<script type="text/javascript">
+  tweak_ToggleClass('doc_add', 'ui_hidden');
+</script>
+
+[% PROCESS entry/diradd.html.tmpl      cur_pid = pid %]
 
 [% PROCESS global/footer.html.tmpl %]
