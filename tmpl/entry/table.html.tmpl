@@ -11,8 +11,8 @@
   </tr>
 
 [% IF upper_path.defined AND upper_path > -1 %]
-  <tr class="upper_path">
-    <td></td>
+  <tr class="upper_path row_even">
+    <td class="docmanage"></td>
     <td class="path">[% INCLUDE show_table_icon id = 'dir_up' %]
       <a href="pathinfo.cgi?pid=[% upper_path %]">一つ上</a></td>
     <td></td>

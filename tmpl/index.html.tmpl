@@ -5,11 +5,11 @@
 
 <h3>[% terms.path %]リスト</h3>
 
-[% INCLUDE entry/table.html.tmpl       paths = topdirs   docs = {} %]
+[% INCLUDE entry/table.html.tmpl       paths = topdirs   docs = doc_list %]
 
 <h3>最近更新された[% terms.document %]</h3>
 
-[% INCLUDE entry/table.html.tmpl       paths = {}        docs = recent %]
+[% INCLUDE entry/table.html.tmpl       docs = recent %]
 
 <h3>あなたの [% terms.favorite %][% terms.document %]</h3>
 

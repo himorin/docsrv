@@ -10,8 +10,12 @@
                                          paths = spath_list  docs = doc_list %]
 [% ELSE %]
   [% INCLUDE entry/table.html.tmpl       upper_path = path_info.parent
-                                         paths = spath_list  docs = doc_list %]
+                                         paths = spath_list  docs = doc_list  %]
 [% END %]
+
+<p>このディレクトリにファイルを
+<a href="docadd.cgi?pid=[% pid %]">追加[% INCLUDE show_table_icon id = 'add_doc' %]</a>
+</p>
 
 [% IF pid != 0 %]
   <form method="POST" action="pathinfo.cgi">

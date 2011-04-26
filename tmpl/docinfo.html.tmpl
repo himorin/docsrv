@@ -53,9 +53,10 @@ function doc_info_update () {
 // -->
 </script>
 
+[% IF UpDoc(doc_info.docid) || Admin %]
 <h3>ファイルアクセスログ</h3>
 
 [% INCLUDE entry/activity.html.tmpl   activity = activity %]
-
+[% END %]
 
 [% PROCESS global/footer.html.tmpl %]

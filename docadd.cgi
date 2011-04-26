@@ -28,6 +28,7 @@ if (defined($pid) && ($pid != 0)) {
     if (! defined($pathinfo)) {
         PSMT::Error->throw_error_user('invalid_path_id');
     }
+} elsif ($pid == 0) {
 } else {
     PSMT::Error->throw_error_user('invalid_path_id');
 }
@@ -85,6 +86,7 @@ $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($pid));
 $obj->template->set_vars('path_info', $pathinfo);
 $obj->template->set_vars('permission', PSMT::Access->ListPathRestrict($pid));
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
+$obj->template->set_vars('path_list', PSMT::File->ListPathInPath($pid));
 $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
 
 $obj->template->process('docadd', 'html');

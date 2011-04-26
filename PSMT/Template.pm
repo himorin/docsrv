@@ -74,6 +74,11 @@ sub new {
             'Label'    => PSMT::Label->ListAllLabel(),
             'IcoTable' => PSMT::Skin->ListIconsTable(TRUE),
             'IcoMime'  => PSMT::Skin->ListIconsMime(TRUE),
+            'UpDoc'    => sub {
+                my ($did) = @_;
+                if (! defined($did)) {return FALSE; }
+                return PSMT::File->IsUserUpForDoc($did);
+            },
             'InList'   => sub {
                 my ($list, $value) = @_;
                 foreach (@$list) {if ($value eq $_) {return TRUE; } }

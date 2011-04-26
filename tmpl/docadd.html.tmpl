@@ -1,76 +1,39 @@
 [% PROCESS global/header.html.tmpl %]
 
 [% IF added.defined %]
-<h3>New document added to path '[% full_path %]'</h3>
-<p>New document : [% added %]</p>
+  <h3>'[% full_path FILTER html %]' にドキュメント [% added FILTER html %] が追加されました</h3>
+[% ELSE %]
+  <h3>新しいドキュメントの追加</h3>
+  <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
+    [% PROCESS global/formopt.html.tmpl %]
+    <ul>
+      <li>新しいドキュメントの名前: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
+      <li>新しいドキュメントの説明: <input type="text" name="docdesc" value="" size="150"></li>
+    </ul>
+    <h4>新規ドキュメントに付けるラベル</h4>
+    <ul>
+      [% FOREACH item = Label.keys %]
+        <li><input type="checkbox" name="label" value="[% item %]" />
+          [% Label.$item.name %] ([% Label.$item.description %])</li>
+      [% END %]
+    </ul>
+    [% INCLUDE entry/docform.html.tmpl %]
+    <input type="hidden" name="pid" value="[% path_info.pathid %]">
+    <input type="submit" value="Add document">
+    <input type="reset" value="Reset">
+  </form>
 [% END %]
-
-<h3>General path informations</h3>
-
-<ul>
-  <li>Path ID: [% path_info.pathid %]</li>
-  <li>Full path: [% full_path %]</li>
-  <li>Parenet: [% path_info.parent %]</li>
-  <li>Name: [% path_info.pathname %]</li>
-  <li>Description: [% path_info.description %]</li>
-  <li>Accessible groups: [% permission.join(', ') %] </li>
-</ul>
-
-<h3>Current document list in this directory</h3>
-
-<ul>
-  [% FOREACH item = doc_list %]
-    <li>ID #[% item.docid %]: <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename %]</a> ([% item.description %])</li>
-  [% END %]
-</ul>
 
 <hr>
 
-<form action="docadd.cgi" method="POST" enctype="multipart/form-data">
-[% PROCESS global/formopt.html.tmpl %]
-
 <ul>
-  <li>New document name: <input type="text" name="filename" value="" size="50"></li>
-  <li>Document descripion: <input type="text" name="docdesc" value="" size="50"></li>
+  <li>ディレクトリの説明: [% path_info.description FILTER html %]</li>
+  <li>アクセス可能グループ: 
+    [% IF group_list.size > 0 %][% group_list.join(', ') %]
+    [% ELSE %](未定義)[% END %]</li>
 </ul>
 
-<p>Apply label to this document
-
-<ul>
-  [% FOREACH item = Label.keys %]
-    <li><input type="checkbox" name="label" value="[% item %]" />
-      [% Label.$item.name %] ([% Label.$item.description %])</li>
-  [% END %]
-</ul>
-
-[% IF dav_file.defined %]
-  <p>
-    [% IF dav_file.keys.size == 0 %]
-      No source file in DAV
-    [% ELSE %]
-      <input type="radio" name="source" value="dav" /> Use file from DAV source :
-      <select name="dav_source">
-        [% FOREACH item IN dav_file.keys %]
-          <option value="[% item %]">[% item %] ([% dav_file.$item %] byte)</option>
-        [% END %]
-      </select>
-    [% END %]
-  </p>
-[% END %]
-
-<p>
-  <input type="radio" name="source" value="upload" checked="checked" /> ローカルファイルを利用: 
-  <input type="file" name="target_file" />
-</p>
-
-<p>
-Comment: <input type="text" name="comment" value="" size="50">
-</p>
-
-
-<input type="hidden" name="pid" value="[% path_info.pathid %]">
-<input type="submit" value="Add document">
-<input type="reset" value="Reset">
-</form>
+[% INCLUDE entry/table.html.tmpl       paths = path_list
+                                       docs = doc_list %]
 
 [% PROCESS global/footer.html.tmpl %]

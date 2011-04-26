@@ -33,6 +33,9 @@ use PSMT::Access;
     ListUserLoad
     ListUserLoadForDoc
 
+    ListUserUpForDoc
+    IsUserUpForDoc
+
     ListDavFile
 
     GetPathInfo
@@ -268,6 +271,23 @@ sub ListUserLoad {
         push(@dl, $ref);
     }
     return \@dl;
+}
+
+sub ListUserUpForDoc {
+    my ($self, $did) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT uname FROM docinfo WHERE docid = ? GROUP BY uname');
+    $sth->execute($did);
+    return $sth->selectcol_arrayref();
+}
+
+sub IsUserUpForDoc {
+    my ($self, $did) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT uname FROM docinfo WHERE docid = ? AND uname = ?');
+    $sth->execute($did, PSMT->user->get_uid());
+    if ($sth->rows() > 0) {return TRUE; }
+    return FALSE;
 }
 
 sub GetPathInfo {
