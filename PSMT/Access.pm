@@ -72,6 +72,13 @@ sub CheckForFile {
     if (! defined($is_throw)) {$is_throw = TRUE; }
     my $finfo = PSMT::File->GetFileInfo($fileid);
     if (! defined($finfo)) {return TRUE; }
+    if ($finfo->{enabled} == 0) {
+        # ok if uploader or is_inadmin
+        if (($finfo->{uname} ne PSMT->user->get_uid()) &&
+            (! PSMT->user->is_inadmin())) {
+            PSMT::Error->throw_error_user('permission_error');
+        }
+    }
     # check for path, label
     my $path_group = $self->ListDocRestrict($finfo->{docid});
     my $labels = PSMT::Label->ListLabelOnDoc($finfo->{docid});

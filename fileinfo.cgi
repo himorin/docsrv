@@ -23,9 +23,17 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 my $fid = $obj_cgi->param('fid');
 if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 
+my $desc = $obj_cgi->param('description');
+my $method = $obj_cgi->param('method');
 if ($obj_cgi->request_method() eq 'POST') {
-    my $desc = $obj_cgi->param('description');
     if (defined($desc)) {PSMT::File->UpdateFileInfo($fid, $desc); }
+} elsif (defined($method)) {
+    # user who can disable file, can access file even if disabled
+    if ($method eq 'disable') {
+        PSMT::File->EditFileAccess($fid, FALSE);
+    } elsif ($method eq 'enable') {
+        PSMT::File->EditFileAccess($fid, TRUE);
+    }
 }
 
 my $fileinfo = PSMT::File->GetFileInfo($fid);
@@ -41,7 +49,7 @@ $obj->template->set_vars('user_load', PSMT::File->ListUserLoad($fid));
 $obj->template->set_vars('file_info', PSMT::File->GetFileInfo($fid));
 $obj->template->set_vars('file_type', PSMT::File->GetFileExt($fid));
 
-$obj->template->process('fileinfo', 'html');
+$obj->template->process('fileinfo');
 
 exit;
 

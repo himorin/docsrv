@@ -23,18 +23,20 @@
 [%# 表の中のアイコンの表示定義
   #   id : アイコンID
   #%]
-[%- BLOCK show_table_icon -%]
+[%- BLOCK show_table_icon %]<img 
   [%- IF IcoTable.$id.defined -%]
-    <img src="skins/images/[% IcoTable.$id.value %]" title="[% IcoTable.$id.tiphelp %]" />
+    src="skins/images/[% IcoTable.$id.value %]" title="[% IcoTable.$id.tiphelp %]"
   [%- ELSE -%]
-    <img src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です" />
-  [%- END -%]
-[%- END -%]
+    src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です"
+  [%- END %]
+  [% IF html_id.defined %]id="[% html_id FILTER html %]"[% END -%]
+  [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
+/>[% END -%]
 
-[% BLOCK show_mime_icon %]
+[% BLOCK show_mime_icon %]<img 
   [%- IF IcoMime.$id.defined -%]
-    <img src="skins/images/[% IcoMime.$id.value %]" title="[% IcoMime.$id.tiphelp %]" />
+    src="skins/images/[% IcoMime.$id.value %]" title="[% IcoMime.$id.tiphelp %]"
   [%- ELSE -%]
-    <img src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です" />
-  [%- END -%]
-[% END %]
+    src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です"
+  [%- END %]
+/>[% END %]

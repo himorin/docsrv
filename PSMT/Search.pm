@@ -47,6 +47,7 @@ sub RecentUpdate {
          FROM docreg
          LEFT JOIN docinfo ON docreg.docid = docinfo.docid
          WHERE docinfo.uptime > ADDDATE(NOW(), ?)
+               AND docinfo.enabled = 1
          GROUP BY docreg.docid
          ORDER BY docinfo.uptime DESC
         ';

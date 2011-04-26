@@ -57,6 +57,7 @@ use PSMT::Access;
     UpdatePathInfo
     UpdateDocInfo
     UpdateFileInfo
+    EditFileAccess
 
     ValidateNameInPath
     MoveNewFile
@@ -97,12 +98,23 @@ sub GetDocInfo {
     return $ref;
 }
 
+# by default : For admin all, for non-admin enabled + self-uploaded
+# is_all : default (undef) is FALSE, return all if TRUE
 sub GetDocFiles {
-    my ($self, $docid) = @_;
+    my ($self, $docid, $is_all) = @_;
     my @flist;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC');
-    $sth->execute($docid);
+    my $sth;
+    if (! defined($is_all)) {$is_all = FALSE; }
+    my $uname = PSMT->user->get_uid();
+    if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
+    if ($is_all) {
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC');
+        $sth->execute($docid);
+    } else {
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND (enabled = 1 OR uname = ?) ORDER BY uptime DESC');
+        $sth->execute($docid, $uname);
+    }
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {
         $ref->{size} = $self->GetFileSize($ref->{fileid});
@@ -111,20 +123,22 @@ sub GetDocFiles {
     return \@flist;
 }
 
+# Always select 'enabeld' one (for user-wide consistency)
 sub GetDocLastPostFileId {
     my ($self ,$docid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC LIMIT 1');
+    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY uptime DESC LIMIT 1');
     $sth->execute($docid);
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
     return $ref->{fileid};
 }
 
+# Always select 'enabeld' one (for user-wide consistency)
 sub GetDocLastPostFileInfo {
     my ($self ,$docid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC LIMIT 1');
+    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY uptime DESC LIMIT 1');
     $sth->execute($docid);
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
@@ -208,14 +222,26 @@ sub ListPathInPath {
     return \@path;
 }
 
+# XXX: NOT USED??
+# by default : For admin all, for non-admin enabled + self-uploaded
+# is_all : default (undef) is FALSE, return all if TRUE
 sub ListFilesInDoc {
-    my ($self, $docid) = @_;
+    my ($self, $docid, $is_all) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ? ORDER BY docinfo.uptime DESC');
-    $sth->execute($docid);
+    my $sth;
+    if (! defined($is_all)) {$is_all = FALSE; }
+    my $uname = PSMT->user->get_uid();
+    if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
+    if ($is_all) {
+        $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ? ORDER BY docinfo.uptime DESC');
+        $sth->execute($docid);
+    } else {
+        $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ? AND (enabled = 1 OR uname = ?) ORDER BY docinfo.uptime DESC');
+        $sth->execute($docid, $uname);
+    }
     my (@files, $ref);
     while ($ref = $sth->fetchrow_hashref()) {
-        push(@files, $self->GetFileInfo($ref->{fileid}));
+        push(@files, $self->GetFileInfo($ref->{fileid}, $is_all));
     }
     return \@files;
 }
@@ -304,11 +330,22 @@ sub GetFileExt {
     return 'application/octet-stream';
 }
 
+# by default : For admin all, for non-admin enabled + self-uploaded
+# is_all : default (undef) is FALSE, return all if TRUE
 sub GetFileInfo {
-    my ($self, $fileid) = @_;
+    my ($self, $fileid, $is_all) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ?');
-    $sth->execute($fileid);
+    my $sth;
+    if (! defined($is_all)) {$is_all = FALSE; }
+    my $uname = PSMT->user->get_uid();
+    if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
+    if ($is_all) {
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ?');
+        $sth->execute($fileid);
+    } else {
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ? AND enabled = 1');
+        $sth->execute($fileid, $uname);
+    }
     if ($sth->rows != 1) {return undef; }
     return $sth->fetchrow_hashref();
 }
@@ -419,6 +456,23 @@ sub UpdateFileInfo {
     $dbh->db_lock_tables('docinfo WRITE');
     my $sth = $dbh->prepare('UPDATE docinfo SET description = ? WHERE fileid = ?');
     if ($sth->execute($desc, $fid) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    $dbh->db_unlock_tables();
+}
+
+sub EditFileAccess {
+    my ($self, $fid, $is_enabled) = @_;
+    my $finfo = $self->GetFileInfo($fid);
+    if (! defined($finfo)) {PSMT::Error->throw_error_user('update_permission'); }
+    if ((! PSMT->user->is_inadmin()) && ($finfo->{uname} ne PSMT->user->get_uid())) {
+        PSMT::Error->throw_error_user('update_permission');
+    }
+    if (! defined($is_enabled)) {$is_enabled = TRUE; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo WRITE');
+    my $sth = $dbh->prepare('UPDATE docinfo SET enabled = ? WHERE fileid = ?');
+    if ($sth->execute(($is_enabled ? 1 : 0), $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
     $dbh->db_unlock_tables();

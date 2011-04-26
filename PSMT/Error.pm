@@ -46,10 +46,14 @@ sub throw_error_user {
 
 sub _throw_error {
     my ($self, $fname, $ext, $err_id) = @_;
-    if (! defined($ext)) {$ext = ''; }
+    my @formats = @{AVAIL_FORMATS->{error}};
+    if (! defined($ext)) {$ext = PSMT->cgi()->param('format'); }
+    my $fmt = '';
+    foreach (@formats) {if ($_ eq $ext) {$fmt = $ext; } }
+    if ($fmt eq '') {$fmt = $formats[0]; }
     PSMT->dbh->db_unlock_tables(PSMT::Constants::DB_UNLOCK_ABORT);
     PSMT->template->set_vars('error', $err_id);
-    PSMT->template->process($fname, $ext, PSMT->template->vars);
+    PSMT->template->process($fname, $fmt, PSMT->template->vars);
     exit;
 }
 

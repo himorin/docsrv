@@ -5,7 +5,7 @@
 <p>(近い時間にアップロードされた)異なるタイプのファイルは、同じバージョンの
 別形式のファイルとしてアップロードされている可能性があります。</p>
 
-[% PROCESS entry/filelist.html.tmpl   files = file_list %]
+[% INCLUDE entry/filelist.html.tmpl   files = file_list %]
 
 <h3>ドキュメント情報</h3>
 
@@ -31,7 +31,7 @@
         <span title="[% Label.$item.description %]">[% Label.$item.name %]</span>
       [% END %]
     [% ELSE %](未定義)[% END %]
-    <a href="doclabel.cgi?did=[% doc_info.docid %]">[% PROCESS show_table_icon id = 'label_add' %]</a>
+    <a href="doclabel.cgi?did=[% doc_info.docid %]">[% INCLUDE show_table_icon id = 'label_add' %]</a>
     </li>
 </ul>
 <div id="doc_update" class="ui_hidden">
@@ -55,7 +55,7 @@ function doc_info_update () {
 
 <h3>ファイルアクセスログ</h3>
 
-[% PROCESS entry/activity.html.tmpl   activity = activity %]
+[% INCLUDE entry/activity.html.tmpl   activity = activity %]
 
 
 [% PROCESS global/footer.html.tmpl %]

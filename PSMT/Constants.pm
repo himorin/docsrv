@@ -52,7 +52,7 @@ use constant AVAIL_FORMATS => {
   'doclabel'           => ['html'],
   'docupdate'          => ['html'],
   'favlist'            => ['html'],
-  'fileinfo'           => ['html'],
+  'fileinfo'           => ['html', 'json'],
   'index'              => ['html'],
   'labeledit'          => ['html'],
   'labellist'          => ['html'],
@@ -63,6 +63,7 @@ use constant AVAIL_FORMATS => {
   'search/query'       => ['html'],
   'search/search'      => ['html'],
 
+  'error'              => ['html', 'json'],
   'error/code'         => ['html', 'json'],
   'error/user'         => ['html', 'json'],
 

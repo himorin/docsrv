@@ -11,7 +11,7 @@
       <span id="update_link"><a href="javascript: file_info_update();">更新</a></span>
     [% END %]</li>
   <li>ファイル型:
-       [%- PROCESS show_mime_icon id = file_info.fileext -%]
+       [%- INCLUDE show_mime_icon id = file_info.fileext -%]
        [% file_info.fileext %] / [% file_type %]</li>
   <li>ユーザ: [% file_info.uname %]</li>
   <li>登録日時: [% file_info.uptime %]</li>
@@ -44,7 +44,7 @@ function file_info_update () {
 
 <h3>このファイルへのアクセスログ</h3>
 
-[% PROCESS entry/activity.html.tmpl   activity        = user_load
+[% INCLUDE entry/activity.html.tmpl   activity        = user_load
                                        %]
 
 [% PROCESS global/footer.html.tmpl %]

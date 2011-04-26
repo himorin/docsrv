@@ -3,7 +3,7 @@
 %]
 
 [% IF search_result.defined %]
-  [% PROCESS entry/table.html.tmpl       paths = {}    docs = search_result %]
+  [% INCLUDE entry/table.html.tmpl       paths = {}    docs = search_result %]
 [% ELSE %]
   <p>検索結果が0件でした。</p>
 [% END %]

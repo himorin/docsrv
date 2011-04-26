@@ -1,3 +1,46 @@
+<script type="text/javascript">
+<!--
+// File display flag
+var fdisp_callback = {
+  success: function (o) {
+    var messages = [];
+    try { messages = YAHOO.lang.JSON.parse(o.responseText); }
+    catch (x) { alert("YUI: Invalid JSON data"); }
+    if (messages.finfo == undefined) {
+      alert("Exec failed." + o.responseText);
+    } else {
+      var elem = document.getElementById('fdisp_' + messages.finfo.fid);
+      if (elem == undefined) {
+        alert("No such id " + messages.finfo.fid);
+      } else if (messages.finfo.enabled == '1') {
+        YAHOO.util.Dom.addClass(elem, 'disp_on');
+        elem.src = 'skins/images/[% IcoTable.show_file.value FILTER js %]';
+        elem.title = '[% IcoTable.show_file.tiphelp FILTER js %]';
+      } else {
+        YAHOO.util.Dom.removeClass(elem, 'disp_on');
+        elem.src = 'skins/images/[% IcoTable.hide_file.value FILTER js %]';
+        elem.title = '[% IcoTable.hide_file.tiphelp FILTER js %]';
+      }
+    }
+  },
+  failure: function (o) {
+    if (! YAHOO.util.Connect.isCallInProgress(o)) {
+      alret("YUI: Async call failed");
+    }
+  },
+  timeout: 3000,
+}
+
+function tweak_ToggleFileDisp (target) {
+  var elem = document.getElementById('fdisp_' + target);
+  var url = 'fileinfo.cgi?format=json&fid=' + target + '&method=';
+  if (YAHOO.util.Dom.hasClass(elem, 'disp_on')) {url += 'disable'; }
+  else {url += 'enable'; }
+  YAHOO.util.Connect.asyncRequest('GET', url, fdisp_callback);
+}
+// -->
+</script>
+
 <table class="dirlist">
   <tr>
     <th></th>
@@ -16,11 +59,16 @@
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
     <td class="filelist">
-      <a href="fileget.cgi?fid=[% item.fileid %]">[% PROCESS show_table_icon id = 'download' %]</a>
-      <a href="fileinfo.cgi?fid=[% item.fileid %]">[% PROCESS show_table_icon id = 'info' %]</a>
+      <a href="fileget.cgi?fid=[% item.fileid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
+      <a href="fileinfo.cgi?fid=[% item.fileid %]">[% INCLUDE show_table_icon id = 'info' %]</a>
+      [% IF item.enabled == 1 %]
+        [% INCLUDE show_table_icon id = 'show_file' html_id = "fdisp_$item.fileid" html_class = "disp_on" %]
+      [% ELSE %]
+        [% INCLUDE show_table_icon id = 'hide_file' html_id = "fdisp_$item.fileid" %]
+      [% END %]
       </td>
     <td class="path">
-      [%- PROCESS show_mime_icon id = item.fileext -%]
+      [%- INCLUDE show_mime_icon id = item.fileext -%]
       [% item.fileid FILTER html %]</td>
     <td>[% item.fileext %]</td>
     <td class="filedesc">[% item.description FILTER html %]</td>
@@ -28,6 +76,10 @@
     <td>[% item.uptime %]</td>
     <td class="docsize">[% SizeDisp(item.size) %]</td>
   </tr>
+<script type="text/javascript">
+  var fdisp_mod_[% count %] = function() { tweak_ToggleFileDisp('[% item.fileid %]'); }
+  YAHOO.util.Event.on('fdisp_[% item.fileid %]', 'click', fdisp_mod_[% count %]);
+</script>
 [% END %]
 
 </table>

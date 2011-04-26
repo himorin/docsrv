@@ -15,7 +15,8 @@ CREATE TABLE docinfo (
   uptime        datetime             NOT NULL                            ,
   uname         text                 NOT NULL                            ,
   srcip         int         UNSIGNED NOT NULL                            ,
-  description   text                     NULL                            
+  description   text                     NULL                            ,
+  enabled       int                  NOT NULL DEFAULT 1                  
 );
 
 CREATE TABLE path (

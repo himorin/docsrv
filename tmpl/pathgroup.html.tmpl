@@ -16,7 +16,7 @@
 全てのチェックを外すと、どのユーザも閲覧できるようになります。</p>
 
 <form action="pathgroup.cgi" method="POST">
-[% PROCESS global/formopt.html.tmpl %]
+[% INCLUDE global/formopt.html.tmpl %]
 <ul>
 [% FOREACH item = all_groups.keys %]
   <li><input type="checkbox" name="newgroup" value="[% item %]"

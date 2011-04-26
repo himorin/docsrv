@@ -6,10 +6,10 @@
 <h3>現在の [% terms.path %] ([% full_path %]) の情報</h3>
 
 [% IF pid == 0 %]
-  [% PROCESS entry/table.html.tmpl       upper_path = -1
+  [% INCLUDE entry/table.html.tmpl       upper_path = -1
                                          paths = spath_list  docs = doc_list %]
 [% ELSE %]
-  [% PROCESS entry/table.html.tmpl       upper_path = path_info.parent
+  [% INCLUDE entry/table.html.tmpl       upper_path = path_info.parent
                                          paths = spath_list  docs = doc_list %]
 [% END %]
 

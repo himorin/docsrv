@@ -8,7 +8,6 @@ function tweak_ToggleClass (target, css) {
   }
 }
 
-
 // favorite
 
 var fav_callback = {
