@@ -79,6 +79,11 @@ sub new {
                 if (! defined($did)) {return FALSE; }
                 return PSMT::File->IsUserUpForDoc($did);
             },
+            'InGroup'  => sub {
+                my ($group) = @_;
+                if (! defined($group)) {return FALSE; }
+                return PSMT->user->is_ingroup($group);
+            },
             'InList'   => sub {
                 my ($list, $value) = @_;
                 foreach (@$list) {if ($value eq $_) {return TRUE; } }

@@ -42,21 +42,26 @@
   <div id="gmenu">
     <ul class="links">
       [% FOREACH item = header_links %]
-        <li>
-          [% IF NOT loop.first %]<span class="separator">|</span>[% END %]
-          [% IF header_links_def.$item.defined %]
-            [% IF item == current_page %]
-              [% header_links_def.$item.name %]
-            [% ELSE %]
-              <a href="[% header_links_def.$item.url %]">[% header_links_def.$item.name %]</a>
-            [% END %]
+        [% IF header_links_def.$item.defined %]
+          [% IF header_links_def.$item.group.defined AND
+                (NOT InGroup(header_links_def.$item.group)) %]
+            [%# must NOT display %]
+          [% ELSE %]
+            <li>
+              [% IF NOT loop.first %]<span class="separator">|</span>[% END %]
+              [% IF item == current_page %]
+                [% header_links_def.$item.name %]
+              [% ELSE %]
+                <a href="[% header_links_def.$item.url %]">[% header_links_def.$item.name %]</a>
+              [% END %]
+            </li>
           [% END %]
-        </li>
+        [% END %]
       [% END %]
     </ul>
     <ul class="account">
       <li><span class="target">ユーザ</span> <span class="data">[% User.uid %]</span></li>
-      <li><span class="target">所属グループ</span> <span class="data">[% User.gid.join(',') %]</span></li>
+      <li><span class="target">所属</span> <span class="data">[% User.gid.join(',') %]</span></li>
       [% IF Admin %]<li><span class="data">(管理者)</span></li>[% END %]
       <li><span class="target">[% terms.favorite %]数</span> <span class="data">[% User.favs.size %]</span></li>
     </ul>

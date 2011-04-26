@@ -11,10 +11,11 @@
 %]
 [% header_links_def = {
     "index"    => { "name" => "メインページ", "url" => "index.cgi" },
-    "dir"      => { "name" => "トップディレクトリ", "url" => "pathinfo.cgi?pid=0" },
-    "labels"   => { "name" => "ラベル一覧", "url" => "labellist.cgi"},
-    "favs"     => { "name" => "$terms.favorite 一覧", "url" => "favlist.cgi"},
+    "dir"      => { "name" => "トップ", "url" => "pathinfo.cgi?pid=0" },
+    "labels"   => { "name" => "ラベル", "url" => "labellist.cgi"},
+    "favs"     => { "name" => "$terms.favorite", "url" => "favlist.cgi"},
     "search"   => { "name" => "検索", "url" => "search.cgi"},
+    "admin"    => { "name" => "管理", "url" => "admin.cgi", group => Param.admingroup },
  }
 %]
 [% BLOCK site_announce %]
