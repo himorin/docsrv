@@ -80,6 +80,7 @@ foreach (@$subpath) {
 }
 $obj->template->set_vars('spath_list', $subpath);
 $obj->template->set_vars('spath_access', \%subpath_access);
+$obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
 
 $obj->template->process('pathinfo', 'html');
 
