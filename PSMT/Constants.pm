@@ -39,7 +39,7 @@ use Cwd;
 use constant TRUE         => 1;
 use constant FALSE        => 0;
 
-use constant PSMT_DOCSRV_VERSION => "0.2.0";
+use constant PSMT_DOCSRV_VERSION => "0.3.0";
 
 use constant HEADER_LINKS => (
   'dir', 'index', 'labels', 'favs', 'search', 'admin', 'config'
