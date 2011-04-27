@@ -64,6 +64,11 @@ CREATE TABLE favorite (
   docid         int         UNSIGNED NOT NULL                            
 );
 
+CREATE TABLE fav_path (
+  uname         text                 NOT NULL                            ,
+  pathid        int         UNSIGNED NOT NULL                            
+);
+
 CREATE TABLE disp_skin (
   name          varchar(64)          NOT NULL                PRIMARY KEY ,
   value         varchar(255)         NOT NULL                            ,
@@ -74,6 +79,8 @@ CREATE TABLE disp_skin (
 CREATE TABLE setting (
   name          varchar(64)          NOT NULL                            ,
   default_value varchar(64)          NOT NULL                            ,
+  class         varchar(16)          NOT NULL                            ,
+  enumval       varchar(255)             NULL                            ,
   enabled       tinyint     UNSIGNED NOT NULL DEFAULT 0                  
 );
 

@@ -1,0 +1,92 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "config"
+  page_title = "ユーザ設定"
+%]
+
+<script type="text/javascript">
+<!--
+function tweak_default_change (item) {
+  var elem_def = document.getElementById(item + '_default');
+  var elem_input = document.getElementById(item + '_input');
+  if (elem_def.checked) {elem_input.disabled = true; }
+  else {elem_input.disabled = false; }
+}
+// -->
+</script>
+
+<h3>設定一覧</h3>
+
+<form method="POST" action="config.cgi">
+  [% PROCESS global/formopt.html.tmpl %]
+
+<table class="config">
+  <tr>
+    <th>名前</th>
+    <th class="description">説明</th>
+    <th colspan="2">値</th>
+    <th>既定値に設定</th>
+  </tr>
+
+  [% FOREACH item IN config_user.keys %]
+    [% count = loop.count() %]
+    <tr 
+      class="
+        config_[% item.pathid %]
+        [% count % 2 == 1 ? "row_odd" : "row_even" %]
+       ">
+      <td>[% item FILTER html %]</td>
+      <td>[% user_config_help.$item FILTER html %]</td>
+      <td>
+        [% IF config_user.$item.enabled == 1 %]
+          [% IF config_user.$item.class == 'enum' %]
+            <select name="[% item %]_input" id="[% item %]_input"
+              class="config class_[% config_user.$item.class %]"
+              [% IF config_user.$item.is_default == 1 %]disabled="disabled"[% END %]
+              >
+              [% FOREACH conf_opt IN config_user.$item.enum %]
+                <option value="[% conf_opt %]"
+                  [% IF conf_opt == config_user.$item.value %]selected="selected"[% END %]
+                  >
+              [% END %]
+            </select>
+          [% ELSIF config_user.$item.class == 'bool' %]
+            <input type="checkbox" name="[% item %]_input" id="[% item %]_input"
+              class="config class_[% config_user.$item.class %]"
+              [% IF config_user.$item.value == 1 %]checked="checked"[% END %]
+              [% IF config_user.$item.is_default == 1 %]disabled="disabled"[% END %]
+              >
+          [% ELSE %]
+            <input type="text" name="[% item %]_input" id="[% item %]_input" size="20"
+              class="config class_[% config_user.$item.class %]"
+              value="[% config_user.$item.value %]"
+              [% IF config_user.$item.is_default == 1 %]disabled="disabled"[% END %]
+              >
+          [% END %]
+        [% ELSE %]
+          [% user_config.$item %]
+        [% END %]</td>
+      <td>
+        [% IF config_user.$item.class == 'number' %]    数字
+        [% ELSIF config_user.$item.class == 'enum' %]   選択
+        [% ELSIF config_user.$item.class == 'string' %] 文字列
+        [% ELSIF config_user.$item.class == 'char' %]   文字
+        [% ELSIF config_user.$item.class == 'bool' %]   真偽値
+        [% END %]
+        </td>
+      <td>
+        <input type="checkbox" name="[% item %]_default" id="[% item %]_default"
+          [% IF config_user.$item.is_default == 1 %]checked="checked"[% END %]
+          onchange="javascript: tweak_default_change('[% item %]')"
+          >
+        (既定値: [% config_user.$item.default_value FILTER html %])
+        </td>
+    </tr>
+  [% END %]
+</table>
+
+
+<input type="submit" value="更新">
+<input type="reset" value="リセット">
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

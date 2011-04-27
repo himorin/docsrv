@@ -33,6 +33,9 @@ use PSMT::Access;
     ListUserLoad
     ListUserLoadForDoc
 
+    GetPathIdForParent
+    GetPathIdForDoc
+
     ListUserUpForDoc
     IsUserUpForDoc
 
@@ -278,7 +281,7 @@ sub ListUserUpForDoc {
     my $dbh = PSMT->dbh;
     my $sth = $dbh->prepare('SELECT uname FROM docinfo WHERE docid = ? GROUP BY uname');
     $sth->execute($did);
-    return $sth->selectcol_arrayref();
+    return $sth->fetchall_arrayref();
 }
 
 sub IsUserUpForDoc {
@@ -380,6 +383,7 @@ sub RegNewDoc {
     if ($sth->execute($pathid, $name, $desc) == 0) {return $docid; }
     $docid = $dbh->db_last_key('docreg', 'docid');
     $dbh->db_unlock_tables();
+    PSMT->email->NewDocInPath($pathid, $docid);
     return $docid;
 }
 
@@ -405,6 +409,7 @@ sub RegNewFile {
     $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, NOW(), ?, ?, ?)');
     $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
     $dbh->db_unlock_tables();
+    PSMT->email->NewFileInDoc($docid, $fileid);
     return $fileid;
 }
 
@@ -418,6 +423,7 @@ sub RegNewPath {
     my $pathid = $dbh->db_last_key('path', 'pathid');
     $dbh->db_unlock_tables();
     PSMT::Access->SetPathAccessGroup($pathid, $group);
+    PSMT->email->NewPathInPath($cur, $pathid);
     return $pathid;
 }
 
@@ -550,6 +556,24 @@ sub ValidateNameInPath {
         PSMT::Template->set_vars('error_id', 'collision');
         PSMT::Error->throw_error_user('invalid_new_name');
     }
+}
+
+sub GetPathIdForParent {
+    my ($self, $pid) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT parent FROM path WHERE pathid = ?');
+    $sth->execute($pid);
+    if ($sth->rows() == 0) {return -1; }
+    return $sth->fetchrow_hashref()->{parent};
+}
+
+sub GetPathIdForDoc {
+    my ($self, $did) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT pathid FROM docreg WHERE docid = ?');
+    $sth->execute($did);
+    if ($sth->rows() == 0) {return -1; }
+    return $sth->fetchrow_hashref()->{pathid};
 }
 
 ################################################################## PRIVATE

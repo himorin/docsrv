@@ -1,4 +1,4 @@
-[% terms = {
+[%- terms = {
     "sitename"       => "PSMT - 岡山望遠鏡プロジェクト - ドキュメントサーバ",
 
     "path"           => "ディレクトリ",
@@ -9,17 +9,24 @@
     "icon_def"       => "crystal_project-16/mimetypes/unknown.png",
  }
 %]
-[% header_links_def = {
+[%- header_links_def = {
     "index"    => { "name" => "ホーム", "url" => "index.cgi" },
     "dir"      => { "name" => "トップ", "url" => "pathinfo.cgi?pid=0" },
     "labels"   => { "name" => "ラベル", "url" => "labellist.cgi"},
     "favs"     => { "name" => "$terms.favorite", "url" => "favlist.cgi"},
     "search"   => { "name" => "検索", "url" => "search.cgi"},
     "admin"    => { "name" => "管理", "url" => "admin.cgi", group => Param.admingroup },
+    "config"   => { "name" => "設定", "url" => "config.cgi" },
  }
 %]
 [% BLOCK site_announce %]
 [% END %]
+
+[%- user_config_help = {
+    "history"    => "更新履歴で表示するドキュメントの最終更新日数",
+    "email"      => "お気に入りが更新されたときにメールを送信する",
+ }
+%]
 
 [%# 表の中のアイコンの表示定義
   #   id : アイコンID
@@ -34,7 +41,7 @@
   [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
 />[% END -%]
 
-[% BLOCK show_mime_icon %]<img 
+[%- BLOCK show_mime_icon %]<img 
   [%- IF IcoMime.$id.defined -%]
     src="skins/images/[% IcoMime.$id.value %]" title="[% IcoMime.$id.tiphelp %]"
   [%- ELSE -%]

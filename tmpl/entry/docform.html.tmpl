@@ -18,7 +18,7 @@
       <input type="radio" name="source" value="dav" /> WebDAVに置いたファイルを利用 :
       <select name="dav_source">
         [% FOREACH item IN dav_file.keys %]
-          <option value="[% item %]">[% item %] ([% dav_file.$item %] byte)</option>
+          <option value="[% item %]">[% item %] ([% SizeDisp(dav_file.$item) %])</option>
         [% END %]
       </select>
     [% END %]

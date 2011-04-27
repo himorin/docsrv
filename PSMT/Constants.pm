@@ -47,6 +47,7 @@ use constant HEADER_LINKS => (
 
 use constant AVAIL_FORMATS => {
   'admin'              => ['html'],
+  'config'             => ['html'],
   'docadd'             => ['html'],
   'docfav'             => ['html', 'json'],
   'docinfo'            => ['html'],
@@ -63,6 +64,10 @@ use constant AVAIL_FORMATS => {
 
   'search/query'       => ['html'],
   'search/search'      => ['html'],
+
+  'email/newdoc'       => ['email'],
+  'email/newfile'      => ['email'],
+  'email/newpath'      => ['email'],
 
   'error'              => ['html', 'json'],
   'error/code'         => ['html', 'json'],

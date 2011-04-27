@@ -18,23 +18,44 @@ var fav_callback = {
     if (messages.fav == undefined) {
       alert("Exec failed." + o.responseText);
     } else {
-      var elem = document.getElementById('fav_' + messages.fav.did);
-      if (elem == undefined) {
-        alert("No such id " + messages.fav.did);
-      } else if (messages.fav.op == 'add') {
-        YAHOO.util.Dom.addClass(elem, 'fav_on');
-        elem.src = 'skins/images/woofunction/16/star.png';
-      } else if (messages.fav.op == 'remove') {
-        YAHOO.util.Dom.removeClass(elem, 'fav_on');
-        elem.src = 'skins/images/woofunction/16/star_off.png';
+      if (messages.fav.did == undefined) {
+        if (messages.fav.pid == undefined) {
+          alert("Invalid operation: no target");
+          return;
+        }
+        // path mode
+        var elem = document.getElementById('fav_p' + messages.fav.pid);
+        if (elem == undefined) {
+          alert("No such id " + messages.fav.pid);
+        } else if (messages.fav.op == 'add') {
+          YAHOO.util.Dom.addClass(elem, 'fav_on');
+          elem.src = 'skins/images/woofunction/16/star.png';
+        } else if (messages.fav.op == 'remove') {
+          YAHOO.util.Dom.removeClass(elem, 'fav_on');
+          elem.src = 'skins/images/woofunction/16/star_off.png';
+        } else {
+          alert('Invalid operation: ' + messages.fav.pid + ' / ' + messages.fav.op);
+        }
       } else {
-        alert('Invalid operation: ' + messages.fav.did + ' / ' + messages.fav.op);
+        // doc mode
+        var elem = document.getElementById('fav_' + messages.fav.did);
+        if (elem == undefined) {
+          alert("No such id " + messages.fav.did);
+        } else if (messages.fav.op == 'add') {
+          YAHOO.util.Dom.addClass(elem, 'fav_on');
+          elem.src = 'skins/images/woofunction/16/star.png';
+        } else if (messages.fav.op == 'remove') {
+          YAHOO.util.Dom.removeClass(elem, 'fav_on');
+          elem.src = 'skins/images/woofunction/16/star_off.png';
+        } else {
+          alert('Invalid operation: ' + messages.fav.did + ' / ' + messages.fav.op);
+        }
       }
     }
   },
   failure: function (o) {
     if (! YAHOO.util.Connect.isCallInProgress(o)) {
-      alret("YUI: Async call failed");
+      alert("YUI: Async call failed");
     }
   },
   timeout: 3000,
@@ -43,6 +64,14 @@ var fav_callback = {
 function tweak_ToggleFav (target) {
   var elem = document.getElementById('fav_' + target);
   var url = 'docfav.cgi?format=json&did=' + target + '&op=';
+  if (YAHOO.util.Dom.hasClass(elem, 'fav_on')) {url += 'remove'; } 
+  else {url += 'add'; }
+  YAHOO.util.Connect.asyncRequest('GET', url, fav_callback);
+}
+
+function tweak_ToggleFavPath (target) {
+  var elem = document.getElementById('fav_p' + target);
+  var url = 'docfav.cgi?format=json&pid=' + target + '&op=';
   if (YAHOO.util.Dom.hasClass(elem, 'fav_on')) {url += 'remove'; } 
   else {url += 'add'; }
   YAHOO.util.Connect.asyncRequest('GET', url, fav_callback);

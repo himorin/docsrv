@@ -20,14 +20,22 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 
 # favorites
 my %favdocs;
-my $favs = PSMT->user->ListFavs();
+my $favs = PSMT->user->ListFavsDoc();
 foreach (@$favs) {
     $favdocs{$_} = PSMT::File->GetDocInfo($_);
     $favdocs{$_}->{full_path} = PSMT::File->GetFullPathFromId($favdocs{$_}->{pathid});
     $favdocs{$_}->{fid} = PSMT::File->GetDocLastPostFileInfo($_);
 }
 
+my %favpath;
+$favs = PSMT->user->ListFavsPath();
+foreach (@$favs) {
+    $favpath{$_} = PSMT::File->GetPathInfo($_);
+    $favpath{$_}->{full_path} = PSMT::File->GetFullPathFromId($_);
+}
+
 $obj->template->set_vars('favs', \%favdocs);
+$obj->template->set_vars('favs_path', \%favpath);
 $obj->template->process('favlist', 'html');
 
 

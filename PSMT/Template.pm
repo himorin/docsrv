@@ -49,7 +49,8 @@ sub new {
     $conf_template = {
         INCLUDE_PATH => PSMT::Constants::LOCATIONS()->{'rel_tmpl'},
         INTERPOLATE  => 1,
-        POST_CHOMP   => 0,
+        PRE_CHOMP    => 1,
+        POST_CHOMP   => 1,
         EVAL_PERL    => 1,
         COMPILE_DIR  => PSMT::Constants::LOCATIONS()->{'datacache'},
 #        DEBUG => 'parser, undef',

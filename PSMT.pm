@@ -20,10 +20,12 @@ use PSMT::Constants;
 use PSMT::CGI;
 use PSMT::DB;
 #use PSMT::Error;
+use PSMT::Email;
 #use PSMT::File;
 use PSMT::NetLdap;
 use PSMT::Template;
 use PSMT::User;
+use PSMT::UserConfig;
 #use PSMT::Util;
 
 %PSMT::EXPORT = qw(
@@ -36,8 +38,10 @@ use PSMT::User;
     template
     dbh
     user
+    user_config
     error
     ldap
+    email
 );
 
 BEGIN {
@@ -89,6 +93,12 @@ sub user {
     return $this->request->{user};
 }
 
+sub user_config {
+    my $this = shift;
+    $this->request->{user_config} ||= new PSMT::UserConfig;
+    return $this->request->{user_config};
+}
+
 sub error {
     my $this = shift;
     $this->request->{error} ||= new PSMT::Error;
@@ -99,6 +109,12 @@ sub ldap {
     my $this = shift;
     $this->request->{ldap} ||= new PSMT::NetLdap;
     return $this->request->{ldap};
+}
+
+sub email {
+    my $this = shift;
+    $this->request->{email} ||= new PSMT::Email;
+    return $this->request->{email};
 }
 
 ################################################################## PRIVATE

@@ -28,7 +28,14 @@
       path_[% item.pathid %]
       [% count % 2 == 1 ? "row_odd" : "row_even" %]
      ">
-    <td class="docmanage"><a href="docadd.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'add_doc' %]</a></td>
+    <td class="docmanage">
+      [% IF InList(User.favs_path, item.pathid) %]
+        <img id="fav_p[% item.pathid %]" class="fav_on" src="skins/images/woofunction/16/star.png">
+      [% ELSE %]
+        <img id="fav_p[% item.pathid %]" class="" src="skins/images/woofunction/16/star_off.png">
+      [% END %]
+      <a href="docadd.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'add_doc' %]</a>
+      </td>
     <td class="path">[% INCLUDE show_table_icon id = 'dir' %]
       <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname FILTER html %]</a></td>
     <td class="pathdesc">[% item.description FILTER html %]</td>
@@ -38,6 +45,10 @@
       <a href="pathgroup.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
       </td>
   </tr>
+<script type="text/javascript">
+  var fav_mod_path_[% item.pathid %] = function() { tweak_ToggleFavPath('[% item.pathid %]'); }
+  YAHOO.util.Event.on('fav_p[% item.pathid %]', 'click', fav_mod_path_[% item.pathid %]);
+</script>
 [% END %]
 
 
