@@ -68,7 +68,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     }
 
     # second register new file to doc
-    my $fid = PSMT::File->RegNewFile($ext, $did, $desc);
+    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, FALSE);
     if (! defined($fid)) {
         PSMT::Error->throw_error_user('file_register_failed');
     }

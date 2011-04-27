@@ -384,12 +384,14 @@ sub RegNewDoc {
     if ($sth->execute($pathid, $name, $desc) == 0) {return $docid; }
     $docid = $dbh->db_last_key('docreg', 'docid');
     $dbh->db_unlock_tables();
-    PSMT->email()->NewDocInPath($pathid, $docid);
+# No Need To Send Mail in 'RegNewDoc' : Always Followed by 'RegNewFile' !
+#    PSMT->email()->NewDocInPath($pathid, $docid);
     return $docid;
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc) = @_;
+    my ($self, $ext, $docid, $desc, $is_add) = @_;
+    if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
     my $fileid = undef;
     my $uname = PSMT->user()->get_uid();
     my $srcip = PSMT::Util->IpAddr();
@@ -410,7 +412,8 @@ sub RegNewFile {
     $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, NOW(), ?, ?, ?)');
     $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
     $dbh->db_unlock_tables();
-    PSMT->email()->NewFileInDoc($docid, $fileid);
+    if ($is_add == TRUE) {PSMT->email()->NewFileInDoc($docid, $fileid); }
+    else {PSMT->email()->NewDocInPath($docid, $fileid); }
     return $fileid;
 }
 

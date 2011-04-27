@@ -38,12 +38,14 @@ sub new {
 }
 
 sub NewDocInPath {
-    my ($self, $pid, $new) = @_;
-    my $users = $self->_get_user_for_path($pid);
+    my ($self, $docid, $new) = @_;
+    my $users = $self->_get_user_for_doc($docid);
     my $obj = new PSMT::Template;
-    $obj->set_vars('target', PSMT::File->GetPathInfo($pid));
-    $obj->set_vars('newdoc', PSMT::File->GetDocInfo($new));
-    $obj->set_vars('path', PSMT::File->GetFullPathFromId($pid));
+    my $docinfo = PSMT::File->GetDocInfo($docid);
+    $obj->set_vars('target', PSMT::File->GetPathInfo($docinfo->{pathid}));
+    $obj->set_vars('newdoc', $docinfo);
+    $obj->set_vars('newfile', PSMT::File->GetFileInfo($new));
+    $obj->set_vars('path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
     foreach (keys %$users) {$self->_send_email($obj, $_, 'newdoc'); }
 }
 

@@ -27,7 +27,7 @@
 <hr>
 
 <ul>
-  <li>ディレクトリの説明: [% path_info.description FILTER html %]</li>
+  <li>ディレクトリの説明: <a href="pathinfo.cgi?pid=1">[% path_info.pathid FILTER html %]</a></li>
   <li>アクセス可能グループ: 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
     [% ELSE %](未定義)[% END %]</li>
