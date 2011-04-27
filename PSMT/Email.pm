@@ -20,12 +20,16 @@ use PSMT::Access;
 use PSMT::File;
 use PSMT::User;
 use PSMT::UserConfig;
+use PSMT::Template;
 
 use Email::Send;
 
 %PSMT::Email::EXPORT = qw(
     new
 
+    NewDocInPath
+    NewPathInPath
+    NewFileInDoc
 );
 
 sub new {
@@ -40,7 +44,7 @@ sub NewDocInPath {
     $obj->set_vars('target', PSMT::File->GetPathInfo($pid));
     $obj->set_vars('newdoc', PSMT::File->GetDocInfo($new));
     $obj->set_vars('path', PSMT::File->GetFullPathFromId($pid));
-    foreach (keys %$users) {$self->_send_email($_, 'newdoc'); }
+    foreach (keys %$users) {$self->_send_email($obj, $_, 'newdoc'); }
 }
 
 sub NewPathInPath {

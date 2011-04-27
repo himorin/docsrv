@@ -21,6 +21,7 @@ use PSMT::Constants;
 use PSMT::Util;
 use PSMT::Label;
 use PSMT::Access;
+use PSMT::Email;
 
 %PSMT::File::EXPORT = qw(
     new
@@ -383,7 +384,7 @@ sub RegNewDoc {
     if ($sth->execute($pathid, $name, $desc) == 0) {return $docid; }
     $docid = $dbh->db_last_key('docreg', 'docid');
     $dbh->db_unlock_tables();
-    PSMT->email->NewDocInPath($pathid, $docid);
+    PSMT->email()->NewDocInPath($pathid, $docid);
     return $docid;
 }
 
@@ -409,7 +410,7 @@ sub RegNewFile {
     $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, NOW(), ?, ?, ?)');
     $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
     $dbh->db_unlock_tables();
-    PSMT->email->NewFileInDoc($docid, $fileid);
+    PSMT->email()->NewFileInDoc($docid, $fileid);
     return $fileid;
 }
 
@@ -423,7 +424,7 @@ sub RegNewPath {
     my $pathid = $dbh->db_last_key('path', 'pathid');
     $dbh->db_unlock_tables();
     PSMT::Access->SetPathAccessGroup($pathid, $group);
-    PSMT->email->NewPathInPath($cur, $pathid);
+    PSMT->email()->NewPathInPath($cur, $pathid);
     return $pathid;
 }
 
