@@ -22,6 +22,7 @@ use PSMT::Util;
 use PSMT::Label;
 use PSMT::Access;
 use PSMT::Email;
+use PSMT::HyperEstraier;
 
 %PSMT::File::EXPORT = qw(
     new
@@ -518,6 +519,9 @@ sub MoveNewFile {
         PSMT::Error->throw_error_user('file_move_failed');
     }
     rename($src, $newpath . $fid);
+    # Exec HyperEstraier Index
+    my $obj = new PSMT::HyperEstraier();
+    $obj->AddNewFile($fid);
 }
 
 sub SaveToDav {

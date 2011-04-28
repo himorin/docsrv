@@ -6,29 +6,39 @@
 <form action="query.cgi" method="POST">
 [% INCLUDE global/formopt.html.tmpl %]
 
-<p>検索条件は、それぞれのカテゴリに対して AND もしくは OR の複数設定可能で、
-それらのカテゴリを AND もしくは OR でつないで検索を行います。</p>
-
-<h3>全体設定</h3>
-
-<div>各カテゴリの条件に合致した結果の
-<select name="global_cond">
-  <option value="AND" selected="selected">AND</option>
-  <option value="OR">OR</option>
-</select>
-を結果として表示する。</div>
-
-<div>
-<input type="submit" value="検索実行">
-<input type="reset">
+<div id="error">
+<div class="info">
+現在、ドキュメント全文検索は試験中です。<br />
+全文検索を指定した場合、ドキュメント情報についての検索条件は無視されます。<br />
+また、PDFのみしかインデックス化されておりません。
+</div>
 </div>
 
+<h3>ドキュメント全文検索</h3>
 
-<h3>カテゴリへの検索条件指定</h3>
+<p><a href="http://fallabs.com/hyperestraier/uguide-ja.html#searchcond">HyperEstraierの検索条件節</a>
+を直接指定してください。</p>
+
+<input type="text" name="docs_he" value="" size="100"></input>
+
+
+<h3>ドキュメント情報についての検索条件指定</h3>
 
 <p>各[% terms.document %]の名前、説明、[% terms.document %]に付けたラベルに
 対して検索条件を指定可能です。
 検索条件を指定しなかったカテゴリについては条件付けは行われません。</p>
+
+<p>
+検索条件は、それぞれのカテゴリに対して AND もしくは OR の複数設定可能で、
+それらのカテゴリを AND もしくは OR でつないで検索を行います。
+<br/>
+以下の各カテゴリの条件に合致した結果の
+<select name="global_cond">
+  <option value="AND" selected="selected">AND</option>
+  <option value="OR">OR</option>
+</select>
+を結果として表示する。
+</p>
 
 <h4>[% terms.document %]の名前</h4>
 
@@ -65,6 +75,11 @@
 </select>
 </div>
 
+
+<div>
+<input type="submit" value="検索実行">
+<input type="reset">
+</div>
 
 </form>
 

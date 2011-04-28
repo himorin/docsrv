@@ -13,6 +13,8 @@ use PSMT::Util;
 use PSMT::File;
 use PSMT::Search;
 
+use PSMT::HyperEstraier;
+
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
 
@@ -22,6 +24,26 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 
 if ($obj_cgi->request_method() ne 'POST') {
     print $obj_cgi->redirect('search.cgi');
+    exit;
+}
+
+my $docs_he = $obj_cgi->param('docs_he');
+if (defined($docs_he)) {
+    my $obj_he = new PSMT::HyperEstraier();
+    my $res = $obj_he->ExecSearch($docs_he);
+    my (@data, $finfo, $dinfo);
+    foreach (@$res) {
+        if (! PSMT::Access->CheckForFile($_)) {next; }
+        $finfo = PSMT::File->GetFileInfo($_);
+        $dinfo = PSMT::File->GetDocInfo($finfo->{docid});
+        $dinfo->{filename} = PSMT::File->GetFullPathFromId($dinfo->{pathid}) . $dinfo->{filename};
+        $dinfo->{labelid} = PSMT::Label->ListLabelOnDoc($dinfo->{docid});
+        $finfo->{size} = PSMT::File->GetFileSize($_);
+        $dinfo->{lastfile} = $finfo;
+        push(@data, $dinfo);
+    }
+    $obj->template->set_vars('search_result', \@data);
+    $obj->template->process('search/query', 'html');
     exit;
 }
 

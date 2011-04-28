@@ -25,6 +25,7 @@ use Cwd;
   LOCATIONS
 
   INVALID_NAME_CHAR
+  HE_FILE_FILTER
 
   TRUE
   FALSE
@@ -39,7 +40,7 @@ use Cwd;
 use constant TRUE         => 1;
 use constant FALSE        => 0;
 
-use constant PSMT_DOCSRV_VERSION => "0.3.0";
+use constant PSMT_DOCSRV_VERSION => "0.4.0";
 
 use constant HEADER_LINKS => (
   'dir', 'index', 'labels', 'favs', 'search', 'admin', 'config'
@@ -102,6 +103,10 @@ use constant contenttypes =>
     "ics"  => "text/calendar" ,
     "default" => 'application/octet-stream',
   };
+
+use constant HE_FILE_FILTER => {
+  'pdf'    => '/usr/bin/pdftotext -enc UTF-8',
+};
 
 use constant SAFE_PROTOCOLS => (
   'ftp', 'http', 'https', 'irc', 'view-source',
