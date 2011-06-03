@@ -20,6 +20,7 @@ use PSMT::Constants;
 use PSMT::Config;
 use PSMT::Util;
 use PSMT::User;
+use PSMT::UserConfig;
 use PSMT::Label;
 use PSMT::NetLdap;
 use PSMT::Error;
@@ -49,8 +50,8 @@ sub new {
     $conf_template = {
         INCLUDE_PATH => PSMT::Constants::LOCATIONS()->{'rel_tmpl'},
         INTERPOLATE  => 1,
-        PRE_CHOMP    => 1,
-        POST_CHOMP   => 1,
+        PRE_CHOMP    => 0,
+        POST_CHOMP   => 0,
         EVAL_PERL    => 1,
         COMPILE_DIR  => PSMT::Constants::LOCATIONS()->{'datacache'},
 #        DEBUG => 'parser, undef',
@@ -70,6 +71,7 @@ sub new {
         VARIABLES => {
             'Param'    => sub { return $obj_config->GetHash(); },
             'User'     => PSMT->user()->user_data(),
+            'UConf'    => PSMT->user_config->Config(),
             'Admin'    => PSMT->user()->is_inadmin(),
             'Group'    => PSMT->ldap()->GetAvailGroups(),
             'Label'    => PSMT::Label->ListAllLabel(),

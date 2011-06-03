@@ -520,8 +520,9 @@ sub MoveNewFile {
     }
     rename($src, $newpath . $fid);
     # Exec HyperEstraier Index
-    my $obj = new PSMT::HyperEstraier();
+    my $obj = new PSMT::HyperEstraier(TRUE);
     $obj->AddNewFile($fid);
+    return TRUE;
 }
 
 sub SaveToDav {

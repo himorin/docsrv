@@ -35,8 +35,8 @@ sub END {
 }
 
 sub new {
-    my ($self) = @_;
-    $self->_open();
+    my ($self, $mode) = @_;
+    $self->_open($mode);
     return $self;
 }
 
@@ -90,10 +90,14 @@ sub _add {
 }
 
 sub _open {
-    my ($self) = @_;
+    my ($self, $is_write) = @_;
     my $db = PSMT->config->GetParam('he_dir');
     $obj_db = new Database();
-    unless($obj_db->open($db, Database::DBWRITER | Database::DBCREAT)) {
+    my $flag = Database::DBREADER;
+    if (defined($is_write) && ($is_write == TRUE)) {
+        $flag = Database::DBWRITER | Database::DBCREAT;
+    }
+    unless($obj_db->open($db, $flag)) {
         $obj_db = undef;
         PSMT::Error->throw_error_code('he_open_failed');
     }

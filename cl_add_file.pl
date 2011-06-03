@@ -3,6 +3,7 @@
 use strict;
 
 use PSMT;
+use PSMT::Constants;
 use PSMT::HyperEstraier;
 
 $ENV{'REMOTE_USER'} = 'shimono';
@@ -20,7 +21,7 @@ if (! defined($fid)) {
 }
 
 print "Open DB\n";
-my $obj = new PSMT::HyperEstraier();
+my $obj = new PSMT::HyperEstraier(TRUE);
 print "Opened\n";
 
 print "Adding $fid\n";

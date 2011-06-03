@@ -10,8 +10,8 @@
  }
 %]
 [%- header_links_def = {
-    "index"    => { "name" => "ホーム", "url" => "index.cgi" },
-    "dir"      => { "name" => "トップ", "url" => "pathinfo.cgi?pid=0" },
+    "index"    => { "name" => "ホーム", "url" => "$UConf.home.value" },
+    "dir"      => { "name" => "/", "url" => "pathinfo.cgi?pid=0" },
     "labels"   => { "name" => "ラベル", "url" => "labellist.cgi"},
     "favs"     => { "name" => "$terms.favorite", "url" => "favlist.cgi"},
     "search"   => { "name" => "検索", "url" => "search.cgi"},
@@ -25,6 +25,7 @@
 [%- user_config_help = {
     "history"    => "更新履歴で表示するドキュメントの最終更新日数",
     "email"      => "お気に入りが更新されたときにメールを送信する",
+    "home"       => "ホーム(トップページ)として表示する画面 (\"index.cgi\"のようなURLの最後の'/'よりあと)",
  }
 %]
 

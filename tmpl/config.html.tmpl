@@ -22,7 +22,7 @@ function tweak_default_change (item) {
 <table class="config">
   <tr>
     <th>名前</th>
-    <th class="description">説明</th>
+    <th>説明</th>
     <th colspan="2">値</th>
     <th>既定値に設定</th>
   </tr>
@@ -31,8 +31,8 @@ function tweak_default_change (item) {
     [% count = loop.count() %]
     <tr 
       class="
-        config_[% item.pathid %]
-        [% count % 2 == 1 ? "row_odd" : "row_even" %]
+        config_[% item %]
+        [%+ count % 2 == 1 ? "row_odd" : "row_even" %]
        ">
       <td>[% item FILTER html %]</td>
       <td>[% user_config_help.$item FILTER html %]</td>
