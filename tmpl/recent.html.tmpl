@@ -1,0 +1,11 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "index"
+  page_title = "最近更新された $terms.document"
+%]
+
+<h3>最近更新された[% terms.document %]</h3>
+
+[% INCLUDE entry/table.html.tmpl       docs = recent %]
+
+
+[% PROCESS global/footer.html.tmpl %]
