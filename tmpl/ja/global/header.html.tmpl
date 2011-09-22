@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>[% page_title %] - [% terms.sitename %] (ver. [% constants.PSMT_DOCSRV_VERSION %])</title>
+    <link rel="stylesheet" href="skins/global.css">
+    [% FOREACH item = stylesheet %]
+      <link rel="stylesheer" href="skins/[% item %]">
+    [% END %]
+
+    <!-- yui -->
+    <script type="text/javascript" src="skins/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="skins/yui/build/yahoo/yahoo-min.js"></script>
+    <script type="text/javascript" src="skins/yui/build/dom/dom-min.js"></script>
+    <script type="text/javascript" src="skins/yui/build/connection/connection_core-min.js"></script> 
+    <script type="text/javascript" src="skins/yui/build/json/json-min.js"></script>
+
+    <script type="text/javascript" src="skins/global.js"></script>
+    [% FOREACH item = javascript %]
+      <script src="skins/[% item %]"></script>
+    [% END %]
+    
+  </head>
+  <body
+    [% IF onload.defined %]onload="[% onload %]"[% END %]
+    [% IF bodyclass.defined AND bodyclass.size > 0 %]class="[% FOREACH item = bodyclass %][% item %][% END %]"[% END %]
+    >
+
+<div id="header">
+  <div id="titles">
+    <p id="sitename">[% terms.sitename %] (ver. [% constants.PSMT_DOCSRV_VERSION %])</p>
+    <p id="subtitle">
+      [% IF page_title%][% page_title %]
+        [% IF header_addl %]
+          &mdash; <span id="header_addl">[% header_addl %]</span>
+        [% END %]
+      [% ELSE %]
+        &nbsp;
+      [% END %]
+    </p>
+  </div>
+  <div id="gmenu">
+    <ul class="links">
+      [% FOREACH item = header_links %]
+        [% IF header_links_def.$item.defined %]
+          [% IF header_links_def.$item.group.defined AND
+                (NOT InGroup(header_links_def.$item.group)) %]
+            [%# must NOT display %]
+          [% ELSE %]
+            <li>
+              [% IF NOT loop.first %]<span class="separator">|</span>[% END %]
+              [% IF item == current_page %]
+                [% header_links_def.$item.name %]
+              [% ELSE %]
+                <a href="[% header_links_def.$item.url %]">[% header_links_def.$item.name %]</a>
+              [% END %]
+            </li>
+          [% END %]
+        [% END %]
+      [% END %]
+    </ul>
+    <ul class="account">
+      <li><span class="target">ユーザ</span> <span class="data">[% User.uid %]</span></li>
+      <li><span class="target">所属</span> <span class="data">[% User.gid.join(',') %]</span></li>
+      [% IF Admin %]<li><span class="data">(管理者)</span></li>[% END %]
+      <li><span class="target">[% terms.favorite %]数</span> <span class="data">[% User.favs.size %]</span></li>
+    </ul>
+  </div>
+</div>
+
+<div id="body">
+[% PROCESS site_announce %]

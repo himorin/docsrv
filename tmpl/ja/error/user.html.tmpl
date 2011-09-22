@@ -1,0 +1,73 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "操作エラー"
+%]
+
+<div id="error">
+<img class="errico" src="skins/images/weby-icon/Warning.png">
+<p class="desc">
+あなたの要求を正常に解釈できませんでした。
+このエラーが発生した画面のURLおよびどういう操作を行ったかを、
+エラーコード '[% error %]' とともにシステム管理者に通知するか、
+<a href="https://psmt.kusastro.kyoto-u.ac.jp/bugzilla/enter_bug.cgi?product=PSMT">Bugzilla</a>
+に登録してください。
+</p>
+<div class="info">
+  [% IF error == 'doc_add_failed' %]
+    ドキュメントの追加に失敗しました。
+  [% ELSIF error == 'file_move_failed' %]
+    ドキュメントへのファイル登録時にファイルを保存領域に移動できませんでした。
+  [% ELSIF error == 'file_register_failed' %]
+    ドキュメントへのファイル登録に失敗しました。
+  [% ELSIF error == 'update_permission' %]
+    登録情報を更新する権限がありません。
+    管理者権限を持っているユーザである、
+    またはファイルについてはアップロードした本人である必要があります。
+  [% ELSIF error == 'invalid_document_id' %]
+    無効な [% terms.document %] IDです。
+  [% ELSIF error == 'invalid_file_source' %]
+    無効なファイルです。
+  [% ELSIF error == 'invalid_fileid' %]
+    無効なファイルIDです。
+  [% ELSIF error == 'invalid_filepath' %]
+    無効なファイルパスです。
+  [% ELSIF error == 'invalid_label_id' %]
+    無効なラベルIDです。
+  [% ELSIF error == 'invalid_param' %]
+    無効なパラメータが指定されました。
+  [% ELSIF error == 'invalid_path_id' %]
+    無効なパスIDです。
+  [% ELSIF error == 'ldap_uid_notfound' %]
+    あなたのユーザアカウントがLDAP上に見つかりません。
+  [% ELSIF error == 'null_file_upload' %]
+    ファイルがアップロードされませんでした。
+  [% ELSIF error == 'permission_error' %]
+    指定されたコンテンツの閲覧権限がありません。
+  [% ELSIF error == 'root_cannot_set_permission' %]
+    ルートディレクトリには権限を設定できません。
+  [% ELSIF error == 'system_invoke_error' %]
+    システムの起動に失敗しました。
+  [% ELSIF error == 'unknown_operation_method' %]
+    未定義の操作を要求しました。
+  [% ELSIF error == 'invalid_new_name' %]
+    新規ディレクトリもしくはドキュメントを '[% new_name FILTER html %]' 
+    という名前では作成できません。
+    [% IF error_id == 'null_name' %]
+      名前が空白です。
+    [% ELSIF error_id == 'cannot_use_char' %]
+      名前として利用できない文字を含んでいます。
+    [% ELSIF error_id == 'collision' %]
+      既存の
+      [% IF target == 'path' %]ディレクトリ
+      [% ELSIF target == 'doc' %]ドキュメント
+      [% ELSE %][% target FILTER html %][% END %]
+      と同じ名前は利用できません。
+    [% END %]
+  [% ELSIF error == 'unknown_icon_target' %]
+    未定義のアイコンの分類を指定しました。オプションを確認してください。
+  [% ELSE %]
+    このエラーコード [% error %] は未定義です。
+  [% END %]
+</div>
+</div>
+
+[% PROCESS global/footer.html.tmpl %]

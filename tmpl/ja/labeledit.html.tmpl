@@ -1,0 +1,28 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>[% IF lid == 0 %]ラベルの追加[% ELSE %]ラベルの更新[% END %]</h3>
+
+<form action="labeledit.cgi" method="POST">
+[% INCLUDE global/formopt.html.tmpl %]
+
+<ul>
+  [% IF lid != 0 %]<li>ID : [% linfo.labelid %]</li>[% END %]
+  <li>名前 : <input type="text" name="lname" value="[% linfo.name %]"></input></li>
+  <li>説明 : <input type="text" name="ldesc" value="[% linfo.description %]"></input></li>
+</ul>
+
+<h4>アクセス可能グループ</h4>
+<ul>
+[% FOREACH item = Group %]
+  <li><input type="checkbox" name="newgroup" value="[% item %]"
+    [% IF InList(permission, item) %]checked="checked"[% END %]
+    >[% item %]</input></li>
+[% END %]
+</ul>
+<input type="hidden" name="lid" value="[% lid %]" />
+<input type="submit" value="更新" />
+<input type="reset" />
+</p>
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,33 @@
+</div>
+
+[% IF Debug.defined %]
+  <div id="debug_output">
+    <h3>デバッグ出力</h3>
+    [% FOREACH item = Debug %]
+      [% IF item == 'sql' %]
+        <h4>発行 SQL リスト (prepare)</h4>
+        <ul>
+          [% FOREACH sql IN debug_sql %]<li>[% sql %]</li>[% END %]
+        </ul>
+      [% ELSIF item == 'param' %]
+        <h4>クエリ文字列</h4>
+        <ul>
+          [% FOREACH param IN debug_param.keys %]
+            <li>[% param %] : [% debug_param.$param.join(', ') %]
+          [% END %]
+        </ul>
+      [% ELSE %]
+        <h4>Unknown [% item %]
+      [% END %]
+    [% END %]
+  </div>
+[% END %]
+
+<footer>
+<address>
+Document Server System for PSMT Group
+</address>
+</footer>
+
+</body>
+</html>

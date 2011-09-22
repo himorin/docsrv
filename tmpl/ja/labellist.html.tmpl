@@ -1,0 +1,30 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "ラベル一覧"
+%]
+
+<table class="labellist">
+  <tr>
+    <th>ID</th>
+    <th>ラベル名</th>
+    <th>説明</th>
+    <th>アクセス可能グループ</th>
+  </tr>
+[% FOREACH item = labels.keys %]
+  [% count = loop.count() %]
+  <tr 
+    class="
+      label_[% item %]
+      [% count % 2 == 1 ? "row_odd" : "row_even" %]
+     ">
+    <td><a href="labeledit.cgi?lid=[% item %]">[% item %]</a></td>
+    <td>[% labels.$item.name %]</td>
+    <td>[% labels.$item.description %]</td>
+    <td>[% IF labels.$item.group.size == 0 %]No Access Restriction[% ELSE %]
+        [% labels.$item.group.join(', ') %][% END %]</td>
+  </tr>
+[% END %]
+</table>
+
+<div><a href="labeledit.cgi">新規追加</a></div>
+
+[% PROCESS global/footer.html.tmpl %]

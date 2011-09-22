@@ -81,7 +81,7 @@ sub _send_email {
     my %ref;
     $ref{uname} = $uname;
     $ref{by} = PSMT->user()->get_uid();
-    $ref{emailto} = PSMT->ldap()->GetAttrsFromUID($uname, 'bugmail')->{bugmail}[0];
+    $ref{emailto} = PSMT->ldap()->GetAttrsFromUID($uname, 'mail')->{bugmail}[0];
     $obj->process('email/' . $tmpl, 'email', \%ref, \$out);
     my @args;
     push(@args, '-i');

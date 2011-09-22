@@ -1,0 +1,50 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>このファイルについて</h3>
+
+<form method="POST" action="fileinfo.cgi">
+<ul>
+  <li>ファイルの説明:
+    <span id="file_desc_raw">[% file_info.description %]</span>
+    <span id="file_desc_edit" class="ui_hidden"><input type="text" size="100" name="description" value="[% file_info.description %]"></span>
+    [% IF User.uid == file_info.uname %]
+      <span id="update_link"><a href="javascript: file_info_update();">更新</a></span>
+    [% END %]</li>
+  <li>ファイル型:
+       [%- INCLUDE show_mime_icon id = file_info.fileext -%]
+       [% file_info.fileext %] / [% file_type %]</li>
+  <li>ユーザ: [% file_info.uname %]</li>
+  <li>登録日時: [% file_info.uptime %]</li>
+  <li>登録元: [% file_info.srcip FILTER ipaddr %]</li>
+</ul>
+<div id="file_update" class="ui_hidden">
+  <input type="submit" value="更新">
+</div>
+<input type="hidden" name="fid" value="[% file_info.fileid %]">
+</form>
+
+<script type="text/javascript">
+<!--
+function file_info_update () {
+  var ui = document.getElementById('file_desc_raw');
+  YAHOO.util.Dom.addClass(ui, 'ui_hidden');
+  ui = document.getElementById('file_desc_edit');
+  YAHOO.util.Dom.removeClass(ui, 'ui_hidden');
+  ui = document.getElementById('file_update');
+  YAHOO.util.Dom.removeClass(ui, 'ui_hidden');
+  ui = document.getElementById('update_link');
+  YAHOO.util.Dom.addClass(ui, 'ui_hidden');
+}
+// -->
+</script>
+
+<p><a href="fileget.cgi?fid=[% file_info.fileid %]">このファイルをダウンロード</a>
+もしくは、このファイルが登録されている
+<a href="docinfo.cgi?did=[% file_info.docid %]">ドキュメントの情報を表示</a>する。</p>
+
+<h3>このファイルへのアクセスログ</h3>
+
+[% INCLUDE entry/activity.html.tmpl   activity        = user_load
+                                       %]
+
+[% PROCESS global/footer.html.tmpl %]

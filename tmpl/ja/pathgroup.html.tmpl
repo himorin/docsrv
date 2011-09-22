@@ -1,0 +1,33 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>現在の設定</h3>
+<ul>
+  <li>Path ID: [% path_info.pathid %]</li>
+  <li>Full path: [% full_path %]</li>
+  <li>Parenet: [% path_info.parent %]</li>
+  <li>Name: [% path_info.pathname %]</li>
+  <li>Description: [% path_info.description %]</li>
+  <li>Accessible groups: [% permission.join(', ') %] </li>
+</ul>
+
+<h3>アクセス権限グループの更新</h3>
+
+<p>チェックを付けたグループのどれかに所属しているユーザのみが閲覧可能になります。
+全てのチェックを外すと、どのユーザも閲覧できるようになります。</p>
+
+<form action="pathgroup.cgi" method="POST">
+[% INCLUDE global/formopt.html.tmpl %]
+<ul>
+[% FOREACH item = all_groups.keys %]
+  <li><input type="checkbox" name="newgroup" value="[% item %]"
+    [% IF all_groups.$item == 1 %]checked="checked"[% END %]
+    >[% item %]</input></li>
+[% END %]
+</ul>
+<input type="hidden" name="pid" value="[% path_info.pathid %]" />
+<input type="submit" value="UPDATE" />
+<input type="reset" />
+</p>
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

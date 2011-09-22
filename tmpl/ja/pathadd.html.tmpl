@@ -1,0 +1,22 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "pathinfo"
+  page_title = "$terms.path 追加成功 - $full_path"
+%]
+
+<h3>現在の <a href="pathinfo.cgi?pid=[% path_info.pathid %]">[% terms.path %] ([% full_path %])</a> の情報</h3>
+
+[% IF pid == 0 %]
+  <p>トップ [% terms.path %]</p>
+[% ELSE %]
+  <ul>
+    <li>ID: [% path_info.pathid %]</li>
+    <li>フルパス: [% full_path %]</li>
+    <li>一つ上: <a href="pathinfo.cgi?pid=[% path_info.parent %]">[% path_info.parent %]</a></li>
+    <li>名前: [% path_info.pathname %]</li>
+    <li>説明: [% path_info.description %]</li>
+    <li>アクセス可能グループ: [% path_info.gname.join(', ') %]</li>
+  </ul>
+[% END %]
+
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,83 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "pathinfo"
+  page_title = "$terms.path 表示 - $full_path"
+%]
+
+<h3>現在の [% terms.path %] ([% full_path %]) の情報</h3>
+
+[% IF pid == 0 %]
+  [% INCLUDE entry/table.html.tmpl       upper_path = -1
+                                         paths = spath_list  docs = doc_list %]
+[% ELSE %]
+  [% INCLUDE entry/table.html.tmpl       upper_path = path_info.parent
+                                         paths = spath_list  docs = doc_list  %]
+[% END %]
+
+[% IF pid != 0 %]
+  <form method="POST" action="pathinfo.cgi">
+  [% PROCESS global/formopt.html.tmpl %]
+  <ul>
+    <li id="path_name_edit" class="ui_hidden">ディレクトリ名: <input type="text" name="pathname" size="50" value="[% path_info.pathname FILTER html %]"></li>
+    <li>このディレクトリについて: 
+      <span id="path_desc_raw">[% path_info.description FILTER html %]</span>
+      <span id="path_desc_edit" class="ui_hidden"><input type="text" name="description" size="150" value="[% path_info.description FILTER html %]"></span>
+      [% IF Admin %]
+        <span id="update_link"><a href="javascript: doc_info_update();">更新</a></span>
+      [% END %]</li>
+    <li>アクセス可能グループ: 
+      [% IF path_info.gname.size > 0 %][% path_info.gname.join(', ') %]
+      [% ELSE %](誰でも)[% END %]</li>
+  </ul>
+  <div id="path_update" class="ui_hidden">
+    <input type="submit" value="更新">
+  </div>
+  <input type="hidden" name="pid" value="[% path_info.pathid %]">
+  </form>
+
+  <script type="text/javascript">
+  <!--
+  function doc_info_update () {
+    YAHOO.util.Dom.removeClass(document.getElementById('path_name_edit'), 'ui_hidden');
+    YAHOO.util.Dom.addClass(document.getElementById('path_desc_raw'), 'ui_hidden');
+    YAHOO.util.Dom.removeClass(document.getElementById('path_desc_edit'), 'ui_hidden');
+    YAHOO.util.Dom.removeClass(document.getElementById('path_update'), 'ui_hidden');
+    YAHOO.util.Dom.addClass(document.getElementById('update_link'), 'ui_hidden');
+  }
+  // -->
+  </script>
+[% END %]
+
+
+<h3 id="doc_add" class="ui_clickable">新しいドキュメントの追加</h3>
+<script type="text/javascript">
+  var doc_add_disp = function() { tweak_ToggleClass('doc_add', 'ui_hidden'); }
+  YAHOO.util.Event.on('doc_add', 'click', doc_add_disp);
+</script>
+
+<div class="doc_add">
+<form action="docadd.cgi" method="POST" enctype="multipart/form-data">
+  [% PROCESS global/formopt.html.tmpl %]
+  <ul>
+    <li>新しいドキュメントの名前: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
+    <li>新しいドキュメントの説明: <input type="text" name="docdesc" value="" size="150"></li>
+  </ul>
+  <h4>新規ドキュメントに付けるラベル</h4>
+  <ul>
+    [% FOREACH item = Label.keys %]
+      <li><input type="checkbox" name="label" value="[% item %]" />
+        [% Label.$item.name %] ([% Label.$item.description %])</li>
+    [% END %]
+  </ul>
+  [% INCLUDE entry/docform.html.tmpl %]
+  <input type="hidden" name="pid" value="[% pid %]">
+  <input type="submit" value="ドキュメント追加">
+  <input type="reset" value="リセット">
+</form>
+</div>
+<script type="text/javascript">
+  tweak_ToggleClass('doc_add', 'ui_hidden');
+</script>
+
+[% PROCESS entry/diradd.html.tmpl      cur_pid = pid %]
+
+[% PROCESS global/footer.html.tmpl %]

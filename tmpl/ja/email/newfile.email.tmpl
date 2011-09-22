@@ -1,0 +1,26 @@
+From: docsrv@psmt.kusastro.kyoto-u.ac.jp
+To: [% emailto +%]
+Subject: [PSMT/DocSrv] New file was added to your favorite document
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+User-Agent: PSMT Document Server
+
+　[%+ uname %] さま
+
+　このメールは PSMT ドキュメントサーバからの自動通知メールです。
+　返信しないでください。
+
+　あなたがお気に入りに入れているドキュメントに、[% by %] により新しい
+ファイルが追加されました。
+
+　追加されたファイル
+形式: [% newfile.fileext +%]
+説明: [% newfile.description +%]
+日時: [% newfile.uptime +%]
+URL : https://psmt.kusastro.kyoto-u.ac.jp/docsrv/fileinfo.cgi?fid=[% newfile.fileid +%]
+
+　追加場所は "[% path %][% target.filename %]" です。
+
+-- 
+PSMT Document Server System
+https://psmt.kusastro.kyoto-u.ac.jp/docsrv/

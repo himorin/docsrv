@@ -1,0 +1,48 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "MIMEアイコン追加"
+%]
+<script type="text/javascript">
+<!--
+function select_icon (target) {
+  if (target == '') {return; }
+  var input_icon = document.getElementById('current_icon');
+  input_icon.src = 'skins/images/' + target;
+  var input_target = document.getElementById('current_target');
+  input_target.value = target;
+}
+// -->
+</script>
+
+<h3>[% target FILTER html %]アイコン追加</h3>
+
+<p>アイコンに利用できる画像リストは下にあります。
+リストから画像をクリックすると選択されます。</p>
+
+<form method="POST" action="editicon.cgi">
+  <input type="hidden" name="class" value="[% class FILTER html %]">
+  <input type="hidden" name="icon" value="[% terms.icon_def %]" id="current_target">
+
+  <ul>
+    <li>対象拡張子: <input type="text" name="target"> (pdf, exe, doc など)</li>
+    <li>アイコン: <img src="skins/images/[% terms.icon_def %]" id="current_icon" /></li>
+    <li>ツールチップ: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
+    <li>状態: <select name="enabled">
+      <option value="1" selected="selected">有効</option>
+      <option value="0">無効</option>
+      </select></li>
+  </ul>
+  <input type="submit" value="追加">
+</form>
+
+<h4>有効なアイコンリスト</h4>
+
+<div class="icon_disp">
+  [%- FOREACH item = avail_icons %]
+    <a href="javascript: select_icon('[% item FILTER js %]')"><img
+      src="skins/images/[% item FILTER html %]"></a>
+  [% END %]
+</div>
+
+
+
+[% PROCESS global/footer.html.tmpl %]

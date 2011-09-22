@@ -14,6 +14,7 @@ package PSMT::Template;
 use strict;
 
 use base qw(Exporter);
+use File::Basename qw(basename dirname);
 use Template;
 
 use PSMT::Constants;
@@ -48,7 +49,8 @@ sub new {
     $def_format = undef;
     $obj_config = PSMT->config;
     $conf_template = {
-        INCLUDE_PATH => PSMT::Constants::LOCATIONS()->{'rel_tmpl'},
+#        INCLUDE_PATH => PSMT::Constants::LOCATIONS()->{'rel_tmpl'},
+        INCLUDE_PATH => $this->_lang_template(),
         INTERPOLATE  => 1,
         PRE_CHOMP    => 0,
         POST_CHOMP   => 0,
@@ -180,6 +182,49 @@ sub vars {
 }
 
 ################################################################## PRIVATE
+
+sub _lang_template {
+    my ($self) = @_;
+    my @dirs;
+    my $lang_install = $self->_lang_install();
+    my $lang_client  = $self->_lang_client();
+    foreach my $cli (@$lang_client) {
+    foreach (@$lang_install) {
+        if ($_ eq $cli) {
+            push(@dirs, PSMT::Constants::LOCATIONS()->{'rel_tmpl'} . '/' . $cli);
+        }
+    }
+    }
+    return \@dirs;
+}
+
+sub _lang_install {
+    my ($self) = @_;
+    my @lang;
+    my @dirs = glob(PSMT::Constants::LOCATIONS()->{'rel_tmpl'} . '/*');
+    foreach (@dirs) {
+        next if (! -d $_);
+        my $id = basename($_);
+        next unless $id =~ /^[a-zA-Z]{1,3}(-[a-zA-Z]{1,3})?$/;
+        push(@lang, $id);
+    }
+    return \@lang;
+}
+
+sub _lang_client {
+    my ($self) = @_;
+    my @lang;
+    if (defined(PSMT->cgi()->cookie('LANG'))) {
+        push(@lang, PSMT->cgi()->cookie('LANG'));
+    }
+    if (exists $ENV{'SERVER_SOFTWARE'}) {
+        my $req = PSMT->cgi()->http('Accept-Language') || '';
+        foreach (split(/,/, $req)) {
+            if (m/([A-Za-z\-]+)(?:;q=(\d(?:\.\d+)))?/) {push(@lang, $1); }
+        }
+    }
+    return \@lang;
+}
 
 sub _load_constants() {
     my %consts;
