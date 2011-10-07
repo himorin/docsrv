@@ -1,43 +1,43 @@
 [%- terms = {
-    "sitename"       => "PSMT - 岡山望遠鏡プロジェクト - ドキュメントサーバ",
+    "sitename"       => "SuMIRe/PFS - Prime Focus Spectrograph Project",
 
-    "path"           => "ディレクトリ",
-    "document"       => "ドキュメント",
-    "file"           => "ファイル",
-    "favorite"       => "お気に入り",
+    "path"           => "Directory",
+    "document"       => "Document",
+    "file"           => "File",
+    "favorite"       => "Favorite",
 
     "icon_def"       => "crystal_project-16/mimetypes/unknown.png",
  }
 %]
 [%- header_links_def = {
-    "index"    => { "name" => "ホーム", "url" => "$UConf.home.value" },
+    "index"    => { "name" => "Home", "url" => "$UConf.home.value" },
     "dir"      => { "name" => "/", "url" => "pathinfo.cgi?pid=0" },
-    "labels"   => { "name" => "ラベル", "url" => "labellist.cgi"},
+    "labels"   => { "name" => "Label", "url" => "labellist.cgi"},
     "favs"     => { "name" => "$terms.favorite", "url" => "favlist.cgi"},
-    "recent"   => { "name" => "直近の更新", "url" => "recent.cgi"},
-    "search"   => { "name" => "検索", "url" => "search.cgi"},
-    "admin"    => { "name" => "管理", "url" => "admin.cgi", group => Param.admingroup },
-    "config"   => { "name" => "設定", "url" => "config.cgi" },
+    "recent"   => { "name" => "RecentChanges", "url" => "recent.cgi"},
+    "search"   => { "name" => "Search", "url" => "search.cgi"},
+    "admin"    => { "name" => "Administrate", "url" => "admin.cgi", group => Param.admingroup },
+    "config"   => { "name" => "Config", "url" => "config.cgi" },
  }
 %]
 [% BLOCK site_announce %]
 [% END %]
 
 [%- user_config_help = {
-    "history"    => "更新履歴で表示するドキュメントの最終更新日数",
-    "email"      => "お気に入りが更新されたときにメールを送信する",
-    "home"       => "ホーム(トップページ)として表示する画面 (\"index.cgi\"のようなURLの最後の'/'よりあと)",
+    "history"    => "Max dates for RecentChanges list",
+    "email"      => "Send e-mail when $terms.document in $terms.favorite is updated",
+    "home"       => "Your personal Home page, set address after the last '/' (such as \"index.cgi\")",
  }
 %]
 
-[%# 表の中のアイコンの表示定義
-  #   id : アイコンID
+[%# HTML definitions for icon
+  #   id : icon ID
   #%]
 [%- BLOCK show_table_icon %]<img 
   [%- IF IcoTable.$id.defined -%]
     src="skins/images/[% IcoTable.$id.value %]" title="[% IcoTable.$id.tiphelp %]"
   [%- ELSE -%]
-    src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です"
+    src="skins/images/[% terms.icon_def %]" title="Icon undefined"
   [%- END %]
   [% IF html_id.defined %]id="[% html_id FILTER html %]"[% END -%]
   [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
@@ -47,6 +47,6 @@
   [%- IF IcoMime.$id.defined -%]
     src="skins/images/[% IcoMime.$id.value %]" title="[% IcoMime.$id.tiphelp %]"
   [%- ELSE -%]
-    src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です"
+    src="skins/images/[% terms.icon_def %]" title="Icon undefined"
   [%- END %]
 />[% END %]

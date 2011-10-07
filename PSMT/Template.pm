@@ -223,6 +223,7 @@ sub _lang_client {
             if (m/([A-Za-z\-]+)(?:;q=(\d(?:\.\d+)))?/) {push(@lang, $1); }
         }
     }
+    push(@lang, 'en');
     return \@lang;
 }
 

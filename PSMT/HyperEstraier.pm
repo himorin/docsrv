@@ -58,20 +58,18 @@ sub ExecSearch {
 sub AddNewFile {
     my ($self, $fid) = @_;
     my $finfo = PSMT::File->GetFileInfo($fid);
-    if ($finfo->{fileext} eq 'pdf') {$self->_add_pdf($fid); }
-}
-
-#------------------------------------------------------------------------
-
-sub _add_pdf {
-    my ($self, $fid) = @_;
-    my $cmd = HE_FILE_FILTER;
+    # filter and add
+    my $hash_cmd = HE_FILE_FILTER;
+    my $cmd = $hash_cmd->{$finfo->{fileext}};
+    if (! defined($cmd)) {return; }
     my $fh;
     my $fname = PSMT::File->GetFilePath($fid) . $fid;
-    open($fh, "$cmd->{pdf} $fname - |");
+    open($fh, "$cmd $fname - |");
     $self->_add($fid, $fh);
     close($fh);
 }
+
+#------------------------------------------------------------------------
 
 sub _add {
     my ($self, $fid, $fh) = @_;

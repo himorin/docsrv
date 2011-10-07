@@ -2,15 +2,15 @@
 
 [% IF Debug.defined %]
   <div id="debug_output">
-    <h3>デバッグ出力</h3>
+    <h3>Debug output</h3>
     [% FOREACH item = Debug %]
       [% IF item == 'sql' %]
-        <h4>発行 SQL リスト (prepare)</h4>
+        <h4>Queued SQL list (prepare)</h4>
         <ul>
           [% FOREACH sql IN debug_sql %]<li>[% sql %]</li>[% END %]
         </ul>
       [% ELSIF item == 'param' %]
-        <h4>クエリ文字列</h4>
+        <h4>Query parameters</h4>
         <ul>
           [% FOREACH param IN debug_param.keys %]
             <li>[% param %] : [% debug_param.$param.join(', ') %]
@@ -25,7 +25,7 @@
 
 <footer>
 <address>
-Document Server System for PSMT Group
+[% terms.sitename %]
 </address>
 </footer>
 

@@ -410,6 +410,7 @@ sub RegNewFile {
             if ($hashcnt > 20) {return undef; }
         }
     }
+    $ext = lc($ext);
     $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, NOW(), ?, ?, ?)');
     $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
     $dbh->db_unlock_tables();
