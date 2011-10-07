@@ -108,7 +108,7 @@ use constant contenttypes =>
 use constant HE_FILE_FILTER => {
   'pdf'    => '/usr/bin/pdftotext -enc UTF-8',
   'txt'    => '/usr/bin/lv -Ou8',
-  'tex'    => '/usr/bin/untex -m -e',
+  'tex'    => '/usr/bin/untex -m -e | /usr/bin/lv -Ou8',
 };
 
 use constant SAFE_PROTOCOLS => (
