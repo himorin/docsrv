@@ -1,6 +1,6 @@
 You need the following softwares.
 * MySQL server (or its compatible)
-* Perl (TemplateToolkit, Email::Send, Net::LDAP)
+* Perl (TemplateToolkit, Email::Send, Net::LDAP, Archive::Zip, XML::DOM)
 * Apache (LDAP auth)
 * HyperEstraier (with perl binding libraries)
 

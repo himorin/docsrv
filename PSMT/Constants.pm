@@ -105,10 +105,13 @@ use constant contenttypes =>
     "default" => 'application/octet-stream',
   };
 
+use constant HE_FILE_FILTER_INTERNAL => 'INTERNAL';
 use constant HE_FILE_FILTER => {
   'pdf'    => '/usr/bin/pdftotext -enc UTF-8',
   'txt'    => '/usr/bin/lv -Ou8',
   'tex'    => '/usr/bin/untex -m -e | /usr/bin/lv -Ou8',
+  'doc'    => '/usr/bin/wvWare -c utf8 -1 -x /usr/share/wv/wvText.xml',
+  'docx'   => HE_FILE_FILTER_INTERNAL,
 };
 
 use constant SAFE_PROTOCOLS => (

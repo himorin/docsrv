@@ -62,16 +62,61 @@ sub AddNewFile {
     my $hash_cmd = HE_FILE_FILTER;
     my $cmd = $hash_cmd->{$finfo->{fileext}};
     if (! defined($cmd)) {return; }
-    my $fh;
     my $fname = PSMT::File->GetFilePath($fid) . $fid;
-    open($fh, "$cmd $fname - |");
-    $self->_add($fid, $fh);
-    close($fh);
+    if ($cmd eq HE_FILE_FILTER_INTERNAL) {
+        $self->_add_text($fid, $self->_parse_format($finfo->{fileext}, $fname));
+    } else {
+        my $fh;
+        open($fh, "$cmd $fname - |");
+        $self->_add_fh($fid, $fh);
+        close($fh);
+    }
 }
 
 #------------------------------------------------------------------------
 
-sub _add {
+sub _parse_format {
+    my ($self, $ext, $fname) = @_;
+    my $text = '';
+    my $pkg_module = 'PSMT::HyperEstraier::' . uc($ext);
+    eval ("require $pkg_module") || return "";
+    return $pkg_module->DumpText($fname);
+}
+
+sub _add_text {
+    my ($self, $fid, $text) = @_;
+    my $obj_doc = new Document();
+    my $finfo = PSMT::File->GetFileInfo($fid);
+    my $dinfo = PSMT::File->GetDocInfo($finfo->{docid});
+    $obj_doc->add_attr('@uri', $fid);
+    $obj_doc->add_attr('@title', $dinfo->{filename} . '/' . $finfo->{description});
+    $obj_doc->add_attr('@author', $finfo->{uname});
+    $obj_doc->add_attr('@type', PSMT::File->GetFileExt($fid));
+    $obj_doc->add_text($text);
+    $obj_db->put_doc($obj_doc, Database::PDCLEAN);
+}
+
+sub _add_fh {
+    my ($self, $fid, $fh) = @_;
+    my $obj_doc = new Document();
+    my $finfo = PSMT::File->GetFileInfo($fid);
+    my $dinfo = PSMT::File->GetDocInfo($finfo->{docid});
+    $obj_doc->add_attr('@uri', $fid);
+    $obj_doc->add_attr('@title', $dinfo->{filename} . '/' . $finfo->{description});
+    $obj_doc->add_attr('@author', $finfo->{uname});
+    $obj_doc->add_attr('@type', PSMT::File->GetFileExt($fid));
+    foreach (<$fh>) {
+        chomp();
+        $obj_doc->add_text($_);
+    }
+    $obj_db->put_doc($obj_doc, Database::PDCLEAN);
+}
+
+sub _open {
+    my ($self, $is_write) = @_;
+    my $db = PSMT->config->GetParam('he_dir');
+    $obj_db = new Database();
+sub _add_fh {
     my ($self, $fid, $fh) = @_;
     my $obj_doc = new Document();
     my $finfo = PSMT::File->GetFileInfo($fid);
