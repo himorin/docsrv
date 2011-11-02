@@ -112,10 +112,6 @@ sub _add_fh {
     $obj_db->put_doc($obj_doc, Database::PDCLEAN);
 }
 
-sub _open {
-    my ($self, $is_write) = @_;
-    my $db = PSMT->config->GetParam('he_dir');
-    $obj_db = new Database();
 sub _add_fh {
     my ($self, $fid, $fh) = @_;
     my $obj_doc = new Document();
