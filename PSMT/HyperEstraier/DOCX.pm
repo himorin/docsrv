@@ -47,6 +47,7 @@ sub DumpText {
     my $node_cnt = $nodes->getLength;
     for (my $node_id = 0; $node_id < $node_cnt; $node_id ++) {
         $dump_text .= $nodes->item($node_id)->getFirstChild()->getData();
+        $dump_text .= ' ';
     }
     return $dump_text;
 }
