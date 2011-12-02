@@ -113,6 +113,7 @@ use constant HE_FILE_FILTER => {
   'tex'    => '/usr/bin/untex -m -e | /usr/bin/lv -Ou8',
   'doc'    => '/usr/bin/wvWare -c utf8 -1 -x /usr/share/wv/wvText.xml',
   'docx'   => HE_FILE_FILTER_INTERNAL,
+  'ppt'    => '/usr/bin/ppthtml',
   'pptx'   => HE_FILE_FILTER_INTERNAL,
 };
 
