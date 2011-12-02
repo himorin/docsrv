@@ -27,10 +27,15 @@ print "Opened\n";
 
 my $obj_file = new PSMT::File;
 my $arr_fids = $obj_file->ListFileInExt($ext);
+my $obj_doc;
 foreach (@$arr_fids) {
-    print "Adding $fid\n";
-    $obj_he->AddNewFile($fid);
-
+    $obj_doc = $obj_he->GetFileInfo($_);
+    if (defined($obj_doc)) {
+        print "Already registerd : $_\n";
+    } else {
+        print "Adding $_\n";
+        $obj_he->AddNewFile($_);
+    }
 }
 
 exit;
