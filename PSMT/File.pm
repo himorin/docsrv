@@ -34,6 +34,7 @@ use PSMT::HyperEstraier;
     ListFilesInDoc
     ListUserLoad
     ListUserLoadForDoc
+    ListFileInExt
 
     GetPathIdForParent
     GetPathIdForDoc
@@ -92,6 +93,19 @@ sub ListDavFile {
     }
     closedir(INDIR);
     return \%files;
+}
+
+sub ListFileInExt {
+    my ($self, $ext) = @_;
+    my @fids;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE fileext = ?');
+    $sth->execute($ext);
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {
+        push(@fids, $ref->{fileid});
+    }
+    return \@fids;
 }
 
 sub GetDocInfo {
