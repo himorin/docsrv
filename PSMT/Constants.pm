@@ -115,6 +115,7 @@ use constant HE_FILE_FILTER => {
   'docx'   => HE_FILE_FILTER_INTERNAL,
   'ppt'    => '/usr/bin/ppthtml',
   'pptx'   => HE_FILE_FILTER_INTERNAL,
+  'xlsx'   => HE_FILE_FILTER_INTERNAL,
 };
 
 use constant SAFE_PROTOCOLS => (
