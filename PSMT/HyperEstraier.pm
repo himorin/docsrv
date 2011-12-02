@@ -78,7 +78,9 @@ sub AddNewFile {
 sub GetFileInfo {
     my ($self, $fid) = @_;
     my %ref;
-    my $obj_doc = $obj_db->get_doc($fid, 0);
+    my $he_id = $obj_db->uri_to_id($fid);
+    if ($he_id < 0) {return undef; }
+    my $obj_doc = $obj_db->get_doc($he_id, 0);
     if (! defined($obj_doc)) {return undef; }
     $ref{id} = $obj_doc->id();
     $ref{texts} = $obj_doc->texts();

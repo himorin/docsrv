@@ -27,9 +27,8 @@ print "Opened\n";
 
 my $obj_file = new PSMT::File;
 my $arr_fids = $obj_file->ListFileInExt($ext);
-my $obj_doc;
 foreach (@$arr_fids) {
-    $obj_doc = $obj_he->GetFileInfo($_);
+    my $obj_doc = $obj_he->GetFileInfo($_);
     if (defined($obj_doc)) {
         print "Already registerd : $_\n";
     } else {
