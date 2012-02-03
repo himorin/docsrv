@@ -12,7 +12,7 @@ Full text search is on development. <br />
 If you use full text search, any search condition on the [% terms.document %] information 
 or index will be ignored. <br />
 Current suppoerted formats of full text index are:
-[% FOREACH mimetype IN SAFE_PROTOCOLS %]mimetype.key, [% END %].
+[% constants.HE_FILE_FILTER.keys.sort.join(', ') %].
 </div>
 </div>
 
