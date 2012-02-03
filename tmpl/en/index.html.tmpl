@@ -1,17 +1,17 @@
 [% PROCESS global/header.html.tmpl
   current_page = "index"
-  page_title = "メインページ"
+  page_title = "Main page"
 %]
 
-<h3>[% terms.path %]リスト</h3>
+<h3>List of [% terms.path %]</h3>
 
 [% INCLUDE entry/table.html.tmpl       paths = topdirs   docs = doc_list %]
 
-<h3>最近更新された[% terms.document %]</h3>
+<h3>Recently updated [% terms.document %]</h3>
 
 [% INCLUDE entry/table.html.tmpl       docs = recent %]
 
-<h3>あなたの [% terms.favorite %]</h3>
+<h3>Your [% terms.favorite %]</h3>
 
 [% INCLUDE favorite/table.html.tmpl    favpath = favs_path  favlist = favs %]
 

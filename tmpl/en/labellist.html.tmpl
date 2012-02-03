@@ -1,13 +1,13 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "ラベル一覧"
+  page_title = "List of avail labels"
 %]
 
 <table class="labellist">
   <tr>
     <th>ID</th>
-    <th>ラベル名</th>
-    <th>説明</th>
-    <th>アクセス可能グループ</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Group Restrictions</th>
   </tr>
 [% FOREACH item = labels.keys %]
   [% count = loop.count() %]
@@ -25,6 +25,6 @@
 [% END %]
 </table>
 
-<div><a href="labeledit.cgi">新規追加</a></div>
+<div><a href="labeledit.cgi">Add new label</a></div>
 
 [% PROCESS global/footer.html.tmpl %]

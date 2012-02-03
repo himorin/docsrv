@@ -1,41 +1,43 @@
 [% PROCESS global/header.html.tmpl %]
 
-<h3>ファイル更新履歴</h3>
+<h3>[% terms.file %] history</h3>
 
-<p>(近い時間にアップロードされた)異なるタイプのファイルは、同じバージョンの
-別形式のファイルとしてアップロードされている可能性があります。</p>
+<p>Different formatted [% terms.file %] uploaded into the same [% terms.document %] 
+(uploaded in a short time interval) might be a different format of the same 
+version of [% terms.document %].
+Please check descriptions of [% terms.file %] carefully.</p>
 
 [% INCLUDE entry/filelist.html.tmpl   files = file_list %]
 
-<h3>ドキュメント情報</h3>
+<h3>Informations for [% terms.document %]</h3>
 
 <form method="POST" action="docinfo.cgi">
 <ul>
-  <li>フルパス: <tt><a href="pathinfo.cgi?path=[% full_path %]">[% full_path %]</a></tt>
+  <li>Full [% terms.path %]: <tt><a href="pathinfo.cgi?path=[% full_path %]">[% full_path %]</a></tt>
     <span id="doc_name_raw"><tt>[% doc_info.filename %]</tt></span>
     <span id="doc_name_edit" class="ui_hidden"><input type="text" size="50" name="docname" value="[% doc_info.filename %]"></span>
     [% IF InList(file_uname, User.uid) %]
-      <span id="update_link"><a href="javascript: doc_info_update();">更新</a></span>
+      <span id="update_link"><a href="javascript: doc_info_update();">Update</a></span>
     [% END %]</li>
-  <li>ファイルの説明:
+  <li>Description of [% terms.file %]:
     <span id="doc_desc_raw">[% doc_info.description FILTER html %]</span>
     <span id="doc_desc_edit" class="ui_hidden"><input type="text" size="100" name="description" value="[% doc_info.description FILTER html %]"></span>
     </li>
-  <li>アクセス可能グループ: 
+  <li>Accessible groups (OR): 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
-    [% ELSE %](未定義)[% END %]</li>
-  <li>ラベル: 
+    [% ELSE %](undefined)[% END %]</li>
+  <li>Labels: 
     [% IF doc_labels.size > 0 %]
       [% FOREACH item IN doc_labels %]
         [% IF NOT loop.first %], [% END %]
         <span title="[% Label.$item.description %]">[% Label.$item.name %]</span>
       [% END %]
-    [% ELSE %](未定義)[% END %]
+    [% ELSE %](undefined)[% END %]
     <a href="doclabel.cgi?did=[% doc_info.docid %]">[% INCLUDE show_table_icon id = 'label_add' %]</a>
     </li>
 </ul>
 <div id="doc_update" class="ui_hidden">
-  <input type="submit" value="更新">
+  <input type="submit" value="Update">
 </div>
 <input type="hidden" name="did" value="[% doc_info.docid %]">
 </form>
@@ -54,7 +56,7 @@ function doc_info_update () {
 </script>
 
 [% IF UpDoc(doc_info.docid) || Admin %]
-<h3>ファイルアクセスログ</h3>
+<h3>Access log</h3>
 
 [% INCLUDE entry/activity.html.tmpl   activity = activity %]
 [% END %]

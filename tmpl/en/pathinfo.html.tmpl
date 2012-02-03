@@ -1,9 +1,9 @@
 [% PROCESS global/header.html.tmpl
   current_page = "pathinfo"
-  page_title = "$terms.path 表示 - $full_path"
+  page_title = "Information of $terms.path - $full_path"
 %]
 
-<h3>現在の [% terms.path %] ([% full_path %]) の情報</h3>
+<h3>Current information for [% terms.path %] ([% full_path %])</h3>
 
 [% IF pid == 0 %]
   [% INCLUDE entry/table.html.tmpl       upper_path = -1
@@ -17,19 +17,19 @@
   <form method="POST" action="pathinfo.cgi">
   [% PROCESS global/formopt.html.tmpl %]
   <ul>
-    <li id="path_name_edit" class="ui_hidden">ディレクトリ名: <input type="text" name="pathname" size="50" value="[% path_info.pathname FILTER html %]"></li>
-    <li>このディレクトリについて: 
+    <li id="path_name_edit" class="ui_hidden">Name: <input type="text" name="pathname" size="50" value="[% path_info.pathname FILTER html %]"></li>
+    <li>About this [% terms.path %]: 
       <span id="path_desc_raw">[% path_info.description FILTER html %]</span>
       <span id="path_desc_edit" class="ui_hidden"><input type="text" name="description" size="150" value="[% path_info.description FILTER html %]"></span>
       [% IF Admin %]
-        <span id="update_link"><a href="javascript: doc_info_update();">更新</a></span>
+        <span id="update_link"><a href="javascript: doc_info_update();">Update</a></span>
       [% END %]</li>
-    <li>アクセス可能グループ: 
+    <li>Group restrictions (OR): 
       [% IF path_info.gname.size > 0 %][% path_info.gname.join(', ') %]
-      [% ELSE %](誰でも)[% END %]</li>
+      [% ELSE %](undefined)[% END %]</li>
   </ul>
   <div id="path_update" class="ui_hidden">
-    <input type="submit" value="更新">
+    <input type="submit" value="Update">
   </div>
   <input type="hidden" name="pid" value="[% path_info.pathid %]">
   </form>
@@ -48,7 +48,7 @@
 [% END %]
 
 
-<h3 id="doc_add" class="ui_clickable">新しいドキュメントの追加</h3>
+<h3 id="doc_add" class="ui_clickable">Add new [% terms.document %] to this [% terms.path %]</h3>
 <script type="text/javascript">
   var doc_add_disp = function() { tweak_ToggleClass('doc_add', 'ui_hidden'); }
   YAHOO.util.Event.on('doc_add', 'click', doc_add_disp);
@@ -58,10 +58,10 @@
 <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
   [% PROCESS global/formopt.html.tmpl %]
   <ul>
-    <li>新しいドキュメントの名前: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
-    <li>新しいドキュメントの説明: <input type="text" name="docdesc" value="" size="150"></li>
+    <li>Name of new [% terms.document %]: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
+    <li>Description of new [% terms.document %]: <input type="text" name="docdesc" value="" size="150"></li>
   </ul>
-  <h4>新規ドキュメントに付けるラベル</h4>
+  <h4>Label for new [% terms.document %]</h4>
   <ul>
     [% FOREACH item = Label.keys %]
       <li><input type="checkbox" name="label" value="[% item %]" />
@@ -70,8 +70,8 @@
   </ul>
   [% INCLUDE entry/docform.html.tmpl %]
   <input type="hidden" name="pid" value="[% pid %]">
-  <input type="submit" value="ドキュメント追加">
-  <input type="reset" value="リセット">
+  <input type="submit" value="Add new [% terms.document %]">
+  <input type="reset" value="Reset">
 </form>
 </div>
 <script type="text/javascript">

@@ -1,6 +1,6 @@
 [% PROCESS global/header.html.tmpl
   current_page = "search"
-  page_title = "検索条件設定"
+  page_title = "Set search conditions"
 %]
 
 <form action="query.cgi" method="POST">
@@ -8,25 +8,28 @@
 
 <div id="error">
 <div class="info">
-現在、ドキュメント全文検索は試験中です。<br />
-全文検索を指定した場合、ドキュメント情報についての検索条件は無視されます。<br />
-また、PDFのみしかインデックス化されておりません。
+Full text search is on development. <br />
+If you use full text search, any search condition on the [% terms.document %] information 
+or index will be ignored. <br />
+Current suppoerted formats of full text index are:
+[% FOREACH mimetype IN SAFE_PROTOCOLS %]mimetype.key, [% END %].
 </div>
 </div>
 
-<h3>ドキュメント全文検索</h3>
+<h3>Full text indexed search</h3>
 
-<p><a href="http://fallabs.com/hyperestraier/uguide-ja.html#searchcond">HyperEstraierの検索条件節</a>
-を直接指定してください。</p>
+<p>Please specify the 
+<a href="http://fallabs.com/hyperestraier/uguide-en.html#searchcond">search condition format of HyperEstraier</a>
+directly into this box.</p>
 
 <input type="text" name="docs_he" value="" size="100"></input>
 
 
-<h3>ドキュメント情報についての検索条件指定</h3>
+<h3>Search by information of [% terms.document %]</h3>
 
-<p>各[% terms.document %]の名前、説明、[% terms.document %]に付けたラベルに
-対して検索条件を指定可能です。
-検索条件を指定しなかったカテゴリについては条件付けは行われません。</p>
+<p>You can search by name, description and labels of [% terms.document %].
+If you don't specify in some category (name, description etc), these categories 
+will be simply ignored.</p>
 
 <p>
 検索条件は、それぞれのカテゴリに対して AND もしくは OR の複数設定可能で、
@@ -40,33 +43,33 @@
 を結果として表示する。
 </p>
 
-<h4>[% terms.document %]の名前</h4>
+<h4>Name of [% terms.document %]</h4>
 
-<div>調整中</div>
+<div>Under construction</div>
 
-<h4>[% terms.document %]の説明</h4>
+<h4>Description of [% terms.document %]</h4>
 
 <div>
-<input type="text" name="docreg_desc" value="[% linfo.name %]" size="100"></input>
-の各単語を
+Search [% terms.document %] with its description contains 
 <select name="docreg_desc_cond">
-  <option value="and" selected="selected">全て含む</option>
-  <option value="or">いずれか含む</option>
+  <option value="and" selected="selected">all of</option>
+  <option value="or">any of</option>
 </select>
-説明を持つ[% terms.documenet %]を検索する。
+words of: 
+<input type="text" name="docreg_desc" value="[% linfo.name %]" size="100"></input>
 </div>
 
-<div>半角空白区切りで単語を入力してください。
-""で囲むことによる複数単語の一括指定には対応していません。</div>
+<div>Please specify multiple words in separated with white space (" ").
+You cannot specify words quoted with "".</div>
 
-<h4>[% terms.document %]に付けたラベル</h4>
+<h4>Labels for [% terms.document %]</h4>
 
-<div>次のラベルについて
+<div>Search [% terms.document %] with 
 <select name="doc_label_cond">
-  <option value="and" selected="selected">AND</option>
-  <option value="or">OR</option>
+  <option value="and" selected="selected">ALL</option>
+  <option value="or">ANY</option>
 </select>
-を結果として表示する :
+of the following labels :
 
 <select name="doc_label" size="5" multiple="multiple">
   [% FOREACH item = Label.keys %]
@@ -77,7 +80,7 @@
 
 
 <div>
-<input type="submit" value="検索実行">
+<input type="submit" value="Search">
 <input type="reset">
 </div>
 

@@ -2,10 +2,10 @@
 <table class="favlist">
   <tr>
     <th></th>
-    <th>ドキュメント名</th>
-    <th>説明</th>
-    <th>解除</th>
-    <th colspan="3">最新版</th>
+    <th>[% terms.document %] name</th>
+    <th>Description</th>
+    <th>un-fav</th>
+    <th colspan="3">Newest</th>
   </tr>
 
 [% FOREACH item IN favpath.keys %]
@@ -20,7 +20,7 @@
       </td>
     <td class="docpath"><a href="pathinfo.cgi?pid=[% item %]"><tt>[% favpath.$item.full_path %]</tt></a></td>
     <td class="docfav">[% favpath.$item.description %]</td>
-    <td class="docfav_rm"><a href="docfav.cgi?pid=[% item %]&amp;op=remove">解除</a></td>
+    <td class="docfav_rm"><a href="docfav.cgi?pid=[% item %]&amp;op=remove">un-fav</a></td>
     <td colspan="3" class="center"></td>
   </tr>
 [% END %]
@@ -41,13 +41,13 @@
     <td class="docpath">
       <a href="fileget.cgi?did=[% item %]"><tt>[% favlist.$item.full_path %][% favlist.$item.filename %]</tt></a></td>
     <td class="docfav">[% favlist.$item.description %]</td>
-    <td class="docfav_rm"><a href="docfav.cgi?did=[% favlist.$item.docid %]&amp;op=remove">解除</a></td>
+    <td class="docfav_rm"><a href="docfav.cgi?did=[% favlist.$item.docid %]&amp;op=remove">un-fav</a></td>
     [% IF favlist.$item.fid.defined %]
       <td>[% favlist.$item.fid.uname %]</td>
       <td>[% favlist.$item.fid.uptime %]</td>
       <td class="docsize">[% SizeDisp(favlist.$item.fid.size) %]</td>
     [% ELSE %]
-      <td colspan="3" class="center">存在しません</td>
+      <td colspan="3" class="center">Not exist</td>
     [% END %]
   </tr>
 [% END %]

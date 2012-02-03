@@ -1,20 +1,20 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "編集対象アイコンクラス選択"
+  page_title = "Select icon class to edit"
 %]
 
-<h3>ターゲット選択</h3>
+<h3>Select icon class</h3>
 
-<p>アイコンは利用される部分やターゲットによって、設定や一覧のしやすさを
-目的に、いくつかのアイコンクラスに分類されています。
-以下のアイコンクラス一覧から、目的のクラスを選択してください。
-選択後、そのクラスに定義されているアイコン一覧が表示され、編集・追加でき
-るようになります。</p>
+<p>For ease of setting and listing, icons are organized into some icon 
+classes by where they are used at or their targets.
+First, please select one icon class from the followings. 
+After selecting one, you can view a whole list of icons defined in the 
+specified class, and begin to edit or add icons.</p>
 
 <ul>
-  <li><a href="editicon.cgi?class=table">表部分に利用されるアイコン</a>
-    (ディレクトリ・ドキュメントなどの表に利用されるアイコンです)</li>
-  <li><a href="editicon.cgi?class=mime">MIMEタイプ別アイコン</a>
-    (ドキュメントのファイル型を視認するために表示されるアイコンです)</li>
+  <li><a href="editicon.cgi?class=table">Icons for general tables</a>
+    (will be used in tables of [% terms.document %] or [% terms.path %])</li>
+  <li><a href="editicon.cgi?class=mime">Icons per MIME type</a>
+    (will be used as indicators for file types)</li>
 </ul>
 
 

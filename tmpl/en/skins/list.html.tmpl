@@ -1,5 +1,5 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "アイコン情報更新"
+  page_title = "Update icon definition"
 %]
 <script type="text/javascript">
 <!--
@@ -13,10 +13,10 @@ function select_icon (target) {
 // -->
 </script>
 
-<h3>[% target FILTER html %]アイコン更新</h3>
+<h3>Update information of icon in [% target FILTER html %]</h3>
 
-<p>アイコンに利用できる画像リストは下にあります。
-リストから画像をクリックすると選択されます。</p>
+<p>List of avail icon images are listed below.
+Click icon itself to select.</p>
 
 <form method="POST" action="editicon.cgi">
   <input type="hidden" name="class" value="[% class FILTER html %]">
@@ -24,18 +24,18 @@ function select_icon (target) {
   <input type="hidden" name="icon" value="[% icon_info.value FILTER html %]" id="current_target">
 
   <ul>
-    <li>名前: [% target FILTER html %]</li>
-    <li>アイコン: <img src="skins/images/[% icon_info.value %]" id="current_icon" /></li>
-    <li>ツールチップ: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
-    <li>状態: <select name="enabled">
-      <option value="1" [% IF icon_info.enabled == '1' %]selected="selected"[% END %]>有効</option>
-      <option value="0" [% IF icon_info.enabled == '0' %]selected="selected"[% END %]>無効</option>
+    <li>Name: [% target FILTER html %]</li>
+    <li>Icon: <img src="skins/images/[% icon_info.value %]" id="current_icon" /></li>
+    <li>Tool tip: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
+    <li>Status: <select name="enabled">
+      <option value="1" [% IF icon_info.enabled == '1' %]selected="selected"[% END %]>Used</option>
+      <option value="0" [% IF icon_info.enabled == '0' %]selected="selected"[% END %]>Not used</option>
       </select></li>
   </ul>
-  <input type="submit" value="更新">
+  <input type="submit" value="Update">
 </form>
 
-<h4>有効なアイコンリスト</h4>
+<h4>List of avail icon images</h4>
 
 <div class="icon_disp">
   [%- FOREACH item = avail_icons %]

@@ -1,6 +1,6 @@
 [% PROCESS global/header.html.tmpl
   current_page = "config"
-  page_title = "ユーザ設定"
+  page_title = "User preferences"
 %]
 
 <script type="text/javascript">
@@ -14,17 +14,17 @@ function tweak_default_change (item) {
 // -->
 </script>
 
-<h3>設定一覧</h3>
+<h3>List of preferences</h3>
 
 <form method="POST" action="config.cgi">
   [% PROCESS global/formopt.html.tmpl %]
 
 <table class="config">
   <tr>
-    <th>名前</th>
-    <th>説明</th>
-    <th colspan="2">値</th>
-    <th>既定値に設定</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th colspan="2">Value</th>
+    <th>Set to default</th>
   </tr>
 
   [% FOREACH item IN config_user.keys %]
@@ -66,11 +66,11 @@ function tweak_default_change (item) {
           [% user_config.$item %]
         [% END %]</td>
       <td>
-        [% IF config_user.$item.class == 'number' %]    数字
-        [% ELSIF config_user.$item.class == 'enum' %]   選択
-        [% ELSIF config_user.$item.class == 'string' %] 文字列
-        [% ELSIF config_user.$item.class == 'char' %]   文字
-        [% ELSIF config_user.$item.class == 'bool' %]   真偽値
+        [% IF config_user.$item.class == 'number' %]    Number
+        [% ELSIF config_user.$item.class == 'enum' %]   Select
+        [% ELSIF config_user.$item.class == 'string' %] String
+        [% ELSIF config_user.$item.class == 'char' %]   Charactor
+        [% ELSIF config_user.$item.class == 'bool' %]   Boolean
         [% END %]
         </td>
       <td>
@@ -78,15 +78,15 @@ function tweak_default_change (item) {
           [% IF config_user.$item.is_default == 1 %]checked="checked"[% END %]
           onchange="javascript: tweak_default_change('[% item %]')"
           >
-        (既定値: [% config_user.$item.default_value FILTER html %])
+        (Default: [% config_user.$item.default_value FILTER html %])
         </td>
     </tr>
   [% END %]
 </table>
 
 
-<input type="submit" value="更新">
-<input type="reset" value="リセット">
+<input type="submit" value="Update">
+<input type="reset" value="Reset">
 </form>
 
 [% PROCESS global/footer.html.tmpl %]

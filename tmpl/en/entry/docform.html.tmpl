@@ -1,21 +1,22 @@
-<h4>ドキュメントに追加するファイルの選択</h4>
+<h4>Select file to add into this [% terms.document %]</h4>
 
 <p>
-  <input type="radio" name="source" value="upload" checked="checked" /> ローカルファイルをアップロード: 
+  <input type="radio" name="source" value="upload" checked="checked" /> Upload from local file: 
   <input type="file" name="target_file" size="80" />
   <br />
-  10MB程度以上のファイルをアップロードしようとした場合、ブラウザやサーバの状況に
-  よってはタイムアウトする可能性があります。その場合、下のチェックボックスを選択
-  し、<a href="http://www.google.co.jp/search?q=webdav">WebDAV</a>に先にアップロー
-  ドしたファイルから追加する機能を利用してください。
+  If you try to upload a large file like over than 10MB, system sometimes cause 
+  timeout depending on the conditions of network or server. 
+  If you get timeout, please try to upload into 
+  <a href="http://www.google.co.jp/search?q=webdav">WebDAV</a> space first, and 
+  select the file from selection below with checking on the check box below.
 </p>
 
 [% IF dav_file.defined %]
   <p>
     [% IF dav_file.keys.size == 0 %]
-      WebDAV領域にファイルはありません。
+      No file in the WebDAV space.
     [% ELSE %]
-      <input type="radio" name="source" value="dav" /> WebDAVに置いたファイルを利用 :
+      <input type="radio" name="source" value="dav" /> Use file in the WebDAV space :
       <select name="dav_source">
         [% FOREACH item IN dav_file.keys %]
           <option value="[% item %]">[% item %] ([% SizeDisp(dav_file.$item) %])</option>
@@ -26,5 +27,5 @@
 [% END %]
 
 <p>
-このファイルへのコメント: <input type="text" name="comment" value="" size="80">
+Comment to this [% terms.file %]: <input type="text" name="comment" value="" size="80">
 </p>

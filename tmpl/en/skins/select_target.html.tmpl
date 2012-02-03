@@ -1,19 +1,19 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "アイコン設定ターゲット選択"
+  page_title = "Select target icon to set"
 %]
 
-<h3>[% class %]アイコン一覧</h3>
+<h3>List of icons in class [% class %]</h3>
 
-<p>クラス[% class %]には以下のアイコンが定義されています。
-アイコンを選択しなおす、もしくはツールチップを編集する場合は
-それぞれのアイコンをクリックしてください。</p>
+<p>Following icons are defined in class [% class %].
+If you want to edit settings (selecting new icon or edit tool tips), 
+click the target icon itself.</p>
 
 <table class="icon_list">
   <tr>
     <th></th>
-    <th>名前</th>
-    <th>ツールチップ</th>
-    <th>ファイル名</th>
+    <th>Name</th>
+    <th>Tool tip</th>
+    <th>Icon name</th>
     <th></th>
   </tr>
   [% FOREACH icon = target.keys %]
@@ -29,14 +29,14 @@
       <td>$icon</td>
       <td>[% target.$icon.tiphelp FILTER html %]</td>
       <td>[% target.$icon.value FILTER html %]</td>
-      <td>[% IF target.$icon.enabled == 1 %]有効[% ELSE %]無効[% END %]</td>
+      <td>[% IF target.$icon.enabled == 1 %]Used[% ELSE %]Not used[% END %]</td>
     </tr>
   [% END %]
 </table>
 
 [% IF class == 'mime' %]
-<p>もしくは、<a href="editicon.cgi?class=mime&amp;method=new">定義を追加</a>
-することも可能です。</p>
+<p>You also can <a href="editicon.cgi?class=mime&amp;method=new">add new definition</a>
+instead of editing.</p>
 [% END %]
 
 

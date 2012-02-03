@@ -1,28 +1,29 @@
-From: docsrv@psmt.kusastro.kyoto-u.ac.jp
+From: [% terms.admin %]
 To: [% emailto +%]
-Subject: [PSMT/DocSrv] New document was added to your favorite directory
+Subject: New [% terms.document %] was added to your [% terms.favorite %] [% terms.path %]
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-User-Agent: PSMT Document Server
+User-Agent: [% terms.sitedomain %]
 
 　[%+ uname %] さま
 
-　このメールは PSMT ドキュメントサーバからの自動通知メールです。
-　返信しないでください。
+　このメールは [% terms.sitename %] ドキュメントサーバ
+からの自動通知メールです。
+　このメールには返信しないでください。
 
-　あなたがお気に入りに入れているディレクトリに、[% by %] により新しい
-ドキュメントが追加されました。
+　あなたが [% terms.favorite %] に入れている [% terms.path %] に、[% by %] により新しい
+[% terms.document %] が追加されました。
 
-　追加されたドキュメント
+　追加された [% terms.document %]
 名前: [% path %][% newdoc.filename +%]
 説明: [% newdoc.description +%]
-URL : https://psmt.kusastro.kyoto-u.ac.jp/docsrv/docinfo.cgi?did=[% newdoc.docid +%]
-　追加されたファイル
+URL : [% terms.baseurl %]docinfo.cgi?did=[% newdoc.docid +%]
+　追加された [% terms.file %]
 形式: [% newfile.fileext +%]
 説明: [% newfile.description +%]
 日時: [% newfile.uptime +%]
-URL : https://psmt.kusastro.kyoto-u.ac.jp/docsrv/fileinfo.cgi?fid=[% newfile.fileid +%]
+URL : [% terms.baseurl %]fileinfo.cgi?fid=[% newfile.fileid +%]
 
 -- 
-PSMT Document Server System
-https://psmt.kusastro.kyoto-u.ac.jp/docsrv/
+[% terms.sitename %] Document Server System
+[% terms.baseurl %]

@@ -1,19 +1,21 @@
 [% PROCESS global/header.html.tmpl %]
 
-<h3>現在の設定</h3>
+<h3>Current settings</h3>
 <ul>
   <li>Path ID: [% path_info.pathid %]</li>
-  <li>Full path: [% full_path %]</li>
+  <li>Full [% terms.path %]: [% full_path %]</li>
   <li>Parenet: [% path_info.parent %]</li>
   <li>Name: [% path_info.pathname %]</li>
   <li>Description: [% path_info.description %]</li>
-  <li>Accessible groups: [% permission.join(', ') %] </li>
+  <li>Group restrictions: [% permission.join(', ') %] </li>
 </ul>
 
-<h3>アクセス権限グループの更新</h3>
+<h3>Update the group restrictions</h3>
 
-<p>チェックを付けたグループのどれかに所属しているユーザのみが閲覧可能になります。
-全てのチェックを外すと、どのユーザも閲覧できるようになります。</p>
+<p>Users in any of groups specified here will be able to view any [% terms.document %] 
+in this [% terms.path %]. Group restrictions are evaluated in 'OR'.
+Without any check mark, no group restrictions will be set, and any user can view 
+any [% terms.document %] in this [% terms.path %].</p>
 
 <form action="pathgroup.cgi" method="POST">
 [% INCLUDE global/formopt.html.tmpl %]

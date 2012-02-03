@@ -1,11 +1,11 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "検索結果"
+  page_title = "Search result"
 %]
 
 [% IF search_result.defined %]
   [% INCLUDE entry/table.html.tmpl       paths = {}    docs = search_result %]
 [% ELSE %]
-  <p>検索結果が0件でした。</p>
+  <p>No result found.</p>
 [% END %]
 
 [% PROCESS global/footer.html.tmpl %]

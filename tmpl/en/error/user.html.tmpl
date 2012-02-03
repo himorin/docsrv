@@ -1,71 +1,69 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "操作エラー"
+  page_title = "Error occured."
 %]
 
 <div id="error">
 <img class="errico" src="skins/images/weby-icon/Warning.png">
 <p class="desc">
-あなたの要求を正常に解釈できませんでした。
-このエラーが発生した画面のURLおよびどういう操作を行ったかを、
-エラーコード '[% error %]' とともにシステム管理者に通知するか、
-<a href="https://psmt.kusastro.kyoto-u.ac.jp/bugzilla/enter_bug.cgi?product=PSMT">Bugzilla</a>
-に登録してください。
+The system could not complete your request. 
+Please notify your system administrator or file into ITS (if exist), 
+with error code '[% error %]', the URL you requested, 
+and what you did just before this error.
 </p>
 <div class="info">
   [% IF error == 'doc_add_failed' %]
-    ドキュメントの追加に失敗しました。
+    Failed to add new [% terms.document %].
   [% ELSIF error == 'file_move_failed' %]
-    ドキュメントへのファイル登録時にファイルを保存領域に移動できませんでした。
+    Could not move into the storage on registering new [% terms.file %].
   [% ELSIF error == 'file_register_failed' %]
-    ドキュメントへのファイル登録に失敗しました。
+    Failed to register new [% terms.file %] into existing [% terms.document %].
   [% ELSIF error == 'update_permission' %]
-    登録情報を更新する権限がありません。
-    管理者権限を持っているユーザである、
-    またはファイルについてはアップロードした本人である必要があります。
+    Could not update information.
+    You need to have the administrative permissino or 
+    to be an exact user who uploaded the [% terms.file %].
   [% ELSIF error == 'invalid_document_id' %]
-    無効な [% terms.document %] IDです。
+    Invalid [% terms.document %] ID supplied.
   [% ELSIF error == 'invalid_file_source' %]
-    無効なファイルです。
+    Invalid [% terms.file %] supplied.
   [% ELSIF error == 'invalid_fileid' %]
-    無効なファイルIDです。
+    Invalid [% terms.file %] ID supplied.
   [% ELSIF error == 'invalid_filepath' %]
-    無効なファイルパスです。
+    Invalid [% terms.file %] path supplied.
   [% ELSIF error == 'invalid_label_id' %]
-    無効なラベルIDです。
+    Invalid label ID supplied.
   [% ELSIF error == 'invalid_param' %]
-    無効なパラメータが指定されました。
+    You have specified invalid parameters.
   [% ELSIF error == 'invalid_path_id' %]
-    無効なパスIDです。
+    Invalid [% terms.path %] ID supplied.
   [% ELSIF error == 'ldap_uid_notfound' %]
-    あなたのユーザアカウントがLDAP上に見つかりません。
+    Could not find a record of your account at LDAP.
   [% ELSIF error == 'null_file_upload' %]
-    ファイルがアップロードされませんでした。
+    No file uploaded.
   [% ELSIF error == 'permission_error' %]
-    指定されたコンテンツの閲覧権限がありません。
+    You don't have permission to view specified content.
   [% ELSIF error == 'root_cannot_set_permission' %]
-    ルートディレクトリには権限を設定できません。
+    You cannot set any permission for the top [% terms.path %].
   [% ELSIF error == 'system_invoke_error' %]
-    システムの起動に失敗しました。
+    System invoke error.
   [% ELSIF error == 'unknown_operation_method' %]
-    未定義の操作を要求しました。
+    You have specified an unknown operation method.
   [% ELSIF error == 'invalid_new_name' %]
-    新規ディレクトリもしくはドキュメントを '[% new_name FILTER html %]' 
-    という名前では作成できません。
+    You cannot register new [% terms.path %] or [% terms.document %] with 
+    a name of '[% new_name FILTER html %]'.
     [% IF error_id == 'null_name' %]
-      名前が空白です。
+      Your specified name is empty.
     [% ELSIF error_id == 'cannot_use_char' %]
-      名前として利用できない文字を含んでいます。
+      Your specified name contains an invalid charactor.
     [% ELSIF error_id == 'collision' %]
-      既存の
-      [% IF target == 'path' %]ディレクトリ
-      [% ELSIF target == 'doc' %]ドキュメント
-      [% ELSE %][% target FILTER html %][% END %]
-      と同じ名前は利用できません。
+      You cannot use the same name as existing 
+      [% IF target == 'path' %][% terms.path %]
+      [% ELSIF target == 'doc' %][% terms.document %]
+      [% ELSE %][% target FILTER html %][% END %].
     [% END %]
   [% ELSIF error == 'unknown_icon_target' %]
-    未定義のアイコンの分類を指定しました。オプションを確認してください。
+    You have specified unknown icon target. Please check the option.
   [% ELSE %]
-    このエラーコード [% error %] は未定義です。
+    This error code [% error %] is undefined.
   [% END %]
 </div>
 </div>

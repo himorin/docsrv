@@ -1,16 +1,17 @@
 [% PROCESS global/header.html.tmpl %]
 
 [% IF added.defined %]
-  <h3>'[% full_path FILTER html %]' にドキュメント [% added FILTER html %] が追加されました</h3>
+  <h3>New [% terms.document %] [% added FILTER html %] have added into the 
+    [% terms.path %] '[% full_path FILTER html %]'.</h3>
 [% ELSE %]
-  <h3>新しいドキュメントの追加</h3>
+  <h3>Add new [% terms.document %]</h3>
   <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
     <ul>
-      <li>新しいドキュメントの名前: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
-      <li>新しいドキュメントの説明: <input type="text" name="docdesc" value="" size="150"></li>
+      <li>Name for new [% terms.document %]: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
+      <li>Description for new [% terms.document %]: <input type="text" name="docdesc" value="" size="150"></li>
     </ul>
-    <h4>新規ドキュメントに付けるラベル</h4>
+    <h4>Labels for new [% terms.document %]</h4>
     <ul>
       [% FOREACH item = Label.keys %]
         <li><input type="checkbox" name="label" value="[% item %]" />
@@ -27,10 +28,10 @@
 <hr>
 
 <ul>
-  <li>ディレクトリの説明: <a href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]">[% full_path FILTER html %] ([% path_info.pathid FILTER html %])</a> - [% path_info.description FILTER html %]</li>
-  <li>アクセス可能グループ: 
+  <li>Description of this [% terms.path %]: <a href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]">[% full_path FILTER html %] ([% path_info.pathid FILTER html %])</a> - [% path_info.description FILTER html %]</li>
+  <li>Accessible groups (OR): 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
-    [% ELSE %](未定義)[% END %]</li>
+    [% ELSE %](undefined)[% END %]</li>
 </ul>
 
 [% INCLUDE entry/table.html.tmpl       paths = path_list

@@ -1,5 +1,5 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "MIMEアイコン追加"
+  page_title = "Add new icon entry"
 %]
 <script type="text/javascript">
 <!--
@@ -13,28 +13,28 @@ function select_icon (target) {
 // -->
 </script>
 
-<h3>[% target FILTER html %]アイコン追加</h3>
+<h3>Add new icon into [% target FILTER html %]</h3>
 
-<p>アイコンに利用できる画像リストは下にあります。
-リストから画像をクリックすると選択されます。</p>
+<p>List of avail icon images are listed below.
+Click icon itself to select.</p>
 
 <form method="POST" action="editicon.cgi">
   <input type="hidden" name="class" value="[% class FILTER html %]">
   <input type="hidden" name="icon" value="[% terms.icon_def %]" id="current_target">
 
   <ul>
-    <li>対象拡張子: <input type="text" name="target"> (pdf, exe, doc など)</li>
-    <li>アイコン: <img src="skins/images/[% terms.icon_def %]" id="current_icon" /></li>
-    <li>ツールチップ: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
-    <li>状態: <select name="enabled">
-      <option value="1" selected="selected">有効</option>
-      <option value="0">無効</option>
+    <li>Target extension: <input type="text" name="target"> (Like pdf, exe, doc)</li>
+    <li>Icon: <img src="skins/images/[% terms.icon_def %]" id="current_icon" /></li>
+    <li>Tool tip: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
+    <li>Status: <select name="enabled">
+      <option value="1" selected="selected">Using</option>
+      <option value="0">Not used</option>
       </select></li>
   </ul>
-  <input type="submit" value="追加">
+  <input type="submit" value="Add">
 </form>
 
-<h4>有効なアイコンリスト</h4>
+<h4>List of avail icon images</h4>
 
 <div class="icon_disp">
   [%- FOREACH item = avail_icons %]

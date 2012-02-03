@@ -1,24 +1,24 @@
 [% PROCESS global/header.html.tmpl %]
 
-<h3>このファイルについて</h3>
+<h3>About this [% terms.file %]</h3>
 
 <form method="POST" action="fileinfo.cgi">
 <ul>
-  <li>ファイルの説明:
+  <li>General information of [% terms.file %]:
     <span id="file_desc_raw">[% file_info.description %]</span>
     <span id="file_desc_edit" class="ui_hidden"><input type="text" size="100" name="description" value="[% file_info.description %]"></span>
     [% IF User.uid == file_info.uname %]
-      <span id="update_link"><a href="javascript: file_info_update();">更新</a></span>
+      <span id="update_link"><a href="javascript: file_info_update();">Update</a></span>
     [% END %]</li>
-  <li>ファイル型:
+  <li>File type:
        [%- INCLUDE show_mime_icon id = file_info.fileext -%]
        [% file_info.fileext %] / [% file_type %]</li>
-  <li>ユーザ: [% file_info.uname %]</li>
-  <li>登録日時: [% file_info.uptime %]</li>
-  <li>登録元: [% file_info.srcip FILTER ipaddr %]</li>
+  <li>Uploaded by: [% file_info.uname %]</li>
+  <li>Uploaded at: [% file_info.uptime %]</li>
+  <li>Uploaded from: [% file_info.srcip FILTER ipaddr %]</li>
 </ul>
 <div id="file_update" class="ui_hidden">
-  <input type="submit" value="更新">
+  <input type="submit" value="Update">
 </div>
 <input type="hidden" name="fid" value="[% file_info.fileid %]">
 </form>
@@ -38,11 +38,12 @@ function file_info_update () {
 // -->
 </script>
 
-<p><a href="fileget.cgi?fid=[% file_info.fileid %]">このファイルをダウンロード</a>
-もしくは、このファイルが登録されている
-<a href="docinfo.cgi?did=[% file_info.docid %]">ドキュメントの情報を表示</a>する。</p>
+<p><a href="fileget.cgi?fid=[% file_info.fileid %]">Download this [% terms.file %]</a>
+or 
+<a href="docinfo.cgi?did=[% file_info.docid %]">show general information of [% terms.document %]</a>
+which this [% terms.file %] is registered in.</p>
 
-<h3>このファイルへのアクセスログ</h3>
+<h3>Access log to this [% terms.file %]</h3>
 
 [% INCLUDE entry/activity.html.tmpl   activity        = user_load
                                        %]

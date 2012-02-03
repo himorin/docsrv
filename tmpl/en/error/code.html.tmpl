@@ -1,41 +1,39 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "システムエラー"
+  page_title = "System error occurred"
 %]
 
 <div id="error">
 <img class="errico" src="skins/images/weby-icon/Warning.png">
 <p class="desc">
-システムに回復不可能なエラーが発生しました。
-このエラーが発生した画面のURLおよびどういう操作を行ったかを、
-エラーコード '[% error %]' とともにシステム管理者に通知するか、
-<a href="https://psmt.kusastro.kyoto-u.ac.jp/bugzilla/enter_bug.cgi?product=PSMT">Bugzilla</a>
-に登録してください。
+System suffered to a un-recoverable error.
+Please notify your system administrator or file into ITS (if exist), 
+with error code '[% error %]' and what you did just before this error.
 </p>
 <div class="info">
   [% IF error == 'already_locked' %]
-    すでにロックしているデータベースを再度ロックしようとしました。
+    System tried to lock the database which is already locked.
   [% ELSIF error == 'failed_to_add_label' %]
-    ラベルの追加操作に失敗しました。
+    Faild to add new label.
   [% ELSIF error == 'ldap_bind_anonymous' %]
-    LDAPサーバに匿名接続できませんでした。
+    Could not bind to LDAP server in anonymous.
   [% ELSIF error == 'ldap_connect' %]
-    LDAPサーバに接続できません。
+    Could not connect to LDAP server.
   [% ELSIF error == 'nested_transaction' %]
-    データベースへのトランザクションを再度開始しようとしました。
+    System tried to execute a nested transaction to a database.
   [% ELSIF error == 'not_in_transaction' %]
-    トランザクションが開始されていないのにデータベースへのトランザクションを終了しようとしました。
+    System tried to end a transaction while it has not started.
   [% ELSIF error == 'not_locked' %]
-    データベースはロックしていない状態です。
+    System has not locked the database.
   [% ELSIF error == 'path_add_failed' %]
-    パスの追加操作に失敗しました。
+    Failed to add new path.
   [% ELSIF error == 'template_format_missing' %]
-    要求されたテンプレートの形式が見つかりません。
+    Template with specified type is missing.
   [% ELSIF error == 'update_info_failed' %]
-    DBへの情報更新の操作が失敗しました。
+    Could not update the database.
   [% ELSIF error == 'invalid_parameter' %]
-    メソッド [% method FILTER html %] が無効なパラメータで呼び出されました。
+    Method '[% method FILTER html %]' was called with invalid parameters.
   [% ELSE %]
-    このエラーコード [% error %] は未定義です。
+    This error code '[% error %]' is undefined. Please contact your system administrator.
   [% END %]
 </div>
 </div>

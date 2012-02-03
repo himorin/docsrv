@@ -2,7 +2,7 @@
 <form action="pathadd.cgi" method="POST">
 [% INCLUDE global/formopt.html.tmpl %]
 
-<h3 id="path_add" class="ui_clickable">[% terms.path %]の追加</h3>
+<h3 id="path_add" class="ui_clickable">Add new [% terms.path %]</h3>
 <script type="text/javascript">
   var path_add_disp = function() { tweak_ToggleClass('path_add', 'ui_hidden'); }
   YAHOO.util.Event.on('path_add', 'click', path_add_disp);
@@ -11,12 +11,13 @@
 <div class="path_add">
 
 <ul>
-  <li>名前: <input type="text" name="newpath" value="" size="50"></li>
-  <li>説明: <input type="text" name="newdesc" value="" size="50"></li>
+  <li>Name: <input type="text" name="newpath" value="" size="50"></li>
+  <li>Description: <input type="text" name="newdesc" value="" size="50"></li>
 </ul>
 
-<p>チェックを付けたグループのどれかに所属しているユーザのみが閲覧可能になります。
-全てのチェックを外すと、どのユーザも閲覧できるようになります。</p>
+<p>If you turn on some groups, the [% terms.path %] will be restricted only to 
+users who are listed at least in one checked groups. 
+Without any, every user can view the [% terms.path %]. </p>
 
 <ul>
 [% FOREACH item = Group %]
@@ -25,8 +26,8 @@
 </ul>
 
 <input type="hidden" name="cur_pid" value="[% cur_pid %]">
-<input type="submit" value="追加">
-<input type="reset" value="リセット">
+<input type="submit" value="Add mew">
+<input type="reset" value="Reset">
 </form>
 </div>
 
