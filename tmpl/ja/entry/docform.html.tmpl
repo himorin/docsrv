@@ -5,9 +5,13 @@
   <input type="file" name="target_file" size="80" />
   <br />
   10MB程度以上のファイルをアップロードしようとした場合、ブラウザやサーバの状況に
-  よってはタイムアウトする可能性があります。その場合、下のチェックボックスを選択
-  し、<a href="http://www.google.co.jp/search?q=webdav">WebDAV</a>に先にアップロー
-  ドしたファイルから追加する機能を利用してください。
+  よってはタイムアウトする可能性があります。
+  [% IF Param.dav_uri != "" %]
+    その場合、下のチェックボックスを選択し、
+    <a href="[% Param.dav_uri %]">WebDAV</a>
+    に先にアップロードしたファイルから追加する機能を利用してください。
+    (<a href="http://www.google.co.jp/search?q=webdav">WebDAVとは</a>)
+  [% END %]
 </p>
 
 [% IF dav_file.defined %]

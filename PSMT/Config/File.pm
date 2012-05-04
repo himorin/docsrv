@@ -28,6 +28,11 @@ sub get_param_list {
             default  => '',
         },
         {
+            name     => 'dav_uri',
+            type     => 'text',
+            default  => '',
+        },
+        {
             name     => 'hash_depth',
             type     => 'number',
             default  => 2,

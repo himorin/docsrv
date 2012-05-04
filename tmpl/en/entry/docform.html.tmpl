@@ -6,9 +6,13 @@
   <br />
   If you try to upload a large file like over than 10MB, system sometimes cause 
   timeout depending on the conditions of network or server. 
-  If you get timeout, please try to upload into 
-  <a href="http://www.google.co.jp/search?q=webdav">WebDAV</a> space first, and 
-  select the file from selection below with checking on the check box below.
+  [% IF Param.dav_uri != "" %]
+    If you get timeout, please try to upload into 
+    <a href="[% Param.dav_uri %]">WebDAV</a>
+    space first, and 
+    select the file from selection below with checking on the check box below.
+    (<a href="http://www.google.co.jp/search?q=webdav">About WebDAV</a>)
+  [% END %]
 </p>
 
 [% IF dav_file.defined %]
