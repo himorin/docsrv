@@ -15,7 +15,7 @@
   [% END %]
 </p>
 
-[% IF dav_file.defined %]
+[% IF dav_file.defined && Param.dav_uri != "" %]
   <p>
     [% IF dav_file.keys.size == 0 %]
       No file in the WebDAV space.
