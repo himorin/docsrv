@@ -12,7 +12,7 @@
   <tr>[% FOREACH hkey IN hkeys %]<td>[% hkey %]</td>[% END %]</tr>
 </thead>
 <tbody>
-  [% FOREACH hid IN jsondata.keys.sort %]
+  [% FOREACH hid IN jsondata.keys.nsort %]
     <tr>[% FOREACH hkey IN hkeys %]<td>[% jsondata.$hid.$hkey %]</td>[% END %]</tr>
   [% END %]
 </tbody>

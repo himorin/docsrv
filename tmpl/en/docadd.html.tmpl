@@ -11,9 +11,10 @@
       <li>Name for new [% terms.document %]: <tt>
         [%- IF pid == -1 %]
           <select name="pid">
-            [% FOREACH hid IN allpath.keys.sort %]
+            <option value="0" onselect="AllPathChange('', 0, 'Top directory')"></option>
+            [% FOREACH hid IN allpath.keys.nsort %]
               <option value="[% hid %]"
-                onselect="AllPathChange('[% allpath.$hid.fullpath %]', [% hid %], '[% allpath.$hid.description %]')"
+                onselect="AllPathChange('[% allpath.$hid.fullpath FILTER js %]', [% hid %], '[% allpath.$hid.description FILTER js %]')"
                 >[% allpath.$hid.fullpath %]</option>
             [% END %]
           </select>
