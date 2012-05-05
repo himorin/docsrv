@@ -22,7 +22,7 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 
 my $pathinfo = undef;
 my $pid = $obj_cgi->param('pid');
-my $allpath = undef;
+my %allpath = undef;
 if (defined($pid) && ($pid != 0) && ($pid != -1)) {
     # first check pid is valid; if valid clear path
     $pathinfo = PSMT::File->GetPathInfo($pid);
@@ -94,7 +94,7 @@ $obj->template->set_vars('permission', PSMT::Access->ListPathRestrict($pid));
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
 $obj->template->set_vars('path_list', PSMT::File->ListPathInPath($pid));
 $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
-$obj->template->set_vars('allpath', $allpath);
+$obj->template->set_vars('allpath', \%allpath);
 
 $obj->template->process('docadd', 'html');
 
