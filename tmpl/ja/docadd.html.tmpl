@@ -7,14 +7,14 @@
   <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
     <ul>
-      <li>新しいドキュメントの名前: <tt>/
+      <li>新しいドキュメントの名前: <tt>
         [%- IF pid == -1 %]
           <select name="pid">
-            <option value="0" onselect="AllPathChange('', 0, 'Top directory')"></option>
+            <option value="0" onselect="AllPathChange('', 0, 'Top directory')">/</option>
             [% FOREACH hid IN allpath.keys.nsort %]
               <option value="[% hid %]"
                 onselect="AllPathChange('[% allpath.$hid.fullpath FILTER js %]', [% hid %], '[% allpath.$hid.description FILTER js %]')"
-                >[% allpath.$hid.fullpath %]</option>
+                >/[% allpath.$hid.fullpath %]</option>
             [%- END %]
           </select>
         [% ELSE %]
@@ -40,7 +40,8 @@
 <hr>
 
 <ul>
-  <li>ディレクトリの説明: <a href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]">[% full_path FILTER html %] ([% path_info.pathid FILTER html %])</a> - [% path_info.description FILTER html %]</li>
+  <li>ディレクトリの説明: 
+    <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.description FILTER html %]</span></li>
   <li>アクセス可能グループ: 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
     [% ELSE %](未定義)[% END %]</li>

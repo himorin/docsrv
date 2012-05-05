@@ -11,11 +11,11 @@
       <li>Name for new [% terms.document %]: <tt>
         [%- IF pid == -1 %]
           <select name="pid">
-            <option value="0" onselect="AllPathChange('', 0, 'Top directory')"></option>
+            <option value="0" onselect="AllPathChange('', 0, 'Top directory')">/</option>
             [% FOREACH hid IN allpath.keys.nsort %]
               <option value="[% hid %]"
                 onselect="AllPathChange('[% allpath.$hid.fullpath FILTER js %]', [% hid %], '[% allpath.$hid.description FILTER js %]')"
-                >[% allpath.$hid.fullpath %]</option>
+                >/[% allpath.$hid.fullpath %]</option>
             [%- END %]
           </select>
         [% ELSE %]
@@ -42,7 +42,8 @@
 <hr>
 
 <ul>
-  <li>Description of this [% terms.path %]: <a href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]">[% full_path FILTER html %] ([% path_info.pathid FILTER html %])</a> - [% path_info.description FILTER html %]</li>
+  <li>Description of this [% terms.path %]: 
+    <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.description FILTER html %]</span></li>
   <li>Accessible groups (OR): 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
     [% ELSE %](undefined)[% END %]</li>

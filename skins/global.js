@@ -78,6 +78,9 @@ function tweak_ToggleFavPath (target) {
 }
 
 function AllPathChange(fullpath, hid, desc) {
+  YAHOO.util.Dom.get("fullpath").innerHTML = fullpath;
+  YAHOO.util.Dom.get("hid").innerHTML = hid;
+  YAHOO.util.Dom.get("desc").innerHTML = desc;
 }
 
 
