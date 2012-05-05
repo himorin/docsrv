@@ -36,6 +36,8 @@ use PSMT::HyperEstraier;
     ListUserLoadForDoc
     ListFileInExt
 
+    ListAllPath
+
     GetPathIdForParent
     GetPathIdForDoc
 
@@ -307,6 +309,34 @@ sub IsUserUpForDoc {
     $sth->execute($did, PSMT->user->get_uid());
     if ($sth->rows() > 0) {return TRUE; }
     return FALSE;
+}
+
+# List all path in DB
+#   if defined($all), ignore restriction
+#   if $all = 1, ignore restriction
+sub ListAllPath {
+    my ($self, $hash, $all) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare('SELECT * FROM path ORDER BY pathid ASC');
+    $sth->execute();
+    if ($sth->rows == 0) {return undef; }
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {
+        if (! PSMT::Access->CheckForPath($ref->{pathid}, FALSE)) {
+            if (defined($all)) {$ref->{visible} = FALSE; }
+            else {next; }
+        } else {
+            $ref->{visible} = TRUE;
+        }
+        if (defined($hash->{$ref->{parent}})) {
+            $ref->{fullpath} = $hash->{$ref->{parent}}->{fullpath} . '/';
+            $ref->{fullpath} .= $ref->{pathname};
+        } else {
+            $ref->{fullpath} = $ref->{pathname};
+        }
+        $hash->{$ref->{pathid}} = $ref;
+    }
+    return $hash;
 }
 
 sub GetPathInfo {

@@ -58,6 +58,7 @@ use constant AVAIL_FORMATS => {
   'favlist'            => ['html'],
   'fileinfo'           => ['html', 'json'],
   'index'              => ['html'],
+  'json'               => ['json'],
   'labeledit'          => ['html'],
   'labellist'          => ['html'],
   'pathadd'            => ['html'],

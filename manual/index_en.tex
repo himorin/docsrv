@@ -1,0 +1,376 @@
+\documentclass[a4paper,notitlepage]{jarticle}
+\pagestyle{empty}
+\usepackage{oao378}
+\title{Document Server System Manual}
+\author{devteam}
+\date{\today}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Abstract}
+
+In this document, overall conceptual design and features of the document 
+server system is shown.
+Since some technical terms are used as definition specified to this system, 
+please refer terminology definitions before using and refering this document.
+
+
+\section{Terminology}
+
+\subsection{Document}
+
+ドキュメントはトップディレクトリもしくはディレクトリ内に作成でき、各ドキュメ
+ントにはファイルを複数アップロードすることができる。この複数のファイルは、
+バージョン更新もしくは異なる形式のファイル
+\footnote{Word形式とそれから変換したPDF形式、など。}
+を置く場合に利用されるものである。ファイルを具体的に指定せずにドキュメントの
+ファイルをダウンロードしようとした場合、有効なファイルのうち最後にアップロー
+ドされたファイルがダウンロードされる。
+
+現在のところ、ドキュメントを作成されたのとは異なるディレクトリに移動すること
+は不可能である。
+
+
+\begin{description}
+  \item[ディレクトリ] 通常のローカルディスクやFTPにおけるディレクトリと同じ概念。
+  \item[ドキュメント] ある1つの"文書"に該当する概念で改訂版や異なるファイル形式
+    でのファイルがその中に存在することがありえる。
+  \item[ファイル] 実際のファイルの実体を指し、1つのファイルは必ず1つの物理ファイ
+    ルに紐づく。一つのドキュメントに複数のファイルを定義することができる。
+  \item[ラベル] ドキュメントに対して指定でき、ドキュメントの分類を示す。
+  \item[お気に入り] ユーザはディレクトリもしくはドキュメントをお気に入りに指定
+    可能で、お気に入りのみを一覧したり更新時にメール配信を指定することが可能で
+    ある。
+\end{description}
+
+
+\subsection{Permission}
+
+アクセス権限は、ディレクトリに対してのグループによる制限、ドキュメントに対して
+のラベルによる制限の二つがある。
+ディレクトリに対してのグループによる制限は、制限対象となるグループの何れかに所
+属しているユーザがアクセス可能となる。
+ドキュメントに対してのラベルによる制限は、各ラベルに対して定義されている制限グ
+ループの何れかに所属しているユーザがアクセス可能となる。この制限グループは、
+それぞれのラベルでの制限グループのどれかに所属していることが必要なのではなく、
+どれかのラベルでの制限グループのどれかに所属していることが必要である。
+最終的なアクセス許可の判定は、この二つの制限の両方を満たしているユーザにのみが
+許可されるようになる。
+
+なお、各ファイルについて、アップロードしたユーザ(もしくは管理者)がファイルの有
+効性指定をすることが可能であり、無効化されたファイルにはアップロードしたユーザ
+(もしくは管理者)以外はアクセスできなくなる。
+
+
+\begin{description}
+  \item[管理者] ユーザ・グループ権限を上書きし全ての情報を編集可能なユーザ
+  \item[ユーザ] LDAPに定義されているユーザで、属性は全てLDAPにある属性である
+  \item[グループ] LDAPに定義されているグループで、所属ユーザはLDAPでのユーザ
+\end{description}
+
+\subsection{Internal data}
+
+\begin{description}
+  \item[File ID] 各実体ファイルに割り当てられている22文字によるコード
+\end{description}
+
+
+
+\section{How to use}
+
+注: 表示で利用されているアイコンは、ウェブ画面から管理者により変更可能なため、
+以下の説明でのキャプチャー上でのアイコンは異なるアイコンである場合があるため
+注意が必要。
+
+なお、一部の機能はIE7とそれ以前のような古いブラウザでは動作しません。
+
+\subsection{画面}
+
+\subsubsection{/ (トップ)}
+
+トップディレクトリに対応するディレクトリ一覧画面(図\ref{fig:disp_directory})
+が表示されます。
+
+\subsubsection{ホーム}
+
+ホームで表示する画面は、ユーザ設定で{\tt home}でURLにより指定できます。
+
+\subsubsection{ディレクトリ一覧}
+
+ターゲットとなるディレクトリに定義されているサブディレクトリと、
+ディレクトリに配置されているドキュメントの一覧が表示されます。
+
+アイコンは、
+星型のアイコンはお気に入り(黄色なら登録済み)を、ディレクトリの＋アイコンは
+ディレクトリへのドキュメント追加、
+下矢印はドキュメントのダウンロード、"i"アイコンはドキュメントの情報表示、
+上矢印はドキュメントへのファイルの追加を示します。
+
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics{disp_directory.eps}
+  \end{center}
+  \caption{ディレクトリ一覧}
+  \label{fig:disp_directory}
+\end{figure}
+
+\subsubsection{ドキュメントの情報表示}
+
+ドキュメント一覧画面では、ドキュメントにアップロードされたファイルの一覧が
+表示されます。
+
+アイコンは、
+"i"がファイルの情報表示、
+花がファイルの有効性表示(緑なら有効)
+を示します。
+
+アクセスログは該当ドキュメントにファイルをアップロードしたユーザもしくは管理
+者にのみ表示されます。
+
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics{disp_document.eps}
+  \end{center}
+  \caption{ドキュメント一覧}
+  \label{fig:disp_document}
+\end{figure}
+
+\subsubsection{ファイルの情報表示}
+
+ファイルの情報表示画面では、ファイルの情報とアクセスログが表示されます。
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics{disp_file.eps}
+  \end{center}
+  \caption{ファイル一覧}
+  \label{fig:disp_file}
+\end{figure}
+
+\subsubsection{ユーザ設定}
+
+トップのリストにある設定リンクから表示されるユーザ設定画面では、ユーザごとの
+設定の変更が可能です。
+
+各設定は以下の意味を持ちます。
+
+\begin{description}
+  \item[email] お気に入りにあるドキュメントもしくはお気に入りにあるディレクトリ
+    以下の全ドキュメント(全てのサブディレクトリを含むディレクトリにあるドキュメ
+    ント全て)が更新された、もしくはディレクトリにドキュメントが追加されたときに
+    メールで通知するかどうか。
+    なお、トップディレクトリはお気に入りには入れられません。
+  \item[history] homeを{\tt index.cgi}にした場合に表示されるホームでの更新履歴
+    で、このドキュメントの最終更新日数で指定された日数以内に更新されたドキュメ
+    ントがリストされる。
+  \item[home] ホームリンクで表示される画面のURL
+\end{description}
+
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics{disp_config.eps}
+  \end{center}
+  \caption{ユーザ設定一覧}
+  \label{fig:disp_config}
+\end{figure}
+
+
+\subsection{作成}
+
+\subsubsection{新規ディレクトリの作成}
+
+新規ディレクトリの作成は、作成したいターゲットディレクトリの画面の下にある
+"新しいディレクトリの追加"をクリックすると表示されるフォームから行えます。
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics{add_new_directory.eps}
+  \end{center}
+  \caption{新規ディレクトリの作成}
+  \label{fig:add_new_directory}
+\end{figure}
+
+
+\subsubsection{新規ドキュメントの作成}
+
+新規ドキュメントの作成は、作成したいターゲットディレクトリの画面の下にある
+"新しいドキュメントの追加"をクリックするか、作成したいターゲットディレクトリ
+の一つ上のディレクトリの一覧で、ターゲットディレクトリの左側にある追加ボタン
+をクリックすることで表示されるフォームから行えます。
+
+新規ドキュメントの追加時には、ディレクトリへの新しいドキュメントの作成と
+ドキュメントへのファイルの追加を同時に行うことになります。
+ファイルの追加については既存ドキュメントへのファイルのアップロードの項目を
+参照してください。
+
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics{add_new_document.eps}
+  \end{center}
+  \caption{新規ディレクトリの作成}
+  \label{fig:add_new_document}
+\end{figure}
+
+
+\subsubsection{既存ドキュメントへのファイルのアップロード}
+
+既存ドキュメントへのファイルのアップロード(ドキュメントの更新)は、
+各一覧画面におけるリスト中のターゲットドキュメントのファイルアップロード
+アイコンをクリックして表示される画面から行えます。
+
+ローカルファイルをアップロードは、手元のPCにあるファイルを選択してアップ
+ロードします。大きなサイズのファイルの場合、状況によってはタイムアウトが
+発生する可能性があるため、先にWebDAVにファイルをアップロードしてからその
+ファイルを利用します。この場合、WebDAVに置いたファイルを利用から選択して
+ください。なお、WebDAV領域にサブディレクトリを作成しても認識されません。
+
+なお、ドキュメントには名前がありますが、ファイルには名前は付けられません。
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics{add_new_file.eps}
+  \end{center}
+  \caption{既存ドキュメントへのファイルの追加}
+  \label{fig:add_new_file}
+\end{figure}
+
+
+\subsection{既存の名前・情報の変更}
+
+
+\subsubsection{既存ディレクトリの名前・情報の変更}
+
+ターゲットとなるディレクトリのディレクトリ一覧表示画面
+(図\ref{fig:disp_directory})の一覧部分の直下に、
+ディレクトリの説明(このディレクトリについて)が表示されており、その右横の更新
+リンクをクリックすることでフォームが表示されます。
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics{mod_directory.eps}
+  \end{center}
+  \caption{ディレクトリ名・情報の変更}
+  \label{fig:mod_directory}
+\end{figure}
+
+
+
+\subsubsection{既存ドキュメントの名前・情報の変更}
+
+既存ドキュメントの名前・情報の変更はディレクトリと同じく、ドキュメントの情報
+表示画面(図\ref{fig:disp_document})のドキュメント情報にある更新リンクにより
+表示されるフォームから行えます。
+
+\subsubsection{既存ファイルの有効性変更}
+
+既存ファイルの有効性は、ファイルの一覧画面(図\ref{fig:disp_file})のアイコン
+をクリックすることで変更できます。
+
+
+\subsection{お気に入り}
+
+\subsubsection{お気に入りへの追加・削除}
+
+ディレクトリの一覧表示画面(図\ref{fig:disp_directory})で、ディレクトリもしくは
+ドキュメントの左側にある星マークをクリックすることで追加・削除が行えます。
+
+
+
+\section{システム管理}
+
+\subsection{セットアップ}
+
+セットアップの流れは以下のようになる。
+
+\begin{itemize}
+  \item 配布アーカイブの展開、もしくはsvnからの取得
+  \item データDBとデータ保存用領域の作成
+  \item ドキュメントサーバシステムの設定
+  \item ウェブサーバの設定
+\end{itemize}
+
+\subsubsection{データDBとデータ保存用領域の作成}
+
+データ用のDBとしては、MySQLもしくはその互換システムが利用可能である。
+データベース定義SQLファイルが{\tt common.sql}として提供されているので、
+データベースシステムのマニュアルを参照して利用するデータベースを設定する。
+なお、データベースに保存するデータの文字コードは"utf8"を利用している。
+
+データ保存用領域はウェブサーバのプロセスからアクセス可能な領域に作成する。
+なお、ウェブサーバとして公開されている領域以外の場所に作成すべきである。
+
+\subsubsection{ドキュメントサーバシステムの設定}
+
+初期設定スクリプト{\tt config\_test.pl}を実行する。
+この際、Perlのモジュールが見つからないというエラーが発生した場合、必要とさ
+れているPerlのモジュールを各システムのマニュアルを参照しながらインストール
+する。
+
+初期設定スクリプトを実行すると、{\tt data/params}というファイルが既定のパラ
+メータにより作成される。なお、この既定のパラメータはパラメータが定義されて
+いない場合の既定であり、設定ファイル中で空白定義を行っても利用されないこと
+に注意。
+このファイルがドキュメントサーバシステムの設定ファイルとなるので、それぞれ
+適切な値をテキストエディタで設定する。
+各設定項目は以下のような内容である。
+
+\begin{description}
+  \item[admingroup] ドキュメントサーバ管理者のLDAPグループ名 (cn)
+  \item[cookie\_domain] ドキュメントサーバが利用するクッキーの読み込み許可ドメイン
+  \item[cookie\_expires] ドキュメントサーバが利用するクッキーの有効期限
+  \item[cookie\_path] ドキュメントサーバが利用するクッキーの読み込み許可パス
+  \item[dav\_path] WebDAV領域のサーバ上でのディレクトリパス (兼、一時ファイル領域)
+  \item[db\_driver] DB種別名 ("mysql"のみ利用可能)
+  \item[db\_err\_maxlen] エラー発生時にクライアントに送出するエラーの最大文字数
+  \item[db\_host] データベースサーバホスト名
+  \item[db\_name] データベース名
+  \item[db\_pass] データベースパスワード
+  \item[db\_port] データベースサーバの接続ポート番号
+  \item[db\_sock] データベースサーバがローカルの場合のsocketファイルパス
+  \item[db\_user] データベースアカウント名
+  \item[file\_path] ファイル保存先パス
+  \item[hash\_depth] ファイル保存時に作成するハッシュディレクトリの深さ
+  \item[he\_dir] 全文検索エンジンのデータ領域のパス
+  \item[ldap\_basedn] LDAPのbasedn名
+  \item[ldap\_uri] LDAPのURI
+\end{description}
+
+
+\subsubsection{ウェブサーバの設定}
+
+ウェブサーバに配布ファイルを展開したディレクトリを指定する。
+該当ディレクトリに対し以下の設定が必要である。
+
+\begin{itemize}
+  \item {\tt .htaccess}ファイルが利用できる設定
+  \item LDAPアカウントによるBASIC認証 (BASIC認証のユーザ名をドキュメントサーバの
+    認証でそのまま利用している)
+  \item CGIが利用可能な設定
+\end{itemize}
+
+BASIC認証でのユーザ名が設定されていないアクセスでは接続ユーザが確認できないエ
+ラーとなるので注意。
+
+
+\subsection{メンテナンス}
+
+\subsubsection{{\tt cl\_add\_file.pl}}
+
+コマンドラインから全文検索エンジンにファイルを登録する場合に利用する。
+引数には"ファイル ID"を一つ指定する。実ファイルのパスやファイル名・ドキュメント
+名で無いことに注意。
+
+
+\subsubsection{ユーザ管理}
+
+ユーザ・グループ管理は全てLDAPで行っている。
+メール送信機能を利用する場合、{\tt bugmail}属性をメールアドレスとして利用して
+いる\footnote{将来的にはパラメータにすべきであろう。}。
+
+\end{document}

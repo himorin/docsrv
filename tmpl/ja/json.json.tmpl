@@ -1,0 +1,4 @@
+{"type":"[% type %]","data":{
+  [%- FOREACH hid IN jsondata.keys %]"[% hid %]":
+    [%- FOREACH hkey IN jsondata.hid %]"[% hkey %]":"[% jsondata.hid.hkey %]",[% END %]
+  [% END %]}}}
