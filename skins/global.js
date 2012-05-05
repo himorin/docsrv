@@ -77,3 +77,7 @@ function tweak_ToggleFavPath (target) {
   YAHOO.util.Connect.asyncRequest('GET', url, fav_callback);
 }
 
+function AllPathChange(fullpath, hid, desc) {
+}
+
+

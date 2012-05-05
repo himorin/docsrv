@@ -7,7 +7,20 @@
   <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
     <ul>
-      <li>新しいドキュメントの名前: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
+      <li>新しいドキュメントの名前: <tt>
+        [%- IF pid == -1 %]
+          <select name="pid">
+            [% FOREACH hid IN allpath.keys.sort %]
+              <option value="[% hid %]"
+                onselect="AllPathChange('[% allpath.$hid.fullpath %]', [% hid %], '[% allpath.$hid.description %]')"
+                >[% allpath.$hid.fullpath %]</option>
+            [% END %]
+          </select>
+        [% ELSE %]
+          <input type="hidden" name="pid" value="[% path_info.pathid %]">
+          [% full_path FILTER html %]
+        [% END %]
+        </tt><input type="text" name="filename" value="" size="50"></li>
       <li>新しいドキュメントの説明: <input type="text" name="docdesc" value="" size="150"></li>
     </ul>
     <h4>新規ドキュメントに付けるラベル</h4>
@@ -18,7 +31,6 @@
       [% END %]
     </ul>
     [% INCLUDE entry/docform.html.tmpl %]
-    <input type="hidden" name="pid" value="[% path_info.pathid %]">
     <input type="submit" value="Add document">
     <input type="reset" value="Reset">
   </form>

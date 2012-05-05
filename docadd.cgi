@@ -22,19 +22,25 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 
 my $pathinfo = undef;
 my $pid = $obj_cgi->param('pid');
-if (defined($pid) && ($pid != 0)) {
+my $allpath = undef;
+if (defined($pid) && ($pid != 0) && ($pid != -1)) {
     # first check pid is valid; if valid clear path
     $pathinfo = PSMT::File->GetPathInfo($pid);
     if (! defined($pathinfo)) {
         PSMT::Error->throw_error_user('invalid_path_id');
     }
 } elsif ($pid == 0) {
+} elsif ($pid == -1) {
+    # set target as path list
+    PSMT::File->ListAllPath(\%allpath);
 } else {
     PSMT::Error->throw_error_user('invalid_path_id');
 }
 
 # check permission
-PSMT::Access->CheckForPath($pid);
+if ($pid != -1) {
+    PSMT::Access->CheckForPath($pid);
+}
 
 # Register file
 if ($obj_cgi->request_method() eq 'POST') {
@@ -88,6 +94,7 @@ $obj->template->set_vars('permission', PSMT::Access->ListPathRestrict($pid));
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
 $obj->template->set_vars('path_list', PSMT::File->ListPathInPath($pid));
 $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
+$obj->template->set_vars('allpath', $allpath);
 
 $obj->template->process('docadd', 'html');
 
