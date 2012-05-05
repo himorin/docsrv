@@ -22,7 +22,7 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 
 my $pathinfo = undef;
 my $pid = $obj_cgi->param('pid');
-my %allpath = undef;
+my %allpath;
 if (defined($pid) && ($pid != 0) && ($pid != -1)) {
     # first check pid is valid; if valid clear path
     $pathinfo = PSMT::File->GetPathInfo($pid);

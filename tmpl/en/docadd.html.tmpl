@@ -16,13 +16,13 @@
               <option value="[% hid %]"
                 onselect="AllPathChange('[% allpath.$hid.fullpath FILTER js %]', [% hid %], '[% allpath.$hid.description FILTER js %]')"
                 >[% allpath.$hid.fullpath %]</option>
-            [% END %]
+            [%- END %]
           </select>
         [% ELSE %]
           <input type="hidden" name="pid" value="[% path_info.pathid %]">
           [% full_path FILTER html %]
-        [% END %]
-        </tt><input type="text" name="filename" value="" size="50"></li>
+        [% END -%]
+        /</tt><input type="text" name="filename" value="" size="50"></li>
       <li>Description for new [% terms.document %]: <input type="text" name="docdesc" value="" size="150"></li>
     </ul>
     <h4>Labels for new [% terms.document %]</h4>
