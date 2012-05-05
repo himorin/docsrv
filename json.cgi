@@ -21,20 +21,24 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
 }
 
-my $hash;
+my %hash;
 my $type = $obj_cgi->param('type');
 
 if ($type eq 'allpath') {
-    PSMT::File->ListAllPath($hash);
+    PSMT::File->ListAllPath(\%hash);
 } else {
     PSMT::Error->throw_error_user('invalid_param');
 }
 
 $obj->template->set_vars('type', $type);
-$obj->template->set_vars('jsondata', $hash);
+$obj->template->set_vars('jsondata', \%hash);
 
-$obj_cgi->header( -type => "application/json" );
-$obj->template->process('json', 'json');
+if (! defined(PSMT->cgi()->param('format'))) {
+    $obj_cgi->header( -type => "application/json" );
+    $obj->template->process('json', 'json');
+} else {
+    $obj->template->process('json');
+}
 
 exit;
 
