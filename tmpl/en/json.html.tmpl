@@ -1,0 +1,18 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "List of configuration"
+%]
+
+<h3>List of configuration for : [% type %]</h3>
+
+<table>
+<thead>
+  <tr>[% FOREACH hkey IN jsondata.first.keys %]<td>[% hkey %]</td>[% END %]</tr>
+</thead>
+<tbody>
+  [% FOREACH hid IN jsondata.keys %]
+    <tr>[% FOREACH hkey IN jsondata.$hid.keys %]<td>[% jsondata.$hid.$hkey %]</td>[% END %]</tr>
+  [% END %]
+</tbody>
+</table>
+
+[% PROCESS global/footer.html.tmpl %]
