@@ -50,6 +50,8 @@ use PSMT::HyperEstraier;
 
     GetFullPathFromId
     GetIdFromFullPath
+    GetIdFromName
+    GetIdFromFullName
 
     GetDocInfo
     GetDocFiles
@@ -203,6 +205,28 @@ sub GetIdFromFullPath {
         $pid = $ref->{pathid};
     }
     return $pid;
+}
+
+sub GetIdFromName {
+    my ($self, $pid, $name) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth = $dbh->prepare("SELECT * FROM docreg WHERE pathid = ? AND filename = ?");
+    my $ref;
+    $sth->execute($pid, $name);
+    if ($sth->rows != 1) {return 0; }
+    $ref = $sth->fetchrow_hashref();
+    return $ref->{docid};
+}
+
+sub GetIdFromFullName {
+    my ($self, $name) = @_;
+    if ($name !~ /^(.*)\/([^\/]+)$/) {
+        return -1;
+    }
+    my $path = $1;
+    my $fname = $2;
+    my $pid = $self->GetIdFromFullPath($path);
+    return $fid = $self->GetIdFromName($pid, $fname);
 }
 
 sub GetDocidFromFileid {

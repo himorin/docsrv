@@ -40,9 +40,11 @@
 <ul>
   <li>ディレクトリの説明: 
     <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.description FILTER html %]</span></li>
-  <li>アクセス可能グループ: 
-    [% IF group_list.size > 0 %][% group_list.join(', ') %]
-    [% ELSE %](未定義)[% END %]</li>
+  [% IF pid == -1 %]
+    <li>アクセス可能グループ: 
+      [% IF group_list.size > 0 %][% group_list.join(', ') %]
+      [% ELSE %](未定義)[% END %]</li>
+  [% END %]
 </ul>
 
 [% IF pid != -1 %]

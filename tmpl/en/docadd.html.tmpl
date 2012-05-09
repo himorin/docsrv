@@ -42,9 +42,11 @@
 <ul>
   <li>Description of this [% terms.path %]: 
     <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.description FILTER html %]</span></li>
-  <li>Accessible groups (OR): 
-    [% IF group_list.size > 0 %][% group_list.join(', ') %]
-    [% ELSE %](undefined)[% END %]</li>
+  [% IF pid == -1 %]
+    <li>Accessible groups (OR): 
+      [% IF group_list.size > 0 %][% group_list.join(', ') %]
+      [% ELSE %](undefined)[% END %]</li>
+  [% END %]
 </ul>
 
 [% INCLUDE entry/table.html.tmpl       paths = path_list

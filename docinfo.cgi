@@ -22,7 +22,15 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 }
 
 my $did = $obj_cgi->param('did');
-if (! defined($did)) {PSMT::Error->throw_error_user('invalid_document_id'); }
+my $dname = $obj_cgi->param('doc');
+if (! (defined($did) || defined($dname))) {
+    PSMT::Error->throw_error_user('invalid_document_id');
+} elsif (defined($dname) && (! defined($did))) {
+    $did = PSMT::File->GetIdFromFullName($dname);
+    if ($did == 0) {
+        PSMT::Error->throw_error_user('invalid_document_id');
+    }
+}
 
 if ($obj_cgi->request_method() eq 'POST') {
     my $name = $obj_cgi->param('docname');

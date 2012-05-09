@@ -99,6 +99,7 @@ use constant contenttypes =>
     "atom" => "application/atom+xml" ,
     "xml"  => "application/xml" ,
     "js"   => "application/javascript" ,
+    "json" => "application/json" ,
     "csv"  => "text/csv" ,
     "jpg"  => "image/jpeg" ,
     "gif"  => "image/gif" ,

@@ -32,15 +32,12 @@ If you don't specify in some category (name, description etc), these categories
 will be simply ignored.</p>
 
 <p>
-検索条件は、それぞれのカテゴリに対して AND もしくは OR の複数設定可能で、
-それらのカテゴリを AND もしくは OR でつないで検索を行います。
-<br/>
-以下の各カテゴリの条件に合致した結果の
+Display items match 
 <select name="global_cond">
-  <option value="AND" selected="selected">AND</option>
-  <option value="OR">OR</option>
+  <option value="AND" selected="selected">ALL</option>
+  <option value="OR">ANY</option>
 </select>
-を結果として表示する。
+of following condition for categories.
 </p>
 
 <h4>Name of [% terms.document %]</h4>
