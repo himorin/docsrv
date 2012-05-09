@@ -1,21 +1,22 @@
 [% PROCESS global/header.html.tmpl %]
+[% IF pif == -1 %]
+  <script type="text/javascript" src="json.cgi?format=js&amp;type=allpath"></script>
+[% END %]
 
 [% IF added.defined %]
   <h3>New [% terms.document %] [% added FILTER html %] have added into the 
     [% terms.path %] '[% full_path FILTER html %]'.</h3>
 [% ELSE %]
   <h3>Add new [% terms.document %]</h3>
-  <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
+  <form action="docadd.cgi" name="docadd_set" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
     <ul>
       <li>Name for new [% terms.document %]: <tt>
         [%- IF pid == -1 %]
-          <select name="pid">
-            <option value="0" onselect="AllPathChange('', 0, 'Top directory')">/</option>
+          <select name="pid" onchange="AllPathChange()">
+            <option value="0">/</option>
             [% FOREACH hid IN allpath.keys.nsort %]
-              <option value="[% hid %]"
-                onselect="AllPathChange('[% allpath.$hid.fullpath FILTER js %]', [% hid %], '[% allpath.$hid.description FILTER js %]')"
-                >/[% allpath.$hid.fullpath %]</option>
+              <option value="[% hid %]">/[% allpath.$hid.fullpath %]</option>
             [%- END %]
           </select>
         [% ELSE %]

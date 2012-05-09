@@ -4,17 +4,15 @@
   <h3>'[% full_path FILTER html %]' にドキュメント [% added FILTER html %] が追加されました</h3>
 [% ELSE %]
   <h3>新しいドキュメントの追加</h3>
-  <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
+  <form action="docadd.cgi" name="docadd_set" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
     <ul>
       <li>新しいドキュメントの名前: <tt>
         [%- IF pid == -1 %]
-          <select name="pid">
-            <option value="0" onselect="AllPathChange('', 0, 'Top directory')">/</option>
+          <select name="pid" onchange="AllPathChange()">
+            <option value="0">/</option>
             [% FOREACH hid IN allpath.keys.nsort %]
-              <option value="[% hid %]"
-                onselect="AllPathChange('[% allpath.$hid.fullpath FILTER js %]', [% hid %], '[% allpath.$hid.description FILTER js %]')"
-                >/[% allpath.$hid.fullpath %]</option>
+              <option value="[% hid %]">/[% allpath.$hid.fullpath %]</option>
             [%- END %]
           </select>
         [% ELSE %]

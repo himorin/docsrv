@@ -77,10 +77,12 @@ function tweak_ToggleFavPath (target) {
   YAHOO.util.Connect.asyncRequest('GET', url, fav_callback);
 }
 
-function AllPathChange(fullpath, hid, desc) {
-  YAHOO.util.Dom.get("fullpath").innerHTML = fullpath;
+function AllPathChange() {
+  var selid = document.docadd_set.pid.selectedIndex;
+  var hid = document.docadd_set.pid.options[selid].value;
+  YAHOO.util.Dom.get("fullpath").innerHTML = conf_data_allpath.data.hid.fullpath;
   YAHOO.util.Dom.get("hid").innerHTML = hid;
-  YAHOO.util.Dom.get("desc").innerHTML = desc;
+  YAHOO.util.Dom.get("desc").innerHTML = conf_data_allpath.data.hid.description;
 }
 
 
