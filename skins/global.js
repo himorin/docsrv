@@ -80,9 +80,15 @@ function tweak_ToggleFavPath (target) {
 function AllPathChange() {
   var selid = document.docadd_set.pid.selectedIndex;
   var hid = document.docadd_set.pid.options[selid].value;
-  YAHOO.util.Dom.get("fullpath").innerHTML = conf_data_allpath.data.hid.fullpath;
-  YAHOO.util.Dom.get("hid").innerHTML = hid;
-  YAHOO.util.Dom.get("desc").innerHTML = conf_data_allpath.data.hid.description;
+  if (hid == 0) {
+    document.getElementById("hid").innerHTML = 0;
+    document.getElementById("fullpath").innerHTML = "";
+    document.getElementById("desc").innerHTML = "Top Directory";
+  } else {
+    document.getElementById("hid").innerHTML = hid;
+    document.getElementById("fullpath").innerHTML = conf_data_allpath.data[hid].fullpath;
+    document.getElementById("desc").innerHTML = conf_data_allpath.data[hid].description;
+  }
 }
 
 

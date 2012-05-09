@@ -159,7 +159,17 @@ sub process {
         PSMT::Error->throw_error_code('template_format_missing');
     }
     $template .= '.' . $ext . '.tmpl';
-    if (! defined($out)) {print PSMT->cgi()->header(); }
+    if (! defined($out)) {
+        if (defined(PSMT::Constants::contenttypes->{$ext})) {
+            print PSMT->cgi()->header(
+                -type => PSMT::Constants::contenttypes->{$ext}
+            );
+        } else {
+            print PSMT->cgi()->header(
+                -type => PSMT::Constants::contenttypes->{'default'}
+            );
+        }
+    }
     $obj_template->process($template, PSMT->template->vars(), $out);
 }
 
