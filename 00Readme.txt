@@ -19,4 +19,5 @@ Reamrks and Notes
 
 Apache Alias for query path
 * Alias <base_uri>/path/ <dir>/pathinfo.cgi/
+* Alias <base_uri>/doc/  <dir>/docinfo.cgi/
 
