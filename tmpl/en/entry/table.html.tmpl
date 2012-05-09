@@ -37,7 +37,12 @@
       <a href="docadd.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'add_doc' %]</a>
       </td>
     <td class="path">[% INCLUDE show_table_icon id = 'dir' %]
-      <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname FILTER html %]</a></td>
+      [%- IF cpname.defined %]
+        <a href="path/[% cpname FILTER url_quote %]/[% item.pathname FILTER url_quote %]/">[% item.pathname FILTER html %]</a>
+      [% ELSE %]
+        <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname FILTER html %]</a>
+      [% END -%]
+      </td>
     <td class="pathdesc">[% item.description FILTER html %]</td>
     [% IF docs_exist %]<th colspan="4"></th>[% END %]
     <td class="group">
