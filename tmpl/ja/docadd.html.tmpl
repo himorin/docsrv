@@ -49,7 +49,8 @@
 
 [% IF pid != -1 %]
   [% INCLUDE entry/table.html.tmpl       paths = path_list
-                                         docs = doc_list %]
+                                         docs = doc_list 
+                                         cpname = full_path %]
 [% END %]
 [% IF pid == -1 %]
   <script type="text/javascript" src="json.cgi?format=js&amp;type=allpath"></script>
