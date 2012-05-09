@@ -1,7 +1,4 @@
 [% PROCESS global/header.html.tmpl %]
-[% IF pid == -1 %]
-  <script type="text/javascript" src="json.cgi?format=js&amp;type=allpath"></script>
-[% END %]
 
 [% IF added.defined %]
   <h3>'[% full_path FILTER html %]' にドキュメント [% added FILTER html %] が追加されました</h3>
@@ -52,5 +49,10 @@
   [% INCLUDE entry/table.html.tmpl       paths = path_list
                                          docs = doc_list %]
 [% END %]
-
+[% IF pid == -1 %]
+  <script type="text/javascript" src="json.cgi?format=js&amp;type=allpath"></script>
+  <script type="text/javascript"><!--
+    AllPathChange();
+  --></script>
+[% END %]
 [% PROCESS global/footer.html.tmpl %]
