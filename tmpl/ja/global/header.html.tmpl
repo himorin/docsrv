@@ -2,6 +2,9 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8">
+    [% IF Param.base_uri != '' %]
+      <base href="[% Param.base_uri %]">
+    [% END %]
     <title>[% page_title %] - [% terms.sitename %] (ver. [% constants.PSMT_DOCSRV_VERSION %])</title>
     <link rel="stylesheet" href="skins/global.css">
     [% FOREACH item = stylesheet %]

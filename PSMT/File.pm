@@ -193,6 +193,7 @@ sub GetIdFromFullPath {
     my $dbh = PSMT->dbh;
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathname = ? AND parent = ?');
     my $ref;
+    if (substr($path, 0, 1) eq '/') {$path = substr($path, 1); }
     my @dirs = split(/\//, $path);
     while ($#dirs > -1) {
         $cdir = shift(@dirs);

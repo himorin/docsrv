@@ -17,3 +17,6 @@ Reamrks and Notes
 * Hash directories will be created by software
 * DAV area will be used as temporary storage, too
 
+Apache Alias for query path
+* Alias <base_uri>/path/ <dir>/pathinfo.cgi/
+

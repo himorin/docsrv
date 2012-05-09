@@ -25,6 +25,7 @@ my $pathinfo = undef;
 # definition : pid > path
 my $pid = $obj_cgi->param('pid');
 my $path = $obj_cgi->param('path');
+my $pathinfo = $obj_cgi->path_info();
 if (defined($pid)) {
     if ($pid == 0) {$path = undef; }
     else {
@@ -32,6 +33,9 @@ if (defined($pid)) {
         $pathinfo = PSMT::File->GetPathInfo($pid);
         if (defined($pathinfo)) {$path = undef; }
     }
+}
+if (defined($pathinfo) && (! defined($path)) && (! defined($pid))) {
+    $path = $pathinfo;
 }
 if (defined($path)) {
     # if path != undef, make path/pid from path
