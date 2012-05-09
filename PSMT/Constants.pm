@@ -44,7 +44,7 @@ use constant FALSE        => 0;
 use constant PSMT_DOCSRV_VERSION => "0.4.0";
 
 use constant HEADER_LINKS => (
-  'dir', 'index', 'labels', 'favs', 'recent', 'search', 'admin', 'config'
+  'dir', 'index', 'add', 'labels', 'favs', 'recent', 'search', 'admin', 'config'
 );
 
 use constant AVAIL_FORMATS => {

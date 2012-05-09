@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <title>[% page_title %] - [% terms.sitename %] (ver. [% constants.PSMT_DOCSRV_VERSION %])</title>
@@ -42,14 +42,14 @@
   <div id="gmenu">
     <ul class="links">
       [% FOREACH item = header_links %]
-        [% IF header_links_def.$item.defined %]
-          [% IF header_links_def.$item.group.defined AND
+        [%- IF header_links_def.$item.defined %]
+          [%- IF header_links_def.$item.group.defined AND
                 (NOT InGroup(header_links_def.$item.group)) %]
             [%# must NOT display %]
           [% ELSE %]
             <li>
-              [% IF NOT loop.first %]<span class="separator">|</span>[% END %]
-              [% IF item == current_page %]
+              [%- IF NOT loop.first %]<span class="separator">|</span>[% END %]
+              [%- IF item == current_page %]
                 [% header_links_def.$item.name %]
               [% ELSE %]
                 <a href="[% header_links_def.$item.url %]">[% header_links_def.$item.name %]</a>
