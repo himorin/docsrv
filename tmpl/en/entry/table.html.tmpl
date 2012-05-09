@@ -38,7 +38,7 @@
       </td>
     <td class="path">[% INCLUDE show_table_icon id = 'dir' %]
       [%- IF cpname.defined %]
-        <a href="path/[% cpname FILTER url_quote %]/[% item.pathname FILTER url_quote %]/">[% item.pathname FILTER html %]</a>
+        <a href="path[% IF cpname != '' %]/[% cpname FILTER url_quote %][% END %]/[% item.pathname FILTER url_quote %]/">[% item.pathname FILTER html %]</a>
       [% ELSE %]
         <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname FILTER html %]</a>
       [% END -%]
