@@ -24,6 +24,7 @@ use Encode;
     filter_html
     filter_text
     filter_url_quote
+    filter_path_url
 
     IpAddr
 );
@@ -105,6 +106,14 @@ sub filter_url_quote {
     return $var;
 }
 
+sub filter_path_url {
+    my ($var) = @_;
+    # IF utf8 mode, must utf8::encode 'var'
+    $var =~ s/^\///g;
+    $var =~ s/\/$//g;
+    $var =~ s/([^a-zA-Z0-9_\-.\/])/uc sprintf("%%%02x",ord($1))/eg;
+    return $var;
+}
 
 1;
 
