@@ -226,7 +226,7 @@ sub GetIdFromFullName {
     my $path = $1;
     my $fname = $2;
     my $pid = $self->GetIdFromFullPath($path);
-    return $fid = $self->GetIdFromName($pid, $fname);
+    return $self->GetIdFromName($pid, $fname);
 }
 
 sub GetDocidFromFileid {
