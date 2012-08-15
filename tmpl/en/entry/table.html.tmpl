@@ -7,7 +7,8 @@
     <th>Name</th>
     <th class="description">Description</th>
     [% IF docs_exist %]<th colspan="4">Newest</th>[% END %]
-    <th>[% IF paths_exist %]Group[% END %][% IF paths_exist AND docs_exist %] Or [% END %][% IF docs_exist %]Label[% END %]</th>
+    <th>Group</th>
+    <th>Label</th>
   </tr>
 
 [% IF upper_path.defined AND upper_path > -1 %]
@@ -17,6 +18,7 @@
       <a href="pathinfo.cgi?pid=[% upper_path %]">Upper [% terms.path %]</a></td>
     <td></td>
     [% IF docs_exist %]<td colspan="4"></td>[% END %]
+    <th>---</th>
     <th>---</th>
   </tr>
 [% END %]
@@ -49,6 +51,7 @@
       [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]No restriction[% END %]
       <a href="pathgroup.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
       </td>
+    <td class="label"></td>
   </tr>
 <script type="text/javascript">
   var fav_mod_path_[% item.pathid %] = function() { tweak_ToggleFavPath('[% item.pathid %]'); }
@@ -86,7 +89,8 @@
       <td colspan="3" class="center">Not exists</td>
       <td><a href="docupdate.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a></td>
     [% END %]
-    <td class="group">[% IF item.labelid.defined %]
+    <td class="group"></td>
+    <td class="label">[% IF item.labelid.defined %]
       [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name FILTER html %][% END %]
       [% ELSE %]No label[% END %]
       <a href="doclabel.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'label_add' %]</a>

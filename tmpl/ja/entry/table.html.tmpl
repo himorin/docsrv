@@ -7,7 +7,8 @@
     <th>名前</th>
     <th class="description">説明</th>
     [% IF docs_exist %]<th colspan="4">最新版</th>[% END %]
-    <th>[% IF paths_exist %]グループ[% END %][% IF paths_exist AND docs_exist %]または[% END %][% IF docs_exist %]ラベル[% END %]</th>
+    <th>グループ</th>
+    <th>ラベル</th>
   </tr>
 
 [% IF upper_path.defined AND upper_path > -1 %]
@@ -17,6 +18,7 @@
       <a href="pathinfo.cgi?pid=[% upper_path %]">一つ上</a></td>
     <td></td>
     [% IF docs_exist %]<td colspan="4"></td>[% END %]
+    <th>---</th>
     <th>---</th>
   </tr>
 [% END %]
@@ -49,6 +51,7 @@
       [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]制限なし[% END %]
       <a href="pathgroup.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
       </td>
+    <td class="label">---</td>
   </tr>
 <script type="text/javascript">
   var fav_mod_path_[% item.pathid %] = function() { tweak_ToggleFavPath('[% item.pathid %]'); }
@@ -86,7 +89,10 @@
       <td colspan="3" class="center">存在しません</td>
       <td><a href="docupdate.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a></td>
     [% END %]
-    <td class="group">[% IF item.labelid.defined %]
+    <td class="group">
+       </td>
+    <td class="label">
+      [% IF item.labelid.defined %]
       [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name FILTER html %][% END %]
       [% ELSE %]ラベルなし[% END %]
       <a href="doclabel.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'label_add' %]</a>

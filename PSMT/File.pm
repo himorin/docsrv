@@ -119,6 +119,7 @@ sub GetDocInfo {
     $sth->execute($docid);
     if ($sth->rows != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
+    $ref->{gname} = PSMT::Access->ListDocRestriction($docid);
     $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
     $ref->{lastfile} = $self->GetDocLastPostFileInfo($docid);
     return $ref;
