@@ -11,14 +11,6 @@
   <li>説明 : <input type="text" name="ldesc" value="[% linfo.description %]"></input></li>
 </ul>
 
-<h4>アクセス可能グループ</h4>
-<ul>
-[% FOREACH item = Group %]
-  <li><input type="checkbox" name="newgroup" value="[% item %]"
-    [% IF InList(permission, item) %]checked="checked"[% END %]
-    >[% item %]</input></li>
-[% END %]
-</ul>
 <input type="hidden" name="lid" value="[% lid %]" />
 <input type="submit" value="更新" />
 <input type="reset" />

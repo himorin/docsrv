@@ -11,7 +11,6 @@ use PSMT::DB;
 use PSMT::User;
 use PSMT::Util;
 use PSMT::File;
-use PSMT::Access;
 
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
@@ -31,7 +30,6 @@ $lid = $obj_cgi->param('lid');
 if ($obj_cgi->request_method() eq 'POST') {
     my $newname = $obj_cgi->param('lname');
     my $newdesc = $obj_cgi->param('ldesc');
-    my @newgroup = $obj_cgi->param('newgroup');
     if ($lid == 0) {
         $lid = PSMT::Label->AddNewLabel($newname, $newdesc);
         if ($lid == 0) {PSMT::Error->throw_error_code('failed_to_add_label'); }
@@ -41,7 +39,6 @@ if ($obj_cgi->request_method() eq 'POST') {
         PSMT::Label->UpdateLabel($lid, $newname, $newdesc);
     }
     $linfo = PSMT::Label->GetLabelInfo($lid);
-    PSMT::Access->ModLabelRestrict($lid, \@newgroup);
 } elsif ($lid == 0) {
     $lid = '0';
 } else {
@@ -53,7 +50,6 @@ if ($obj_cgi->request_method() eq 'POST') {
 print $obj_cgi->header();
 $obj->template->set_vars('lid', $lid);
 $obj->template->set_vars('linfo', $linfo);
-$obj->template->set_vars('permission', PSMT::Access->ListLabelRestrict($lid));
 $obj->template->process('labeledit', 'html');
 
 exit;

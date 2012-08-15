@@ -54,10 +54,12 @@ CREATE TABLE label_doc (
   docid         int         UNSIGNED NOT NULL                            
 );
 
+/*
 CREATE TABLE access_label (
   labelid       int         UNSIGNED NOT NULL                            ,
   gname         text                 NOT NULL                            
 );
+*/
 
 CREATE TABLE favorite (
   uname         text                 NOT NULL                            ,
@@ -90,4 +92,8 @@ CREATE TABLE profiles (
   value         varchar(64)          NOT NULL                            
 );
 
+CREATE TABLE access_doc (
+  docid         int         UNSIGNED NOT NULL                            ,
+  gname         text                 NOT NULL                            
+);
 

@@ -7,7 +7,6 @@
     <th>ID</th>
     <th>Name</th>
     <th>Description</th>
-    <th>Group Restrictions</th>
   </tr>
 [% FOREACH item = labels.keys %]
   [% count = loop.count() %]
@@ -19,8 +18,6 @@
     <td><a href="labeledit.cgi?lid=[% item %]">[% item %]</a></td>
     <td>[% labels.$item.name %]</td>
     <td>[% labels.$item.description %]</td>
-    <td>[% IF labels.$item.group.size == 0 %]No Access Restriction[% ELSE %]
-        [% labels.$item.group.join(', ') %][% END %]</td>
   </tr>
 [% END %]
 </table>
