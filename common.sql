@@ -1,5 +1,11 @@
 -- CREATE DATABASE docsrv DEFAULT CHARACTER SET utf8;
 
+/*
+
+access_label : deleted at rev.114
+access_doc   : added at rev.114
+
+*/
 
 CREATE TABLE activity (
   uname         text                 NOT NULL                            ,
