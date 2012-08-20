@@ -18,10 +18,10 @@ User-Agent: [% terms.sitedomain %]
 形式: [% newfile.fileext +%]
 説明: [% newfile.description +%]
 日時: [% newfile.uptime +%]
-URL : [% terms.baseurl %]fileinfo.cgi?fid=[% newfile.fileid +%]
+URL : [% Param.base_uri %]fileinfo.cgi?fid=[% newfile.fileid +%]
 
 　追加場所は "[% path %][% target.filename %]" です。
 
 -- 
 [% terms.sitename %] Document Server System
-[% terms.baseurl %]
+[% Param.base_uri %]

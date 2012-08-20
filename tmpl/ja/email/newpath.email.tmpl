@@ -16,10 +16,10 @@ User-Agent: PSMT Document Server
 　追加されたディレクトリ
 名前: [% newpath.pathname +%]
 説明: [% newpath.description +%]
-URL : https://psmt.kusastro.kyoto-u.ac.jp/docsrv/pathinfo.cgi?pid=[% newpath.pathid +%]
+URL : [% Param.base_uri %]pathinfo.cgi?pid=[% newpath.pathid +%]
 
 　追加場所は "[% path %]" です。
 
 -- 
 PSMT Document Server System
-https://psmt.kusastro.kyoto-u.ac.jp/docsrv/
+[% Param.base_uri %]

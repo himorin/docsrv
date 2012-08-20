@@ -17,14 +17,14 @@ by user [% by %].
   New added [% terms.document %]
 Name       : [% path %][% newdoc.filename +%]
 Description: [% newdoc.description +%]
-URL        : [% terms.baseurl %]docinfo.cgi?did=[% newdoc.docid +%]
+URL        : [% Param.base_uri %]docinfo.cgi?did=[% newdoc.docid +%]
 
   New added [% terms.file %]
 Format     : [% newfile.fileext +%]
 Description: [% newfile.description +%]
 When       : [% newfile.uptime +%]
-URL        : [% terms.baseurl %]fileinfo.cgi?fid=[% newfile.fileid +%]
+URL        : [% Param.base_uri %]fileinfo.cgi?fid=[% newfile.fileid +%]
 
 -- 
 [% terms.sitename %] Document Server System
-[% terms.baseurl %]
+[% Param.base_uri %]

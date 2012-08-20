@@ -18,8 +18,8 @@ by user [% by %].
 Format     : [% newfile.fileext +%]
 Description: [% newfile.description +%]
 When       : [% newfile.uptime +%]
-URL        : [% terms.baseurl %]fileinfo.cgi?fid=[% newfile.fileid +%]
+URL        : [% Param.base_uri %]fileinfo.cgi?fid=[% newfile.fileid +%]
 
 -- 
 [% terms.sitename %] Document Server System
-[% terms.baseurl %]
+[% Param.base_uri %]
