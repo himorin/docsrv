@@ -107,7 +107,7 @@ sub ListFullDocRestrict {
 sub ListDocRestrict {
     my ($self, $docid) = @_;
     my $dbh = PSMT->dbh;
-    my $sth = $dbh->prepare('SELECT gname FROM access_doc WHERE pathid = ?');
+    my $sth = $dbh->prepare('SELECT gname FROM access_doc WHERE docid = ?');
     $sth->execute($docid);
     my ($ref, @glist);
     while ($ref = $sth->fetchrow_hashref()) {push(@glist, $ref->{gname}); }
