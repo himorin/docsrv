@@ -1,0 +1,32 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>現在の設定</h3>
+<ul>
+  <li>[% terms.document %] ID: [% doc_info.docid %]</li>
+  <li>Full [% terms.path %]: [% full_path %]/[% doc_info.filename %]</li>
+  <li>Description: [% doc_info.description %]</li>
+  <li>Accessible groups: [% permission.join(', ') %] </li>
+</ul>
+
+<h3>アクセス権限グループの更新</h3>
+
+<p>チェックを付けたグループのどれかに所属しているユーザのみが閲覧可能になります。
+全てのチェックを外すと、どのユーザも閲覧できるようになります。
+なお、ユーザはこの [% terms.path %] へのアクセス権限を持っている必要があります。</p>
+
+<form action="docgroup.cgi" method="POST">
+[% INCLUDE global/formopt.html.tmpl %]
+<ul>
+[% FOREACH item = all_groups.keys %]
+  <li><input type="checkbox" name="newgroup" value="[% item %]"
+    [% IF all_groups.$item == 1 %]checked="checked"[% END %]
+    >[% item %]</input></li>
+[% END %]
+</ul>
+<input type="hidden" name="did" value="[% doc_info.docid %]" />
+<input type="submit" value="UPDATE" />
+<input type="reset" />
+</p>
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

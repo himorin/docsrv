@@ -1,0 +1,35 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>Current settings</h3>
+<ul>
+  <li>Document ID: [% doc_info.docid %]</li>
+  <li>Full [% terms.path %]: [% full_path %]/[% doc_info.filename %]</li>
+  <li>Description: [% doc_info.description %]</li>
+  <li>Group restrictions: [% permission.join(', ') %] </li>
+</ul>
+
+<h3>Update the group restrictions</h3>
+
+<p>Users in any of groups specified here will be able to view this [% terms.document %] 
+Group restrictions are evaluated in 'OR'.
+Without any check mark, no group restrictions will be set, and any user can view 
+this [% terms.document %]. 
+Note: Users should have a permission to access the [% terms.path %] which 
+this [% terms.document %] is in.</p>
+
+<form action="docgroup.cgi" method="POST">
+[% INCLUDE global/formopt.html.tmpl %]
+<ul>
+[% FOREACH item = all_groups.keys %]
+  <li><input type="checkbox" name="newgroup" value="[% item %]"
+    [% IF all_groups.$item == 1 %]checked="checked"[% END %]
+    >[% item %]</input></li>
+[% END %]
+</ul>
+<input type="hidden" name="did" value="[% doc_info.docid %]" />
+<input type="submit" value="UPDATE" />
+<input type="reset" />
+</p>
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

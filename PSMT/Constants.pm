@@ -52,6 +52,7 @@ use constant AVAIL_FORMATS => {
   'config'             => ['html'],
   'docadd'             => ['html'],
   'docfav'             => ['html', 'json'],
+  'docgroup'           => ['html'],
   'docinfo'            => ['html'],
   'doclabel'           => ['html'],
   'docupdate'          => ['html'],
