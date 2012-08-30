@@ -533,7 +533,7 @@ sub UpdatePathInfo2 {
     # update
     $sth = $dbh->prepare(
         'UPDATE path SET parent = ?, pathname = ?, description = ? WHERE pathid = ?');
-    if ($sth->execute($new->{parent}, $new->{name}, $name->{description}, $pid) == 0) {
+    if ($sth->execute($new->{parent}, $new->{name}, $new->{description}, $pid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
     # set group restriction if parent path changed
