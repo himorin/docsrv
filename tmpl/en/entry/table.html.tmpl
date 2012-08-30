@@ -93,7 +93,7 @@
       [% IF item.gname.defined %]
       [% FOREACH gid = item.gname %][% IF NOT loop.first %], [% END %][% gid FILTER html %][% END %]
       [% ELSE %](none)[% END %]
-      <a href="docgroup.cgi?pid=[% item.docid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
+      <a href="docgroup.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
       </td>
     <td class="label">[% IF item.labelid.defined %]
       [% FOREACH lid = item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name FILTER html %][% END %]
