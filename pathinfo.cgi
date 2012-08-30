@@ -63,14 +63,14 @@ PSMT::Access->CheckForPath($pid);
 
 if ($obj_cgi->request_method() eq 'POST') {
     my (%old, %new);
-    $old->{name} = $obj_cgi->param('old_name');
-    $old->{parent} = $obj_cgi->param('old_parent');
-    $old->{description} = $obj_cgi->param('old_description');
-    $new->{name} = $obj_cgi->param('new_name');
-    $new->{parent} = $obj_cgi->param('new_parent');
-    $new->{description} = $obj_cgi->param('new_description');
+    $old{name} = $obj_cgi->param('old_name');
+    $old{parent} = $obj_cgi->param('old_parent');
+    $old{description} = $obj_cgi->param('old_description');
+    $new{name} = $obj_cgi->param('new_name');
+    $new{parent} = $obj_cgi->param('new_parent');
+    $new{description} = $obj_cgi->param('new_description');
     if (defined($name) && defined($desc)) {
-        PSMT::File->UpdatePathInfo2($pid, $old, $new);
+        PSMT::File->UpdatePathInfo2($pid, \%old, \%new);
     }
     $pathinfo = PSMT::File->GetPathInfo($pid);
 }
