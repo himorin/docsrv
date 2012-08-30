@@ -68,7 +68,9 @@ use PSMT::HyperEstraier;
     RegNewDoc
     RegNewFile
     UpdatePathInfo
+    UpdatePathInfo2
     UpdateDocInfo
+    UpdateDocInfo2
     UpdateFileInfo
     EditFileAccess
 
@@ -502,6 +504,43 @@ sub RegNewPath {
     PSMT::Access->SetPathAccessGroup($pathid, $group);
     PSMT->email()->NewPathInPath($cur, $pathid);
     return $pathid;
+}
+
+sub UpdatePathInfo2 {
+    my ($self, $pid, $old, $new) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth;
+    my $cur_access = undef;
+    if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
+    $dbh->db_lock_tables('path WRITE, access_path WRITE');
+    my $pathinfo = $self->GetPathInfo($pid);
+    if (! defined($pathinfo)) {PSMT::Error->throw_error_user('invalid_path_id'); }
+    if ($new->{parent} eq $pid) {PSMT::Error->throw_error_user('invalid_new_path'); }
+    # check current match
+    if (($pathinfo->{pathname} ne $old->{name}) || 
+        ($pathinfo->{description} ne $old->{description}) ||
+        ($pathinfo->{parent} ne $old->{parent})) {
+        PSMT::Error->throw_error_user('old_not_match');
+    }
+    # check collision if changing parent or name
+    if ($pathinfo->{parent} ne $new->{parent}) {
+        $cur_access = PSMT::Access->ListFullPathRestrict($pid);
+    }
+    if (($pathinfo->{parent} ne $new->{parent}) ||
+        ($pathinfo->{pathname} ne $new->{name})) {
+        $self->ValidateNameInPath($new->{parent}, $new->{name});
+    }
+    # update
+    $sth = $dbh->prepare(
+        'UPDATE path SET parent = ?, pathname = ?, description = ? WHERE pathid = ?');
+    if ($sth->execute($new->{parent}, $new->{name}, $name->{description}, $pid) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    # set group restriction if parent path changed
+    if (defined($cur_access)) {
+        PSMT::Access->SetPathAccessGroup($pid, $cur_access);
+    }
+    $dbh->db_unlock_tables();
 }
 
 sub UpdatePathInfo {

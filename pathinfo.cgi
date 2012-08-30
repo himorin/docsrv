@@ -62,19 +62,28 @@ if (defined($path)) {
 PSMT::Access->CheckForPath($pid);
 
 if ($obj_cgi->request_method() eq 'POST') {
-    my $name = $obj_cgi->param('pathname');
-    my $desc = $obj_cgi->param('description');
+    my (%old, %new);
+    $old->{name} = $obj_cgi->param('old_name');
+    $old->{parent} = $obj_cgi->param('old_parent');
+    $old->{description} = $obj_cgi->param('old_description');
+    $new->{name} = $obj_cgi->param('new_name');
+    $new->{parent} = $obj_cgi->param('new_parent');
+    $new->{description} = $obj_cgi->param('new_description');
     if (defined($name) && defined($desc)) {
-        PSMT::File->UpdatePathInfo($pid, $name, $desc);
+        PSMT::File->UpdatePathInfo2($pid, $old, $new);
     }
     $pathinfo = PSMT::File->GetPathInfo($pid);
 }
+
+my %hash;
+PSMT::File->ListAllPath(\%hash);
 
 # insert parameters
 $obj->template->set_vars('pid', $pid);
 $obj->template->set_vars('full_path', $path);
 $obj->template->set_vars('path_info', $pathinfo);
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
+$obj->template->set_vars('pathlist', \%hash);
 
 my $subpath = PSMT::File->ListPathInPath($pid);
 my (%subpath_access, $cpid);
