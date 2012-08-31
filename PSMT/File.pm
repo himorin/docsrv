@@ -68,9 +68,7 @@ use PSMT::HyperEstraier;
     RegNewDoc
     RegNewFile
     UpdatePathInfo
-    UpdatePathInfo2
     UpdateDocInfo
-    UpdateDocInfo2
     UpdateFileInfo
     EditFileAccess
 
@@ -545,7 +543,7 @@ sub RegNewPath {
     return $pathid;
 }
 
-sub UpdatePathInfo2 {
+sub UpdatePathInfo {
     my ($self, $pid, $old, $new) = @_;
     my $dbh = PSMT->dbh;
     my $sth;
@@ -582,27 +580,7 @@ sub UpdatePathInfo2 {
     $dbh->db_unlock_tables();
 }
 
-sub UpdatePathInfo {
-    my ($self, $pid, $name, $desc) = @_;
-    my $dbh = PSMT->dbh;
-    my $sth;
-    my $pathinfo = $self->GetPathInfo($pid);
-    if (! defined($pathinfo)) {PSMT::Error->throw_error_user('invalid_path_id'); }
-    if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
-    $dbh->db_lock_tables('docreg WRITE', 'path WRITE');
-    # collision
-    if ($pathinfo->{pathname} ne $name) {
-        $self->ValidateNameInPath($pathinfo->{parent}, $name);
-    }
-    # update
-    $sth = $dbh->prepare('UPDATE path SET pathname = ?, description = ? WHERE pathid = ?');
-    if ($sth->execute($name, $desc, $pid) == 0) {
-        PSMT::Error->throw_error_code('update_info_failed');
-    }
-    $dbh->db_unlock_tables();
-}
-
-sub UpdateDocInfo2 {
+sub UpdateDocInfo {
     my ($self, $did, $old, $new) = @_;
     my $dbh = PSMT->dbh;
     my $sth;
@@ -634,30 +612,6 @@ sub UpdateDocInfo2 {
     # set group restriction if parent path changed
     if (defined($cur_access)) {
         PSMT::Access->SetDocAccessGroup($did, $cur_access);
-    }
-    $dbh->db_unlock_tables();
-}
-
-sub UpdateDocInfo {
-    my ($self, $did, $name, $desc) = @_;
-    my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ', 'docreg WRITE', 'path WRITE');
-    my $sth;
-    my $docinfo = $self->GetDocInfo($did);
-    if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
-    if (! PSMT->user->is_inadmin()) {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE uname = ? AND docid = ?');
-        $sth->execute(PSMT->user->get_uid(), $did);
-        if ($sth->rows == 0) {PSMT::Error->throw_error_user('update_permission'); }
-    }
-    # collision
-    if ($docinfo->{filename} ne $name) {
-        $self->ValidateNameInPath($docinfo->{pathid}, $name);
-    }
-    # update
-    $sth = $dbh->prepare('UPDATE docreg SET filename = ?, description = ? WHERE docid = ?');
-    if ($sth->execute($name, $desc, $did) == 0) {
-        PSMT::Error->throw_error_code('update_info_failed');
     }
     $dbh->db_unlock_tables();
 }

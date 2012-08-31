@@ -46,7 +46,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     $new{name} = $obj_cgi->param('new_name');
     $new{pathid} = $obj_cgi->param('new_pathid');
     $new{description} = $obj_cgi->param('new_description');
-    PSMT::File->UpdateDocInfo2($did, \%old, \%new);
+    PSMT::File->UpdateDocInfo($did, \%old, \%new);
 }
 
 my $docinfo = PSMT::File->GetDocInfo($did);

@@ -69,7 +69,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     $new{name} = $obj_cgi->param('new_name');
     $new{parent} = $obj_cgi->param('new_parent');
     $new{description} = $obj_cgi->param('new_description');
-    PSMT::File->UpdatePathInfo2($pid, \%old, \%new);
+    PSMT::File->UpdatePathInfo($pid, \%old, \%new);
     $pathinfo = PSMT::File->GetPathInfo($pid);
     $path = PSMT::File->GetFullPathFromId($pid);
 }
