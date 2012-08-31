@@ -88,6 +88,7 @@ sub ListFullPathRestrict {
 sub ListPathRestrict {
     my ($self, $pathid) = @_;
     my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('access_path READ');
     my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
     $sth->execute($pathid);
     my ($ref, @glist);
@@ -107,6 +108,7 @@ sub ListFullDocRestrict {
 sub ListDocRestrict {
     my ($self, $docid) = @_;
     my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('access_doc READ');
     my $sth = $dbh->prepare('SELECT gname FROM access_doc WHERE docid = ?');
     $sth->execute($docid);
     my ($ref, @glist);
