@@ -162,7 +162,7 @@ sub _SetAccessGroup {
     # check group valid (via ldap)
     foreach (@$group) {$gconf{$_} = 1; }
     # grant lock for gname
-    $dbh->db_lock_tables('gname WRITE');
+    $dbh->db_lock_tables('gname WRITE', "access_$cat WRITE");
     # check current
     my $sth = $dbh->prepare('SELECT gname FROM access_' . $cat . ' WHERE ' . $cat . 'id = ?');
     my $ref;
