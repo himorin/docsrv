@@ -43,16 +43,23 @@ sub db_last_key {
 
 sub db_lock_tables {
     my ($self, @tables) = @_;
-    if ($self->{private_table_locked} ne '') {
-        PSMT->error->throw_error_code("already_locked",
-            {
-                current => $self->{private_table_locked},
-                new => join(', ', @tables),
-            });
-    } else {
-        $self->do('LOCK TABLES ' . join(', ', @tables));
-        $self->{private_table_locked} = join(', ', @tables);
+    push(@tables, split(/,/, $self->{private_table_locked}));
+    my (%tbl, @ctbl, $ccmd);
+    foreach (@tables) {
+        $ccmd = lc($_);
+        @ctbl = split(/ /, $ccmd);
+        if (defined($tbl{$ctbl[0]})) {
+            if ($ctbl[1] eq 'write') {$tbl{$ctbl[0]} = 'write'; }
+        } else {
+            $tbl{$ctbl[0]} = ($ccmd eq 'read') ? 'read' : 'write';
+        }
     }
+    foreach (keys %tbl) {
+        $ccmd .= ', ' . $_ . ' ' . $tbl{$_};
+    }
+    $ccmd = substr($ccmd, 2);
+    $self->do('LOCK TABLES ' . $ccmd);
+    $self->{private_table_locked} = $ccmd;
 }
 
 sub db_unlock_tables {
