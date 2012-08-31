@@ -71,6 +71,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     $new{description} = $obj_cgi->param('new_description');
     PSMT::File->UpdatePathInfo2($pid, \%old, \%new);
     $pathinfo = PSMT::File->GetPathInfo($pid);
+    $path = PSMT::File->GetFullPathFromId($pid);
 }
 
 my %hash;
