@@ -619,7 +619,7 @@ sub UpdateDocInfo2 {
     }
     # check collision if changing parent or name
     if ($docinfo->{pathid} ne $new->{pathid}) {
-        $cur_access = PSMT::Access->ListFullDocRestrict($pid);
+        $cur_access = PSMT::Access->ListFullDocRestrict($did);
     }
     if (($docinfo->{pathid} ne $new->{pathid}) ||
         ($docinfo->{filename} ne $new->{name})) {
