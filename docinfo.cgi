@@ -39,11 +39,14 @@ if (defined($dname) && (! defined($did))) {
 }
 
 if ($obj_cgi->request_method() eq 'POST') {
-    my $name = $obj_cgi->param('docname');
-    my $desc = $obj_cgi->param('description');
-    if (defined($name) && defined($desc)) {
-        PSMT::File->UpdateDocInfo($did, $name, $desc);
-    }
+    my (%old, %new);
+    $old{name} = $obj_cgi->param('old_name');
+    $old{pathid} = $obj_cgi->param('old_pathid');
+    $old{description} = $obj_cgi->param('old_description');
+    $new{name} = $obj_cgi->param('new_name');
+    $new{pathid} = $obj_cgi->param('new_pathid');
+    $new{description} = $obj_cgi->param('new_description');
+    PSMT::File->UpdateDocInfo2($did, \%old, \%new);
 }
 
 my $docinfo = PSMT::File->GetDocInfo($did);
@@ -55,6 +58,8 @@ PSMT::Access->CheckForDoc($did);
 my $file_list = PSMT::File->GetDocFiles($did);
 my @file_users;
 foreach (@$file_list) {push(@file_users, $_->{uname}); }
+my %hash;
+PSMT::File->ListAllPath(\%hash);
 
 # insert parameters
 $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
@@ -64,6 +69,7 @@ $obj->template->set_vars('file_list', $file_list);
 $obj->template->set_vars('file_uname', \@file_users);
 $obj->template->set_vars('activity', PSMT::File->ListUserLoadForDoc($did));
 $obj->template->set_vars('group_list', PSMT::Access->ListDocRestrict($did));
+$obj->template->set_vars('allpath', \%hash);
 
 $obj->template->process('docinfo', 'html');
 

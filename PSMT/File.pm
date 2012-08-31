@@ -602,6 +602,42 @@ sub UpdatePathInfo {
     $dbh->db_unlock_tables();
 }
 
+sub UpdateDocInfo2 {
+    my ($self, $did, $old, $new) = @_;
+    my $dbh = PSMT->dbh;
+    my $sth;
+    my $cur_access = undef;
+    if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
+    $dbh->db_lock_tables('docreg WRITE', 'path WRITE', 'access_doc WRITE');
+    my $docinfo = $self->GetDocInfo($did);
+    if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_doc_id'); }
+    # check current match
+    if (($docinfo->{filename} ne $old->{name}) || 
+        ($docinfo->{description} ne $old->{description}) ||
+        ($docinfo->{pathid} ne $old->{pathid})) {
+        PSMT::Error->throw_error_user('old_not_match');
+    }
+    # check collision if changing parent or name
+    if ($docinfo->{pathid} ne $new->{pathid}) {
+        $cur_access = PSMT::Access->ListFullDocRestrict($pid);
+    }
+    if (($docinfo->{pathid} ne $new->{pathid}) ||
+        ($docinfo->{filename} ne $new->{name})) {
+        $self->ValidateNameInPath($new->{pathid}, $new->{name});
+    }
+    # update
+    $sth = $dbh->prepare(
+        'UPDATE docreg SET pathid = ?, filename = ?, description = ? WHERE docid = ?');
+    if ($sth->execute($new->{pathid}, $new->{name}, $new->{description}, $did) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    # set group restriction if parent path changed
+    if (defined($cur_access)) {
+        PSMT::Access->SetDocAccessGroup($did, $cur_access);
+    }
+    $dbh->db_unlock_tables();
+}
+
 sub UpdateDocInfo {
     my ($self, $did, $name, $desc) = @_;
     my $dbh = PSMT->dbh;

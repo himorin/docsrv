@@ -11,19 +11,29 @@
 
 <form method="POST" action="docinfo.cgi">
 <ul>
-  <li>フルパス: <tt><a href="pathinfo.cgi?path=[% full_path %]">[% full_path %]</a></tt>
-    <span id="doc_name_raw"><tt>[% doc_info.filename %]</tt></span>
-    <span id="doc_name_edit" class="ui_hidden"><input type="text" size="50" name="docname" value="[% doc_info.filename %]"></span>
+  <li>フルパス: 
+    <span id="doc_name_raw">
+      <tt><a href="pathinfo.cgi?path=[% full_path %]">/[% full_path %]</a></tt>
+      <tt>[% doc_info.filename %]</tt></span>
+    <span id="doc_name_edit" class="ui_hidden">
+      <select name="new_pathid" onChange="AllPathChange();">
+        <option value="0" [% IF doc_info.pathid == -1 %]selected="selected"[% END %]>/</option>
+        [% FOREACH hid IN allpath.keys.nsort %]
+          <option value="[% hid %]" [% IF hid == doc_info.pathid %]selected="selected" [% END %]>[% allpath.$hid.fullpath %]</option>
+        [%- END %]
+      </select>/<input type="text" size="50" name="new_name" value="[% doc_info.filename %]"></span>
     [% IF InList(file_uname, User.uid) %]
       <span id="update_link"><a href="javascript: doc_info_update();">更新</a></span>
     [% END %]</li>
   <li>ファイルの説明:
     <span id="doc_desc_raw">[% doc_info.description FILTER html %]</span>
-    <span id="doc_desc_edit" class="ui_hidden"><input type="text" size="100" name="description" value="[% doc_info.description FILTER html %]"></span>
+    <span id="doc_desc_edit" class="ui_hidden"><input type="text" size="100" name="new_description" value="[% doc_info.description FILTER html %]"></span>
     </li>
   <li>アクセス可能グループ: 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
-    [% ELSE %](未定義)[% END %]</li>
+    [% ELSE %](未定義)[% END %]
+    <a href="docgroup.cgi?did=[% doc_info.docid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
+    </li>
   <li>ラベル: 
     [% IF doc_labels.size > 0 %]
       [% FOREACH item IN doc_labels %]
@@ -38,8 +48,15 @@
   <input type="submit" value="更新">
 </div>
 <input type="hidden" name="did" value="[% doc_info.docid %]">
+<input type="hidden" name="old_name" value="[% doc_info.filename %]">
+<input type="hidden" name="old_pathid" value="[% doc_info.pathid %]">
+<input type="hidden" name="old_description" value="[% doc_info.description %]">
 </form>
 
+<script type="text/javascript" src="json.cgi?format=js&amp;type=allpath"></script>
+<script type="text/javascript"><!--
+  AllPathChange();
+--></script>
 <script type="text/javascript">
 <!--
 function doc_info_update () {
