@@ -377,7 +377,9 @@ sub ListAllPath {
             $ref->{visible} = TRUE;
         }
         # only if parent is already defined, build fullpath
-        if (defined($hash->{$ref->{parent}}) &&
+        if ($ref->{parent} eq 0) {
+            $ref->{fullpath} = '/' . $ref->{pathname};
+        } elsif (defined($hash->{$ref->{parent}}) &&
             defined($hash->{$ref->{parent}}->{fullpath})) {
             $ref->{fullpath} = $hash->{$ref->{parent}}->{fullpath} . '/';
             $ref->{fullpath} .= $ref->{pathname};
