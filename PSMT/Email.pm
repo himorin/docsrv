@@ -97,6 +97,7 @@ sub _get_user_for_doc {
     my ($self, $did) = @_;
     my %hash;
     my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('favorite READ');
     my $sth = $dbh->prepare('SELECT * FROM favorite WHERE docid = ?');
     $sth->execute();
     my $ref;
@@ -124,6 +125,7 @@ sub _get_user_for_path {
 sub _merge_fav_path {
     my ($self, $pid, $hash) = @_;
     my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('fav_path READ');
     my $sth = $dbh->prepare('SELECT * FROM fav_path WHERE pathid = ?');
     $sth->execute($pid);
     my $ref;
