@@ -391,7 +391,8 @@ sub ListAllPath {
     # build fullpath tree
     while ($unfp > 0) {
         foreach (keys %$hash) {
-            if (defined($hash->{$_}->{fullpath})) {next; }
+            $ref = $hash->{$_};
+            if (defined($ref->{fullpath})) {next; }
             if (defined($hash->{$ref->{parent}}) &&
                 defined($hash->{$ref->{parent}}->{fullpath})) {
                 $ref->{fullpath} = $hash->{$ref->{parent}}->{fullpath} . '/';
