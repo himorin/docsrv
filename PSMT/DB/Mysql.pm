@@ -54,6 +54,7 @@ sub db_lock_tables {
             $tbl{$ctbl[0]} = ($ccmd eq 'read') ? 'read' : 'write';
         }
     }
+    $ccmd = '';
     foreach (keys %tbl) {
         $ccmd .= ', ' . $_ . ' ' . $tbl{$_};
     }
