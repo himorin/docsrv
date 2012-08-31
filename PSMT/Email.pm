@@ -146,7 +146,7 @@ sub _merge_fav_path {
 
 #    if ($sth->rows != 1) {return undef; }
 #    my $uname = PSMT->user->get_uid();
-#    $dbh->db_lock_tables('docreg WRITE, path WRITE');
+#    $dbh->db_lock_tables('docreg WRITE', 'path WRITE');
 #    $dbh->db_unlock_tables();
 
 

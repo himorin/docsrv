@@ -315,7 +315,7 @@ sub ListFilesInDoc {
 sub ListUserLoadForDoc {
     my ($self, $docid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('activity READ, docinfo READ');
+    $dbh->db_lock_tables('activity READ', 'docinfo READ');
     my $sth = $dbh->prepare('SELECT activity.* FROM activity LEFT JOIN docinfo ON activity.fileid = docinfo.fileid WHERE docid = ? ORDER BY activity.dltime DESC');
     my (@dl, $ref);
     $sth->execute($docid);
@@ -473,7 +473,7 @@ sub RegNewDoc {
     my ($self, $pathid, $name, $desc) = @_;
     my $docid = 0;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path WRITE, docreg WRITE');
+    $dbh->db_lock_tables('path WRITE', 'docreg WRITE');
     $self->ValidateNameInPath($pathid, $name);
     my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description) VALUES (?, ?, ?)');
     if ($sth->execute($pathid, $name, $desc) == 0) {return $docid; }
@@ -516,7 +516,7 @@ sub RegNewFile {
 sub RegNewPath {
     my ($self, $cur, $path, $desc, $group) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path WRITE, docreg WRITE');
+    $dbh->db_lock_tables('path WRITE', 'docreg WRITE');
     $self->ValidateNameInPath($cur, $path);
     my $sth = $dbh->prepare('INSERT INTO path (parent, pathname, description) VALUES (?, ?, ?)');
     if ($sth->execute($cur, $path, $desc) == 0) {return 0; }
@@ -533,7 +533,7 @@ sub UpdatePathInfo2 {
     my $sth;
     my $cur_access = undef;
     if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
-    $dbh->db_lock_tables('path WRITE, access_path WRITE');
+    $dbh->db_lock_tables('path WRITE', 'access_path WRITE');
     my $pathinfo = $self->GetPathInfo($pid);
     if (! defined($pathinfo)) {PSMT::Error->throw_error_user('invalid_path_id'); }
     if ($new->{parent} eq $pid) {PSMT::Error->throw_error_user('invalid_new_path'); }
@@ -571,7 +571,7 @@ sub UpdatePathInfo {
     my $pathinfo = $self->GetPathInfo($pid);
     if (! defined($pathinfo)) {PSMT::Error->throw_error_user('invalid_path_id'); }
     if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
-    $dbh->db_lock_tables('docreg WRITE, path WRITE');
+    $dbh->db_lock_tables('docreg WRITE', 'path WRITE');
     # collision
     if ($pathinfo->{pathname} ne $name) {
         $self->ValidateNameInPath($pathinfo->{parent}, $name);
@@ -587,7 +587,7 @@ sub UpdatePathInfo {
 sub UpdateDocInfo {
     my ($self, $did, $name, $desc) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ, docreg WRITE, path WRITE');
+    $dbh->db_lock_tables('docinfo READ', 'docreg WRITE', 'path WRITE');
     my $sth;
     my $docinfo = $self->GetDocInfo($did);
     if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
@@ -685,7 +685,7 @@ sub ValidateNameInPath {
     }
     # check the same in the target path
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ, docreg READ');
+    $dbh->db_lock_tables('path READ', 'docreg READ');
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathname = ? AND parent = ?');
     $sth->execute($name, $pid);
     if ($sth->rows() > 0) {$errid = 'path'; }

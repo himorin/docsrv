@@ -43,7 +43,7 @@ sub db_last_key {
 
 sub db_lock_tables {
     my ($self, @tables) = @_;
-    push(@tables, split(/,/, $self->{private_table_locked}));
+    push(@tables, split(/ *, */, $self->{private_table_locked}));
     my (%tbl, @ctbl, $ccmd);
     foreach (@tables) {
         $ccmd = lc($_);
