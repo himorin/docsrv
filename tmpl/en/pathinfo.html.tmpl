@@ -19,7 +19,7 @@
   <ul>
     <li id="path_name_edit" class="ui_hidden">Move/Change this [% terms.path %] to: 
       <select name="new_parent" onChange="AllPathChange();">
-        <option value="0">/</option>
+        <option value="0" [IF path_info.parent == -1 %]selected="selected"[% END %]>/</option>
         [% FOREACH hid IN allpath.keys.nsort %]
           <option value="[% hid %]" [% IF hid == path_info.parent %]selected="selected" [% END %]>/[% allpath.$hid.fullpath %]</option>
         [%- END %]

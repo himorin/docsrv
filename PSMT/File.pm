@@ -368,6 +368,7 @@ sub ListAllPath {
     $sth->execute();
     if ($sth->rows == 0) {return undef; }
     my $ref;
+    my $unfp = 0;
     while ($ref = $sth->fetchrow_hashref()) {
         if (! PSMT::Access->CheckForPath($ref->{pathid}, FALSE)) {
             if (defined($all)) {$ref->{visible} = FALSE; }
@@ -375,13 +376,27 @@ sub ListAllPath {
         } else {
             $ref->{visible} = TRUE;
         }
-        if (defined($hash->{$ref->{parent}})) {
+        # only if parent is already defined, build fullpath
+        if (defined($hash->{$ref->{parent}}) &&
+            defined($hash->{$ref->{parent}}->{fullpath})) {
             $ref->{fullpath} = $hash->{$ref->{parent}}->{fullpath} . '/';
             $ref->{fullpath} .= $ref->{pathname};
         } else {
-            $ref->{fullpath} = $ref->{pathname};
+            $unfp += 1;
         }
         $hash->{$ref->{pathid}} = $ref;
+    }
+    # build fullpath tree
+    while ($unfp > 0) {
+        foreach (keys %$hash) {
+            if (defined($hash->{$_}->{fullpath})) {next; }
+            if (defined($hash->{$ref->{parent}}) &&
+                defined($hash->{$ref->{parent}}->{fullpath})) {
+                $ref->{fullpath} = $hash->{$ref->{parent}}->{fullpath} . '/';
+                $ref->{fullpath} .= $ref->{pathname};
+                $unfp -= 1;
+            }
+        }
     }
     return $hash;
 }
