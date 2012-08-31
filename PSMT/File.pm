@@ -664,6 +664,7 @@ sub ValidateNameInPath {
     }
     # check the same in the target path
     my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg READ');
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathname = ? AND parent = ?');
     $sth->execute($name, $pid);
     if ($sth->rows() > 0) {$errid = 'path'; }
