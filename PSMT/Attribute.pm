@@ -51,8 +51,8 @@ sub GetAttrForId {
     my %attrs;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables($curtgt . ' READ');
-    my $sth = $dbh->prepare('SELECT attr, value FROM ? WHERE id = ?');
-    $sth->execute($curtgt, $id);
+    my $sth = $dbh->prepare('SELECT attr, value FROM ' . $curtgt . ' WHERE id = ?');
+    $sth->execute($id);
     my $ref;
     while ($ref = $sth->fetchrow_hashref())
       {$attrs{$ref->{attr}} = $ref->{value}; }
@@ -65,15 +65,15 @@ sub AddAttrForId {
     # for value, if undef, insert null
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables($curtgt . ' WRITE');
-    my $sth = $dbh->prepare('SELECT * FROM ? WHERE id = ? AND attr = ?');
-    $sth->execute($curtgt, $id, $attr);
+    my $sth = $dbh->prepare('SELECT * FROM ' . $curtgt . ' WHERE id = ? AND attr = ?');
+    $sth->execute($id, $attr);
     if ($sth->rows() > 0) {return FALSE; }
     if (defined($value)) {
-        $sth = $dbh->prepare('INSERT ? (id, attr, value) VALUES (?, ?, ?)');
-        if ($sth->execute($curtgt, $id, $attr, $value) == 0) {return FALSE; }
+        $sth = $dbh->prepare('INSERT ' . $curtgt . ' (id, attr, value) VALUES (?, ?, ?)');
+        if ($sth->execute($id, $attr, $value) == 0) {return FALSE; }
     } else {
-        $sth = $dbh->prepare('INSERT ? (id, attr) VALUES (?, ?)');
-        if ($sth->execute($curtgt, $id, $attr) == 0) {return FALSE; }
+        $sth = $dbh->prepare('INSERT ' . $curtgt . ' (id, attr) VALUES (?, ?)');
+        if ($sth->execute($id, $attr) == 0) {return FALSE; }
     }
     return TRUE;
 }
@@ -86,19 +86,19 @@ sub UpdateAttrForId {
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables($curtgt . ' WRITE');
     # First, check old value
-    my $sth = $dbh->prepare('SELECT value FROM ? WHERE id = ? AND attr = ?');
-    $sth->execute($curtgt, $id, $attr);
+    my $sth = $dbh->prepare('SELECT value FROM ' . $curtgt . ' WHERE id = ? AND attr = ?');
+    $sth->execute($id, $attr);
     if ($sth->rows != 1) {return FALSE; }
     my $ref = $sth->fetchrow_hashref();
     if ($oldvalue eq '') {if ($ref->{value} ne undef) {return FALSE; } } 
     else {if ($ref->{value} ne $oldvalue) {return FALSE; } }
     # Second, update value to new
     if (defined($newvalue)) {
-        $sth = $dbh->prepare('UPDATE ? SET value = ? WHERE id ? AND attr = ?');
-        if ($sth->execute($curtgt, $newvalue, $id, $attr) == 0) {return FALSE; }
+        $sth = $dbh->prepare('UPDATE ' . $curtgt . ' SET value = ? WHERE id ? AND attr = ?');
+        if ($sth->execute($newvalue, $id, $attr) == 0) {return FALSE; }
     } else {
-        $sth = $dbh->prepare('UPDATE ? SET value = NULL WHERE id ? AND attr = ?');
-        if ($sth->execute($curtgt, $id, $attr) == 0) {return FALSE; }
+        $sth = $dbh->prepare('UPDATE ' . $curtgt . ' SET value = NULL WHERE id ? AND attr = ?');
+        if ($sth->execute($id, $attr) == 0) {return FALSE; }
     }
     return TRUE;
 }
@@ -109,11 +109,11 @@ sub ListExistAttr {
     $dbh->db_lock_tables($curtgt . ' READ');
     my $sth;
     if (defined($id)) {
-        $sth = $dbh->prepare('SELECT attr FROM ? WHERE id = ? GROUP BY attr');
-        $sth->execute($curtgt, $id);
+        $sth = $dbh->prepare('SELECT attr FROM ' . $curtgt . ' WHERE id = ? GROUP BY attr');
+        $sth->execute($id);
     } else {
-        $sth = $dbh->prepare('SELECT attr FROM ? GROUP BY attr');
-        $sth->execute($curtgt);
+        $sth = $dbh->prepare('SELECT attr FROM ' . $curtgt . ' GROUP BY attr');
+        $sth->execute();
     }
     my (@ret, $ref);
     while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{attr}); }
