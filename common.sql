@@ -5,6 +5,10 @@
 access_label : deleted at rev.114
 access_doc   : added at rev.114
 
+attr_path : added at rev.
+attr_doc  : added at rev.
+attr_file : added at rev.
+
 */
 
 CREATE TABLE activity (
@@ -102,4 +106,23 @@ CREATE TABLE access_doc (
   docid         int         UNSIGNED NOT NULL                            ,
   gname         text                 NOT NULL                            
 );
+
+CREATE TABLE attr_path (
+  id            int         UNSIGNED NOT NULL                            ,
+  key           varchar(64)          NOT NULL                            ,
+  value         varchar(255)             NULL                            
+);
+
+CREATE TABLE attr_doc (
+  id            int         UNSIGNED NOT NULL                            ,
+  key           varchar(64)          NOT NULL                            ,
+  value         varchar(255)             NULL                            
+);
+
+CREATE TABLE attr_file (
+  id            int         UNSIGNED NOT NULL                            ,
+  key           varchar(64)          NOT NULL                            ,
+  value         varchar(255)             NULL                            
+);
+
 
