@@ -27,7 +27,7 @@ our $curtgt;
     AddAttrForId
     UpdateAttrForId
 
-    ListExistKey
+    ListExistAttr
 );
 
 sub new {
@@ -51,72 +51,72 @@ sub GetAttrForId {
     my %attrs;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables($curtgt . ' READ');
-    my $sth = $dbh->prepare('SELECT key, value FROM ? WHERE id = ?');
+    my $sth = $dbh->prepare('SELECT attr, value FROM ? WHERE id = ?');
     $sth->execute($curtgt, $id);
     my $ref;
     while ($ref = $sth->fetchrow_hashref())
-      {$attrs{$ref->{key}} = $ref->{value}; }
+      {$attrs{$ref->{attr}} = $ref->{value}; }
     return \%attrs;
 }
 
 sub AddAttrForId {
-    my ($self, $id, $key, $value) = @_;
-    if (! defined($key)) {return FALSE; }
+    my ($self, $id, $attr, $value) = @_;
+    if (! defined($attr)) {return FALSE; }
     # for value, if undef, insert null
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables($curtgt . ' WRITE');
-    my $sth = $dbh->prepare('SELECT * FROM ? WHERE id = ? AND key = ?');
-    $sth->execute($curtgt, $id, $key);
+    my $sth = $dbh->prepare('SELECT * FROM ? WHERE id = ? AND attr = ?');
+    $sth->execute($curtgt, $id, $attr);
     if ($sth->rows() > 0) {return FALSE; }
     if (defined($value)) {
-        $sth = $dbh->prepare('INSERT ? (id, key, value) VALUES (?, ?, ?)');
-        if ($sth->execute($curtgt, $id, $key, $value) == 0) {return FALSE; }
+        $sth = $dbh->prepare('INSERT ? (id, attr, value) VALUES (?, ?, ?)');
+        if ($sth->execute($curtgt, $id, $attr, $value) == 0) {return FALSE; }
     } else {
-        $sth = $dbh->prepare('INSERT ? (id, key) VALUES (?, ?)');
-        if ($sth->execute($curtgt, $id, $key) == 0) {return FALSE; }
+        $sth = $dbh->prepare('INSERT ? (id, attr) VALUES (?, ?)');
+        if ($sth->execute($curtgt, $id, $attr) == 0) {return FALSE; }
     }
     return TRUE;
 }
 
 # if oldvalue or newvalue is '', consider as NULL
 sub UpdateAttrForId {
-    my ($self, $id, $key, $oldvalue, $newvalue) = @_;
+    my ($self, $id, $attr, $oldvalue, $newvalue) = @_;
     # if oldvalue is undefined, two values are undefined -> ERROR
     if (! defined($oldvalue)) {return FALSE; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables($curtgt . ' WRITE');
     # First, check old value
-    my $sth = $dbh->prepare('SELECT value FROM ? WHERE id = ? AND key = ?');
-    $sth->execute($curtgt, $id, $key);
+    my $sth = $dbh->prepare('SELECT value FROM ? WHERE id = ? AND attr = ?');
+    $sth->execute($curtgt, $id, $attr);
     if ($sth->rows != 1) {return FALSE; }
     my $ref = $sth->fetchrow_hashref();
     if ($oldvalue eq '') {if ($ref->{value} ne undef) {return FALSE; } } 
     else {if ($ref->{value} ne $oldvalue) {return FALSE; } }
     # Second, update value to new
     if (defined($newvalue)) {
-        $sth = $dbh->prepare('UPDATE ? SET value = ? WHERE id ? AND key = ?');
-        if ($sth->execute($curtgt, $newvalue, $id, $key) == 0) {return FALSE; }
+        $sth = $dbh->prepare('UPDATE ? SET value = ? WHERE id ? AND attr = ?');
+        if ($sth->execute($curtgt, $newvalue, $id, $attr) == 0) {return FALSE; }
     } else {
-        $sth = $dbh->prepare('UPDATE ? SET value = NULL WHERE id ? AND key = ?');
-        if ($sth->execute($curtgt, $id, $key) == 0) {return FALSE; }
+        $sth = $dbh->prepare('UPDATE ? SET value = NULL WHERE id ? AND attr = ?');
+        if ($sth->execute($curtgt, $id, $attr) == 0) {return FALSE; }
     }
     return TRUE;
 }
 
-sub ListExistKey {
+sub ListExistAttr {
     my ($self, $id) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables($curtgt . ' READ');
     my $sth;
     if (defined($id)) {
-        $sth = $dbh->prepare('SELECT key FROM ? WHERE id = ? GROUP BY key');
+        $sth = $dbh->prepare('SELECT attr FROM ? WHERE id = ? GROUP BY attr');
         $sth->execute($curtgt, $id);
     } else {
-        $sth = $dbh->prepare('SELECT key FROM ? GROUP BY key');
+        $sth = $dbh->prepare('SELECT attr FROM ? GROUP BY attr');
         $sth->execute($curtgt);
     }
     my (@ret, $ref);
-    while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{key}); }
+    while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{attr}); }
     return @ret;
 }
 

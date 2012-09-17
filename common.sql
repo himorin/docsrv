@@ -109,19 +109,19 @@ CREATE TABLE access_doc (
 
 CREATE TABLE attr_path (
   id            int         UNSIGNED NOT NULL                            ,
-  key           varchar(64)          NOT NULL                            ,
+  attr          varchar(64)          NOT NULL                            ,
   value         varchar(255)             NULL                            
 );
 
 CREATE TABLE attr_doc (
   id            int         UNSIGNED NOT NULL                            ,
-  key           varchar(64)          NOT NULL                            ,
+  attr          varchar(64)          NOT NULL                            ,
   value         varchar(255)             NULL                            
 );
 
 CREATE TABLE attr_file (
   id            int         UNSIGNED NOT NULL                            ,
-  key           varchar(64)          NOT NULL                            ,
+  attr          varchar(64)          NOT NULL                            ,
   value         varchar(255)             NULL                            
 );
 
