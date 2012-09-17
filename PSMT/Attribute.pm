@@ -98,7 +98,7 @@ sub UpdateAttrForId {
         if ($sth->execute($curtgt, $newvalue, $id, $key) == 0) {return FALSE; }
     } else {
         $sth = $dbh->prepare('UPDATE ? SET value = NULL WHERE id ? AND key = ?');
-        if ($sth->execute($curtgt, $id, $key) {return FALSE; }
+        if ($sth->execute($curtgt, $id, $key) == 0) {return FALSE; }
     }
     return TRUE;
 }
