@@ -17,6 +17,8 @@ use PSMT::Access;
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
 
+print $obj_cgi->header('text/plain');
+
 if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
 }
@@ -37,7 +39,18 @@ if (! defined($i_method)) {
 
 $i_method = lc($i_method);
 if ($i_method eq 'list') {
+    my @ret = $obj_attr->ListExistAttr($i_id);
+    print join("\n", @ret);
+} elsif ($i_method eq 'get') {
+    my $hash = $obj_attr->GetAttrForId($i_id);
+    if (!defined($hash)) {print "Error"; }
+    foreach (keys %$hash) {
+        print "$_ = $hash->{$_}\n";
+    }
 } elsif ($i_method eq 'add') {
+    my $i_attr = $obj_cgi->param('attr');
+    my $i_value = $obj_cgi->param('value');
+    print $obj_attr->AddAttrForId($i_id, $i_attr, $i_value);
 } elsif ($i_method eq 'update') {
 } else {
     PSMT::Error->throw_error_user('invalid_method');
