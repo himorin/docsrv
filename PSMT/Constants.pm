@@ -71,6 +71,7 @@ use constant AVAIL_FORMATS => {
   'attribute/get'      => ['html', 'json'],
   'attribute/add'      => ['html', 'json'],
   'attribute/update'   => ['html', 'json'],
+  'attribute/search'   => ['html', 'json'],
 
   'search/query'       => ['html'],
   'search/search'      => ['html'],

@@ -27,6 +27,11 @@ our $curtgt;
     AddAttrForId
     UpdateAttrForId
 
+    GetIdForAttr
+    GetIdForValue
+    GetIdForPair
+    GetValueForAttr
+
     ListExistAttr
 );
 
@@ -57,6 +62,64 @@ sub GetAttrForId {
     while ($ref = $sth->fetchrow_hashref())
       {$attrs{$ref->{attr}} = $ref->{value}; }
     return \%attrs;
+}
+
+sub GetIdForAttr {
+    my ($self, $attr) = @_;
+    if (! defined($attr)) {return undef; }
+    my @ids;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables($curtgt . ' READ');
+    my $sth = $dbh->prepare('SELECT id FROM ' . $curtgt . ' WHERE attr = ? GROUP BY id');
+    $sth->execute($attr);
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {push(@ids, $ref->{id}); }
+    return \@ids;
+}
+
+sub GetIdForValue {
+    my ($self, $value) = @_;
+    if (! defined($value)) {return undef; }
+    my @ids;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables($curtgt . ' READ');
+    my $sth = $dbh->prepare('SELECT id FROM ' . $curtgt . ' WHERE value = ? GROUP BY id');
+    $sth->execute($value);
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {push(@ids, $ref->{id}); }
+    return \@ids;
+}
+
+sub GetIdForPair {
+    my ($self, $attr, $value) = @_;
+    if (! defined($attr)) {return undef; }
+    my @ids;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables($curtgt . ' READ');
+    my $sth;
+    if (defined($value)) {
+      $sth = $dbh->prepare('SELECT id FROM ' . $curtgt . ' WHERE attr = ? AND value = ? GROUP BY id');
+      $sth->execute($attr, $value);
+    } else {
+      $sth = $dbh->prepare('SELECT id FROM ' . $curtgt . ' WHERE attr = ? AND value = NULL GROUP BY id');
+      $sth->execute($attr);
+    }
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {push(@ids, $ref->{id}); }
+    return \@ids;
+}
+
+sub GetValueForAttr {
+    my ($self, $attr) = @_;
+    if (! defined($attr)) {return undef; }
+    my @values;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables($curtgt . ' READ');
+    my $sth = $dbh->prepare('SELECT value FROM ' . $curtgt . ' WHERE attr = ? GROUP BY value');
+    $sth->execute($attr);
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {push(@values, $ref->{value}); }
+    return \@values;
 }
 
 sub AddAttrForId {
