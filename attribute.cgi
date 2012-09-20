@@ -54,6 +54,7 @@ if ($i_method eq 'list') {
     $obj->template->set_vars('value', $i_value);
 } elsif ($i_method eq 'update') {
     if (! defined($i_id)) {PSMT::Error->throw_error_user('attr_invalid_id'); }
+    my $i_attr = $obj_cgi->param('attr');
     my $i_old = $obj_cgi->param('old_value');
     my $i_new = $obj_cgi->param('new_value');
     if (! $obj_attr->UpdateAttrForId($i_id, $i_attr, $i_old, $i_new)) {
