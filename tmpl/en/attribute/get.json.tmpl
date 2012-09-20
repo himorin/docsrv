@@ -1,2 +1,2 @@
 {"target":"[% target FILTER js %]","id":"[% id FILTER js %]","get":{
-  [%- FOREACH attr IN hash.keys %]{"[% attr FILTER js %]", "[% hash.$attr FILTER js %]"}, [%- END %]}}
+  [%- FOREACH attr IN hash.keys %]{"[% attr FILTER js %]":"[% hash.$attr FILTER js %]"}, [%- END %]}}
