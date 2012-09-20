@@ -17,8 +17,6 @@ use PSMT::Access;
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
 
-print $obj_cgi->header('text/plain');
-
 if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
 }
