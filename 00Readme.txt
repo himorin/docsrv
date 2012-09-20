@@ -21,3 +21,16 @@ Apache Alias for query path
 * Alias <base_uri>/path/ <dir>/pathinfo.cgi/
 * Alias <base_uri>/doc/  <dir>/docinfo.cgi/
 
+
+** UPGRADE NOTES
+
+* To 0.5.2 from prior
+
+'access_label' table droped and migrated into 'access_doc'.
+This operation should be performed by hand.
+
+* To 0.5.3 from prior
+
+Three tables added: 'attr_path', 'attr_doc', 'attr_file'.
+These tables should be created by hand. (refer common.sql for schema)
+

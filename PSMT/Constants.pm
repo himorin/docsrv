@@ -67,6 +67,11 @@ use constant AVAIL_FORMATS => {
   'pathinfo'           => ['html'],
   'recent'             => ['html'],
 
+  'attribute/list'     => ['html', 'json'],
+  'attribute/get'      => ['html', 'json'],
+  'attribute/add'      => ['html', 'json'],
+  'attribute/update'   => ['html', 'json'],
+
   'search/query'       => ['html'],
   'search/search'      => ['html'],
 
