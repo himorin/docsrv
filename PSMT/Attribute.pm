@@ -94,10 +94,10 @@ sub UpdateAttrForId {
     else {if ($ref->{value} ne $oldvalue) {return FALSE; } }
     # Second, update value to new
     if (defined($newvalue)) {
-        $sth = $dbh->prepare('UPDATE ' . $curtgt . ' SET value = ? WHERE id ? AND attr = ?');
+        $sth = $dbh->prepare('UPDATE ' . $curtgt . ' SET value = ? WHERE id = ? AND attr = ?');
         if ($sth->execute($newvalue, $id, $attr) == 0) {return FALSE; }
     } else {
-        $sth = $dbh->prepare('UPDATE ' . $curtgt . ' SET value = NULL WHERE id ? AND attr = ?');
+        $sth = $dbh->prepare('UPDATE ' . $curtgt . ' SET value = NULL WHERE id = ? AND attr = ?');
         if ($sth->execute($id, $attr) == 0) {return FALSE; }
     }
     return TRUE;
