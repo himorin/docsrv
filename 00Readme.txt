@@ -31,6 +31,7 @@ This operation should be performed by hand.
 
 * To 0.5.3 from prior
 
-Three tables added: 'attr_path', 'attr_doc', 'attr_file'.
-These tables should be created by hand. (refer common.sql for schema)
+One table added: 'attribute'.
+This table should be created by hand. (refer common.sql for schema)
+One disp_skin added: 'table.attribute' (refer docsrv_config.sql for data)
 

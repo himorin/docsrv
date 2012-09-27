@@ -36,6 +36,7 @@
       [% ELSE %]
         <img id="fav_p[% item.pathid %]" class="" src="skins/images/woofunction/16/star_off.png">
       [% END %]
+      <a href="attribute.cgi?target=path&method=get&id=[% item.pathid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
       <a href="docadd.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'add_doc' %]</a>
       </td>
     <td class="path">[% INCLUDE show_table_icon id = 'dir' %]
@@ -73,6 +74,7 @@
       [% ELSE %]
         <img id="fav_[% item.docid %]" class="" src="skins/images/woofunction/16/star_off.png">
       [% END %]
+      <a href="attribute.cgi?target=doc&method=get&id=[% item.docid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
       <a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
       <a href="docinfo.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'info' %]</a>
       </td>

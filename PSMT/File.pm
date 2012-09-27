@@ -732,8 +732,8 @@ sub GetPathIdForDoc {
 
 sub MakeEncZipFile {
     my ($self, $fid, $pass) = @_;
-    my $tdir = PSMT::Constants::LOCATIONS()->{'zipcache'};
-    if (! -d PSMT::Constants::LOCATIONS()->{'zipcache'}) {mkdir($tdir); }
+    my $tdir = PSMT::Constants::LOCATIONS()->{'rel_zipcache'};
+    if (! -d PSMT::Constants::LOCATIONS()->{'rel_zipcache'}) {mkdir($tdir); }
     my $dir = tempdir(TEMPLATE => 'XXXXXXXX', DIR => $tdir);
     my $tfname = $self->GetFileFullPath($fid);
     $tfname =~ s/\//\_/g;

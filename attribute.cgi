@@ -82,6 +82,8 @@ if ($i_method eq 'list') {
         PSMT::Error->throw_error_user('attr_search_nores');
     }
     $obj->template->set_vars('result', $i_res);
+    $obj->template->set_vars('s_attr', $i_attr);
+    $obj->template->set_vars('s_value', $i_value);
 } else {
     PSMT::Error->throw_error_user('attr_invalid_method');
 }

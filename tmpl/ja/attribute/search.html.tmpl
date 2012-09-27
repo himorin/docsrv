@@ -1,0 +1,21 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>
+[% IF result == 'id' %]
+  [% IF s_attr.defined %]属性 = [% s_attr FILTER html %][% END %]
+  [% IF s_value.defined %]値 = [% s_value FILTER html %][% END %]
+  を持つ
+  [% IF target == 'file' %][% terms.file %][% ELSIF target == 'doc' %][% terms.document %][% ELSE %][% terms.path %][% END %]
+  リスト
+[% ELSE %]
+  [% IF target == 'file' %][% terms.file %][% ELSIF target == 'doc' %][% terms.document %][% ELSE %][% terms.path %][% END %]
+  が持つ属性 [% s_attr %] の値リスト
+[% END %]</h3>
+
+<ul>
+  [% FOREACH item IN list %]
+    <li>[% item FILTER html %]</li>
+  [% END %]
+</ul>
+
+[% PROCESS global/footer.html.tmpl %]

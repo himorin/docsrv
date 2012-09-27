@@ -1,0 +1,17 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>属性値更新</h3>
+
+<div>
+[%- IF target == 'file' %]
+<a href="fileinfo.cgi?fid=[% id FILTER url %]">[% terms.file %] [% id FILTER html %]</a>
+[% ELSIF target == 'doc' %]
+<a href="docinfo.cgi?did=[% id FILTER url %]">[% terms.document %] [% id FILTER html %]</a>
+[% ELSE %]
+<a href="pathinfo.cgi?pid=[% id FILTER url %]">[% terms.path %] [% id FILTER html %]</a>
+[% END %] 
+の属性 [% attr FILTER html %] の値が
+[% old_value FILTER html %] から [% new_value FILTER html %] に更新されました。
+</div>
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,26 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>
+[%- IF target == 'file' %]
+<a href="fileinfo.cgi?fid=[% id FILTER url %]">[% terms.file %] [% id FILTER html %]</a>
+[% ELSIF target == 'doc' %]
+<a href="docinfo.cgi?did=[% id FILTER url %]">[% terms.document %] [% id FILTER html %]</a>
+[% ELSE %]
+<a href="pathinfo.cgi?pid=[% id FILTER url %]">[% terms.path %] [% id FILTER html %]</a>
+[% END %]の属性値リスト</h3>
+
+<table class="labellist">
+  <tr>
+    <th>名前</th>
+    <th>属性値</th>
+  </tr>
+  [% FOREACH attr IN hash.keys %]
+    [% count = loop.count() %]
+    <tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">
+      <td>[% attr FILTER html %]</td>
+      <td>[% hash.$attr FILTER html %]</td>
+    </tr>
+  [% END %]
+</table>
+
+[% PROCESS global/footer.html.tmpl %]

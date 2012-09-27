@@ -1,0 +1,20 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>List of result for 
+[% IF result == 'id' %]
+  all ID on 
+    [% IF s_attr.defined %]Attribute = [% s_attr FILTER html %][% END %]
+    [% IF s_value.defined %]Value = [% s_value FILTER html %][% END %]
+[% ELSE %]
+  all values on attribute [% s_value %]
+[% END %] for 
+[% IF target == 'file' %][% terms.file %][% ELSIF target == 'doc' %][% terms.document %][% ELSE %][% terms.path %][% END %]
+</h3>
+
+<ul>
+  [% FOREACH item IN list %]
+    <li>[% item FILTER html %]</li>
+  [% END %]
+</ul>
+
+[% PROCESS global/footer.html.tmpl %]

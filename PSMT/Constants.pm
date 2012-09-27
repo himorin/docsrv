@@ -168,6 +168,7 @@ sub LOCATIONS {
         'datadir'     => $datapath,
         'datacache'   => "$datapath/cache",
         'zipcache'    => "$datapath/dwez",
+        'rel_zipcache' => './data/dwez',
     };
 }
 

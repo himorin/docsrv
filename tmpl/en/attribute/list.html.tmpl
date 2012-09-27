@@ -1,0 +1,23 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>List of existing attribute name on 
+[% IF id.defined %]
+  [%- IF target == 'file' %]
+    <a href="fileinfo.cgi?fid=[% id FILTER url %]">[% terms.file %] [% id FILTER html %]</a>
+  [% ELSIF target == 'doc' %]
+    <a href="docinfo.cgi?did=[% id FILTER url %]">[% terms.document %] [% id FILTER html %]</a>
+  [% ELSE %]
+    <a href="pathinfo.cgi?pid=[% id FILTER url %]">[% terms.path %] [% id FILTER html %]</a>
+  [% END %]
+[% ELSE %]
+  [% IF target == 'file' %][% terms.file %][% ELSIF target == 'doc' %][% terms.document %][% ELSE %][% terms.path %][% END %]
+[% END %]
+</h3>
+
+<ul>
+  [% FOREACH attr IN list %]
+    <li>[% attr FILTER html %]</li>
+  [% END %]
+</ul>
+
+[% PROCESS global/footer.html.tmpl %]

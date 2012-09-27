@@ -1,0 +1,18 @@
+[% PROCESS global/header.html.tmpl %]
+
+<h3>Attribute added</h3>
+
+<div>Attribute '[% attr FILTER html %]' with value '[% value FILTER html %]' 
+had added successfully into 
+[% IF target == 'file' %]
+<a href="fileinfo.cgi?fid=[% id FILTER url %]">[% terms.file %] [% id FILTER html %]</a>
+[% ELSIF target == 'doc' %]
+<a href="docinfo.cgi?did=[% id FILTER url %]">[% terms.document %] [% id FILTER html %]</a>
+[% ELSE %]
+<a href="pathinfo.cgi?pid=[% id FILTER url %]">[% terms.path %] [% id FILTER html %]</a>
+[% END %].
+(<a href="attribute.cgi?target=[% target FILTER url %]&method=get&id=[% id FILTER url %]">View</a>)
+</div>
+
+
+[% PROCESS global/footer.html.tmpl %]
