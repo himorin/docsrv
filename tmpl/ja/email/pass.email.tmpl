@@ -1,0 +1,20 @@
+From: [% terms.admin %]
+To: [% emailto +%]
+Subject: ([% terms.sitename %]) PASSWORD NOTIFICATION for [% fname %]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+User-Agent: [% terms.sitedomain %]
+
+  Dear, [%+ uid %]
+
+  This e-mail is an automatical notification from the document server system 
+on [% terms.sitename %].
+  Please do not reply to thi e-mail.
+
+  Password for your downloaded file ([% fname %]) is 
+
+[% pass %]
+
+-- 
+[% terms.sitename %] Document Server System
+[% Param.base_uri %]

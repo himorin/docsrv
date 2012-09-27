@@ -30,6 +30,8 @@ use Email::Send;
     NewDocInPath
     NewPathInPath
     NewFileInDoc
+
+    SendPassword
 );
 
 sub new {
@@ -71,6 +73,14 @@ sub NewFileInDoc {
     foreach (keys %$users) {$self->_send_email($obj, $_, 'newfile'); }
 }
 
+sub SendPassword {
+    my ($self, $fid, $uid, $pass) = @_;
+    my $obj = new PSMT::Template;
+    $obj->set_vars('uid', $uid);
+    $obj->set_vars('fname', PSMT::File->GetFullPathFromId($fid));
+    $obj->set_vars('pass', $pass);
+    $self->_send_email($obj, $uid, 'pass');
+}
 
 
 #------------------------------------------------------------------------

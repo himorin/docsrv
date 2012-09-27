@@ -79,6 +79,7 @@ use constant AVAIL_FORMATS => {
   'email/newdoc'       => ['email'],
   'email/newfile'      => ['email'],
   'email/newpath'      => ['email'],
+  'email/pass'         => ['email'],
 
   'error'              => ['html', 'json'],
   'error/code'         => ['html', 'json'],
