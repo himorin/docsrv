@@ -5,9 +5,10 @@
 access_label : deleted at rev.114
 access_doc   : added at rev.114
 
-attr_path : added at rev.146
-attr_doc  : added at rev.146
-attr_file : added at rev.146
+attr_path : added at rev.146, removed at rev. 165
+attr_doc  : added at rev.146, removed at rev. 165
+attr_file : added at rev.146, removed at rev. 165
+attribute : added at rev.165
 
 */
 
@@ -107,6 +108,7 @@ CREATE TABLE access_doc (
   gname         text                 NOT NULL                            
 ) DEFAULT CHARSET=utf8 ;
 
+/*
 CREATE TABLE attr_path (
   id            int         UNSIGNED NOT NULL                            ,
   attr          varchar(64)          NOT NULL                            ,
@@ -121,6 +123,14 @@ CREATE TABLE attr_doc (
 
 CREATE TABLE attr_file (
   id            int         UNSIGNED NOT NULL                            ,
+  attr          varchar(64)          NOT NULL                            ,
+  value         varchar(255)             NULL                            
+) DEFAULT CHARSET=utf8 ;
+*/
+
+CREATE TABLE attribute (
+  id            int         UNSIGNED NOT NULL                            ,
+  target        tinyttext            NOT NULL                            ,
   attr          varchar(64)          NOT NULL                            ,
   value         varchar(255)             NULL                            
 ) DEFAULT CHARSET=utf8 ;

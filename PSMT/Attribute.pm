@@ -37,16 +37,16 @@ our $curtgt;
 
 sub new {
     my ($self) = @_;
-    $curtgt = 'attr_path'; # default to path
+    $curtgt = 'path'; # default to path
     return $self;
 }
 
 sub SetTarget {
     my ($self, $tgt) = @_;
     $tgt = lc($tgt);
-    if ($tgt eq 'path') {$curtgt = 'attr_' . $tgt; return TRUE; }
-    if ($tgt eq 'doc' ) {$curtgt = 'attr_' . $tgt; return TRUE; }
-    if ($tgt eq 'file') {$curtgt = 'attr_' . $tgt; return TRUE; }
+    if ($tgt eq 'path') {$curtgt = $tgt; return TRUE; }
+    if ($tgt eq 'doc' ) {$curtgt = $tgt; return TRUE; }
+    if ($tgt eq 'file') {$curtgt = $tgt; return TRUE; }
     return FALSE;
 }
 
@@ -55,9 +55,9 @@ sub GetAttrForId {
     if (! defined($id)) {return undef; }
     my %attrs;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables($curtgt . ' READ');
-    my $sth = $dbh->prepare('SELECT attr, value FROM ' . $curtgt . ' WHERE id = ?');
-    $sth->execute($id);
+    $dbh->db_lock_tables('attribute READ');
+    my $sth = $dbh->prepare('SELECT attr, value FROM attribute WHERE target = ? AND id = ?');
+    $sth->execute($curtgt, $id);
     my $ref;
     while ($ref = $sth->fetchrow_hashref())
       {$attrs{$ref->{attr}} = $ref->{value}; }
@@ -69,9 +69,9 @@ sub GetIdForAttr {
     if (! defined($attr)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables($curtgt . ' READ');
-    my $sth = $dbh->prepare('SELECT id FROM ' . $curtgt . ' WHERE attr = ? GROUP BY id');
-    $sth->execute($attr);
+    $dbh->db_lock_tables('attribute READ');
+    my $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND attr = ? GROUP BY id');
+    $sth->execute($curtgt, $attr);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {push(@ids, $ref->{id}); }
     return \@ids;
@@ -82,9 +82,9 @@ sub GetIdForValue {
     if (! defined($value)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables($curtgt . ' READ');
-    my $sth = $dbh->prepare('SELECT id FROM ' . $curtgt . ' WHERE value = ? GROUP BY id');
-    $sth->execute($value);
+    $dbh->db_lock_tables('attribute READ');
+    my $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND value = ? GROUP BY id');
+    $sth->execute($curtgt, $value);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {push(@ids, $ref->{id}); }
     return \@ids;
@@ -95,14 +95,14 @@ sub GetIdForPair {
     if (! defined($attr)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables($curtgt . ' READ');
+    $dbh->db_lock_tables('attribute READ');
     my $sth;
     if (defined($value)) {
-      $sth = $dbh->prepare('SELECT id FROM ' . $curtgt . ' WHERE attr = ? AND value = ? GROUP BY id');
-      $sth->execute($attr, $value);
+      $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND attr = ? AND value = ? GROUP BY id');
+      $sth->execute($curtgt, $attr, $value);
     } else {
-      $sth = $dbh->prepare('SELECT id FROM ' . $curtgt . ' WHERE attr = ? AND value = NULL GROUP BY id');
-      $sth->execute($attr);
+      $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND attr = ? AND value = NULL GROUP BY id');
+      $sth->execute($curtgt, $attr);
     }
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {push(@ids, $ref->{id}); }
@@ -114,9 +114,9 @@ sub GetValueForAttr {
     if (! defined($attr)) {return undef; }
     my @values;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables($curtgt . ' READ');
-    my $sth = $dbh->prepare('SELECT value FROM ' . $curtgt . ' WHERE attr = ? GROUP BY value');
-    $sth->execute($attr);
+    $dbh->db_lock_tables('attribute READ');
+    my $sth = $dbh->prepare('SELECT value FROM attribute WHERE target = ? AND attr = ? GROUP BY value');
+    $sth->execute($curtgt, $attr);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {push(@values, $ref->{value}); }
     return \@values;
@@ -127,16 +127,16 @@ sub AddAttrForId {
     if (! defined($attr)) {return FALSE; }
     # for value, if undef, insert null
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables($curtgt . ' WRITE');
-    my $sth = $dbh->prepare('SELECT * FROM ' . $curtgt . ' WHERE id = ? AND attr = ?');
-    $sth->execute($id, $attr);
+    $dbh->db_lock_tables('attribute WRITE');
+    my $sth = $dbh->prepare('SELECT * FROM attribute WHERE target = ? AND id = ? AND attr = ?');
+    $sth->execute($curtgt, $id, $attr);
     if ($sth->rows() > 0) {return FALSE; }
     if (defined($value)) {
-        $sth = $dbh->prepare('INSERT ' . $curtgt . ' (id, attr, value) VALUES (?, ?, ?)');
-        if ($sth->execute($id, $attr, $value) == 0) {return FALSE; }
+        $sth = $dbh->prepare('INSERT attribute (id, target, attr, value) VALUES (?, ?, ?, ?)');
+        if ($sth->execute($id, $curtgt, $attr, $value) == 0) {return FALSE; }
     } else {
-        $sth = $dbh->prepare('INSERT ' . $curtgt . ' (id, attr) VALUES (?, ?)');
-        if ($sth->execute($id, $attr) == 0) {return FALSE; }
+        $sth = $dbh->prepare('INSERT attribute (id, target, attr) VALUES (?, ?, ?)');
+        if ($sth->execute($id, $curtgt, $attr) == 0) {return FALSE; }
     }
     return TRUE;
 }
@@ -147,21 +147,21 @@ sub UpdateAttrForId {
     # if oldvalue is undefined, two values are undefined -> ERROR
     if (! defined($oldvalue)) {return FALSE; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables($curtgt . ' WRITE');
+    $dbh->db_lock_tables('attribute WRITE');
     # First, check old value
-    my $sth = $dbh->prepare('SELECT value FROM ' . $curtgt . ' WHERE id = ? AND attr = ?');
-    $sth->execute($id, $attr);
+    my $sth = $dbh->prepare('SELECT value FROM attribute WHERE target = ? AND id = ? AND attr = ?');
+    $sth->execute($curtgt, $id, $attr);
     if ($sth->rows != 1) {return FALSE; }
     my $ref = $sth->fetchrow_hashref();
     if ($oldvalue eq '') {if ($ref->{value} ne undef) {return FALSE; } } 
     else {if ($ref->{value} ne $oldvalue) {return FALSE; } }
     # Second, update value to new
     if (defined($newvalue)) {
-        $sth = $dbh->prepare('UPDATE ' . $curtgt . ' SET value = ? WHERE id = ? AND attr = ?');
-        if ($sth->execute($newvalue, $id, $attr) == 0) {return FALSE; }
+        $sth = $dbh->prepare('UPDATE attribute SET value = ? WHERE id = ? AND target = ? AND attr = ?');
+        if ($sth->execute($newvalue, $id, $curtgt, $attr) == 0) {return FALSE; }
     } else {
-        $sth = $dbh->prepare('UPDATE ' . $curtgt . ' SET value = NULL WHERE id = ? AND attr = ?');
-        if ($sth->execute($id, $attr) == 0) {return FALSE; }
+        $sth = $dbh->prepare('UPDATE attribute SET value = NULL WHERE id = ? AND target = ? AND attr = ?');
+        if ($sth->execute($id, $curtgt, $attr) == 0) {return FALSE; }
     }
     return TRUE;
 }
@@ -169,14 +169,14 @@ sub UpdateAttrForId {
 sub ListExistAttr {
     my ($self, $id) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables($curtgt . ' READ');
+    $dbh->db_lock_tables('attribute READ');
     my $sth;
     if (defined($id)) {
-        $sth = $dbh->prepare('SELECT attr FROM ' . $curtgt . ' WHERE id = ? GROUP BY attr');
-        $sth->execute($id);
+        $sth = $dbh->prepare('SELECT attr FROM attribute WHERE target = ? AND id = ? GROUP BY attr');
+        $sth->execute($curtgt, $id);
     } else {
-        $sth = $dbh->prepare('SELECT attr FROM ' . $curtgt . ' GROUP BY attr');
-        $sth->execute();
+        $sth = $dbh->prepare('SELECT attr FROM attribute WHERE target = ? GROUP BY attr');
+        $sth->execute($curtgt);
     }
     my (@ret, $ref);
     while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{attr}); }
