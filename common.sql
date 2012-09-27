@@ -130,7 +130,7 @@ CREATE TABLE attr_file (
 
 CREATE TABLE attribute (
   id            int         UNSIGNED NOT NULL                            ,
-  target        tinyttext            NOT NULL                            ,
+  target        tinytext             NOT NULL                            ,
   attr          varchar(64)          NOT NULL                            ,
   value         varchar(255)             NULL                            
 ) DEFAULT CHARSET=utf8 ;
