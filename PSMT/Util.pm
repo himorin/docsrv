@@ -102,6 +102,7 @@ sub filter_text {
 sub filter_url_quote {
     my ($var) = @_;
     # IF utf8 mode, must utf8::encode 'var'
+    utf8::encode($var) if utf8::is_utf8($var);
     $var =~ s/([^a-zA-Z0-9_\-.])/uc sprintf("%%%02x",ord($1))/eg;
     return $var;
 }
@@ -111,6 +112,7 @@ sub filter_path_url {
     # IF utf8 mode, must utf8::encode 'var'
     $var =~ s/^\///g;
     $var =~ s/\/$//g;
+    utf8::encode($var) if utf8::is_utf8($var);
     $var =~ s/([^a-zA-Z0-9_\-.\/])/uc sprintf("%%%02x",ord($1))/eg;
     return $var;
 }

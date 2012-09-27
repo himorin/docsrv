@@ -92,3 +92,22 @@ function AllPathChange() {
 }
 
 
+// InfoTip will use id 'gbit' element
+
+var def_gbit_id = 'gbit';
+
+function show_infotip_path(target) {
+    document.getElementById(def_gbit_id).style.display = 'block';
+}
+
+function show_infotip_doc(target) {
+    document.getElementById(def_gbit_id).style.display = 'block';
+}
+
+function hide_infotip() {
+    document.getElementById(def_gbit_id).style.display = 'none';
+}
+
+
+
+

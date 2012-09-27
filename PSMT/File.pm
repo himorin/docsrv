@@ -12,7 +12,7 @@ use strict;
 
 use Digest::MD5;
 use File::Path;
-use File::Temp qw/ tempfile /;
+use File::Temp qw/ tempfile tempdir /;
 
 use base qw(Exporter);
 
@@ -75,9 +75,11 @@ use PSMT::HyperEstraier;
     ValidateNameInPath
     MoveNewFile
     SaveToDav
+    MakeEncZipFile
 );
 
 my $hash_each = 2;
+my $bin_zip = '/usr/bin/zip -0 ';
 
 sub new {
     my ($self) = @_;
@@ -726,6 +728,20 @@ sub GetPathIdForDoc {
     $sth->execute($did);
     if ($sth->rows() == 0) {return -1; }
     return $sth->fetchrow_hashref()->{pathid};
+}
+
+sub MakeEncZipFile {
+    my ($self, $fid, $pass) = @_;
+    my $tdir = PSMT::Constants::LOCATIONS()->{'zipcache'};
+    if (! -d PSMT::Constants::LOCATIONS()->{'zipcache'}) {mkdir($tdir); }
+    my $dir = tempdir(TEMPLATE => 'XXXXXXXX', DIR => $tdir);
+    my $tfname = $self->GetFileFullPath($fid);
+    $tfname =~ s/\//\_/g;
+    $tfname = $dir . '/' . $tfname;
+    symlink($self->GetFilePath($fid) . '/' . $fid, $tfname) or return undef;
+    my $fh;
+    open($fh, "$bin_zip -P \"$pass\" - $tfname |") or return undef;
+    return $fh;
 }
 
 ################################################################## PRIVATE

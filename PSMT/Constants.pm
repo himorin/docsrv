@@ -166,6 +166,7 @@ sub LOCATIONS {
         'skins'       => "$inspath/skins",
         'datadir'     => $datapath,
         'datacache'   => "$datapath/cache",
+        'zipcache'    => "$datapath/dwez",
     };
 }
 

@@ -36,25 +36,36 @@ my $file = PSMT::File->GetFilePath($fid) . $fid;
 if (! -f $file) {PSMT::Error->throw_error_user('invalid_filepath'); }
 my $fname = PSMT::File->GetFileFullPath($fid);
 if (! defined($fname)) {$fname = $fid; }
-
-my $ext = PSMT::File->GetFileExt($fid);
 PSMT::File->RegUserAccess($fid);
 
-# Quick hack for MSKB #436616
-if ($ENV{'HTTP_USER_AGENT'} =~ / MSIE /) {
-    utf8::encode($fname);
-    $fname =~ s/([^\w ])/'%' . unpack('H2', $1)/eg;
-}
-
-print $obj_cgi->header(
-        -type => "$ext; name=\"$fname\"",
-        -content_disposition => "attachment; filename=\"$fname\"",
-        -content_length => PSMT::File->GetFileSize($fid),
-    );
 binmode STDOUT, ':bytes';
-open(INDAT, $file);
-print <INDAT>;
-close(INDAT);
+# Encrypted zip or not
+if (TRUE) {
+    my $fh = PSMT::File->MakeEncZipFile($fid, 'abcde');
+    if (! defined($fh)) {PSMT::Error->throw_error_code('crypt_zip'); }
+    print $obj_cgi->header(
+            -type => PSMT::File->GetFileExt("zip") . "; name=\"$fname.zip\"",
+            -content_disposition => "attachment; filename=\"$fname.zip\"",
+        );
+    print <$fh>;
+    close($fh);
+} else {
+    my $ext = PSMT::File->GetFileExt($fid);
+    # Quick hack for MSKB #436616
+    if ($ENV{'HTTP_USER_AGENT'} =~ / MSIE /) {
+        utf8::encode($fname);
+        $fname =~ s/([^\w ])/'%' . unpack('H2', $1)/eg;
+    }
+    print $obj_cgi->header(
+            -type => "$ext; name=\"$fname\"",
+            -content_disposition => "attachment; filename=\"$fname\"",
+            -content_length => PSMT::File->GetFileSize($fid),
+        );
+    binmode STDOUT, ':bytes';
+    open(INDAT, $file);
+    print <INDAT>;
+    close(INDAT);
+}
 
 exit;
 
