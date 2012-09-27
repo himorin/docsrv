@@ -95,7 +95,7 @@ sub _send_email {
     $obj->process('email/' . $tmpl, 'email', \%ref, \$out);
     my @args;
     push(@args, '-i');
-    push(@args, '-fmaint@psmt.kusastro.kyoto-u.ac.jp');
+    push(@args, '-f' . PSMT->config->GetParam('admin_email'));
     push(@args, '-ODeliveryMode=deferred');
     # XXX: this line is for quick hack
     while ($out =~ s/^[\r\n]//g) {}

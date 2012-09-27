@@ -1,17 +1,16 @@
-From: [% terms.admin %]
+From: [% Param.admin_email %]
 To: [% emailto +%]
 Subject: ([% terms.sitename %]) PASSWORD NOTIFICATION for [% fname %]
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 User-Agent: [% terms.sitedomain %]
 
-  Dear, [%+ uid %]
+  [%+ uid %] さま
 
-  This e-mail is an automatical notification from the document server system 
-on [% terms.sitename %].
-  Please do not reply to thi e-mail.
+　このメールは PSMT ドキュメントサーバからの自動通知メールです。
+　返信しないでください。
 
-  Password for your downloaded file ([% fname %]) is 
+　ダウンロードされたファイル ([% fname %]) のパスワードは以下になります。
 
 [% pass %]
 
