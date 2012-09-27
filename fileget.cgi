@@ -41,10 +41,11 @@ PSMT::File->RegUserAccess($fid);
 binmode STDOUT, ':bytes';
 # Encrypted zip or not
 if (TRUE) {
-    my $fh = PSMT::File->MakeEncZipFile($fid, 'abcde');
+    my $pass = PSMT::Util->GetHashString($fid);
+    my $fh = PSMT::File->MakeEncZipFile($fid, $pass);
     if (! defined($fh)) {PSMT::Error->throw_error_code('crypt_zip'); }
     print $obj_cgi->header(
-            -type => PSMT::File->GetFileExt("zip") . "; name=\"$fname.zip\"",
+            -type => PSMT::File->GetFileExt("zip") . "; name=\"$fid.zip\"",
             -content_disposition => "attachment; filename=\"$fname.zip\"",
         );
     print <$fh>;

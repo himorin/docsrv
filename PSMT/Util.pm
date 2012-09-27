@@ -15,6 +15,7 @@ use strict;
 
 use Template;
 use Encode;
+use Digest::MD5;
 
 @PSMT::Util::EXPORT = qw(
     filter_none
@@ -27,6 +28,7 @@ use Encode;
     filter_path_url
 
     IpAddr
+    GetHashString
 );
 
 sub StrToIpaddr {
@@ -52,6 +54,16 @@ sub IpAddr {
     return $addr;
 }
 
+sub GetHashString {
+    my ($self, $string) = @_;
+    my $ctx = Digest::MD5->new;
+    utf8::encode($string);
+    $ctx->add(time() . $string);
+    my $hash = $ctx->b64digest;
+    $hash =~ s/\+/\_/g;
+    $hash =~ s/\//-/g;
+    return $hash;
+}
 
 sub filter_none {
     return $_[0];
