@@ -37,7 +37,9 @@ my $file = PSMT::File->GetFilePath($fid) . $fid;
 if (! -f $file) {PSMT::Error->throw_error_user('invalid_filepath'); }
 my $fname = PSMT::File->GetFileFullPath($fid);
 if (! defined($fname)) {$fname = $fid; }
+else {$fname = substr($fname, 1); }
 PSMT::File->RegUserAccess($fid);
+$fname =~ s/\//_/g;
 
 binmode STDOUT, ':bytes';
 #if (TRUE) {
@@ -59,6 +61,7 @@ binmode STDOUT, ':bytes';
     if ($ENV{'HTTP_USER_AGENT'} =~ / MSIE /) {
         utf8::encode($fname);
         $fname =~ s/([^\w ])/'%' . unpack('H2', $1)/eg;
+        $fname .= '.' . $fileinfo->{fileext};
     }
     print $obj_cgi->header(
             -type => "$ext; name=\"$fname\"",
