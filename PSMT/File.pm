@@ -40,6 +40,7 @@ use PSMT::HyperEstraier;
 
     GetPathIdForParent
     GetPathIdForDoc
+    CheckPathIdInParent
 
     ListUserUpForDoc
     IsUserUpForDoc
@@ -569,6 +570,10 @@ sub UpdatePathInfo {
         ($pathinfo->{pathname} ne $new->{name})) {
         $self->ValidateNameInPath($new->{parent}, $new->{name});
     }
+    # check circular reference
+    if ($self->CheckPathIdInParent($pid, $new->{parent})) {
+        PSMT::Error->throw_error_user('invalid_path_circular'); 
+    }
     # update
     $sth = $dbh->prepare(
         'UPDATE path SET parent = ?, pathname = ?, description = ? WHERE pathid = ?');
@@ -742,6 +747,16 @@ sub MakeEncZipFile {
     my $fh;
     open($fh, "$bin_zip -P \"$pass\" - $tfname |") or return undef;
     return $fh;
+}
+
+sub CheckPathIdInParent {
+    my ($self, $check, $start) = @_;
+    my $cid;
+    if ($check == $start) {return TRUE; }
+    while (($cid = $self->GetPathIdForParent($start)) > -1) {
+        if ($cid == $check) {return TRUE; }
+    }
+    return FALSE;
 }
 
 ################################################################## PRIVATE
