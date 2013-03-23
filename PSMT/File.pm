@@ -495,7 +495,7 @@ sub RegNewDoc {
     $dbh->db_lock_tables('path WRITE', 'docreg WRITE');
     $self->ValidateNameInPath($pathid, $name);
     my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description, secure) VALUES (?, ?, ?, ?)');
-    if ($sth->execute($pathid, $name, $desc) == 0) {return $docid; }
+    if ($sth->execute($pathid, $name, $desc, $secure) == 0) {return $docid; }
     $docid = $dbh->db_last_key('docreg', 'docid');
     $dbh->db_unlock_tables();
 # No Need To Send Mail in 'RegNewDoc' : Always Followed by 'RegNewFile' !
