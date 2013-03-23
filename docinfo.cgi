@@ -43,9 +43,11 @@ if ($obj_cgi->request_method() eq 'POST') {
     $old{name} = $obj_cgi->param('old_name');
     $old{pathid} = $obj_cgi->param('old_pathid');
     $old{description} = $obj_cgi->param('old_description');
+    $old{secure} = $obj_cgi->param('old_secure');
     $new{name} = $obj_cgi->param('new_name');
     $new{pathid} = $obj_cgi->param('new_pathid');
     $new{description} = $obj_cgi->param('new_description');
+    $new{secure} = defined($obj_cgi->param('new_secure')) ? 1 : 0;
     PSMT::File->UpdateDocInfo($did, \%old, \%new);
 }
 

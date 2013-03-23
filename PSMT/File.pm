@@ -489,12 +489,12 @@ sub GetFileInfo {
 }
 
 sub RegNewDoc {
-    my ($self, $pathid, $name, $desc) = @_;
+    my ($self, $pathid, $name, $desc, $secure) = @_;
     my $docid = 0;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('path WRITE', 'docreg WRITE');
     $self->ValidateNameInPath($pathid, $name);
-    my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description) VALUES (?, ?, ?)');
+    my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description, secure) VALUES (?, ?, ?, ?)');
     if ($sth->execute($pathid, $name, $desc) == 0) {return $docid; }
     $docid = $dbh->db_last_key('docreg', 'docid');
     $dbh->db_unlock_tables();
@@ -592,14 +592,19 @@ sub UpdateDocInfo {
     my $dbh = PSMT->dbh;
     my $sth;
     my $cur_access = undef;
+    # check security
     if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
+    if ((! PSMT->user->is_inadmin()) && ($old->{secure} ne $new->{secure}))
+        {PSMT::Error->throw_error_user('update_permission'); }
+    # lock
     $dbh->db_lock_tables('docreg WRITE', 'path WRITE', 'access_doc WRITE');
     my $docinfo = $self->GetDocInfo($did);
     if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_doc_id'); }
     # check current match
     if (($docinfo->{filename} ne $old->{name}) || 
         ($docinfo->{description} ne $old->{description}) ||
-        ($docinfo->{pathid} ne $old->{pathid})) {
+        ($docinfo->{pathid} ne $old->{pathid}) ||
+        ($docinfo->{secure} ne $old->{secure}) ) {
         PSMT::Error->throw_error_user('old_not_match');
     }
     # check collision if changing parent or name
@@ -612,8 +617,8 @@ sub UpdateDocInfo {
     }
     # update
     $sth = $dbh->prepare(
-        'UPDATE docreg SET pathid = ?, filename = ?, description = ? WHERE docid = ?');
-    if ($sth->execute($new->{pathid}, $new->{name}, $new->{description}, $did) == 0) {
+        'UPDATE docreg SET pathid = ?, filename = ?, description = ?, secure = ? WHERE docid = ?');
+    if ($sth->execute($new->{pathid}, $new->{name}, $new->{description}, $new->{secure}, $did) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
     # set group restriction if parent path changed

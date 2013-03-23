@@ -25,6 +25,7 @@ use PSMT::File;
     CheckForPath
     CheckForDoc
     CheckForFile
+    CheckSecureForFile
 
     ListFullPathRestrict
     ListPathRestrict
@@ -56,6 +57,15 @@ sub CheckForDoc {
     my $doc_group = $self->ListFullDocRestrict($docid);
     if ($self->_MatchGroupList($doc_group) == TRUE) {return TRUE; }
     if ($is_throw) {PSMT::Error->throw_error_user('permission_error'); }
+    return FALSE;
+}
+
+sub CheckSecureForFile {
+    my ($self, $fileid) = @_;
+    if (! defined($fileid)) {return FALSE; }
+    my $finfo = PSMT::File->GetFileInfo($fileid);
+    my $dinfo = PSMT::File->GetDocInfo($finfo->{docid});
+    if ($dinfo->{secure} eq 1) {return TRUE; }
     return FALSE;
 }
 

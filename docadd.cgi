@@ -49,6 +49,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     my $filename = $obj_cgi->param('filename');
     my $docdesc = $obj_cgi->param('docdesc');
     my @labels = $obj_cgi->param('label');
+    my $secure = defined($obj_cgi->param('secure')) ? 1 : 0;
 
     # Add new file from source
     my $ext = 'dat';
@@ -68,7 +69,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     }
 
     # Fiest register new document to path
-    my $did = PSMT::File->RegNewDoc($pid, $filename, $docdesc);
+    my $did = PSMT::File->RegNewDoc($pid, $filename, $docdesc, $secure);
     if ($did == 0) {
         PSMT::Error->throw_error_user('doc_add_failed');
     }

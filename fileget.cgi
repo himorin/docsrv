@@ -42,19 +42,19 @@ PSMT::File->RegUserAccess($fid);
 $fname =~ s/\//_/g;
 
 binmode STDOUT, ':bytes';
-#if (TRUE) {
-##    by zip encrypted
-#    my $pass = PSMT::Util->GetHashString($fid);
-#    my $fh = PSMT::File->MakeEncZipFile($fid, $pass);
-#    if (! defined($fh)) {PSMT::Error->throw_error_code('crypt_zip'); }
-#    print $obj_cgi->header(
-#            -type => PSMT::File->GetFileExt("zip") . "; name=\"$fname.zip\"",
-#            -content_disposition => "attachment; filename=\"$fname.zip\"",
-#        );
-#    print <$fh>;
-#    close($fh);
-#    PSMT::Email->SendPassword($fid, PSMT->user->get_uid(), $pass);
-#} else {
+if (PSMT::Access->CheckSecureForFile($fid)) {
+#    by zip encrypted
+    my $pass = PSMT::Util->GetHashString($fid);
+    my $fh = PSMT::File->MakeEncZipFile($fid, $pass);
+    if (! defined($fh)) {PSMT::Error->throw_error_code('crypt_zip'); }
+    print $obj_cgi->header(
+            -type => PSMT::File->GetFileExt("zip") . "; name=\"$fname.zip\"",
+            -content_disposition => "attachment; filename=\"$fname.zip\"",
+        );
+    print <$fh>;
+    close($fh);
+    PSMT::Email->SendPassword($fid, PSMT->user->get_uid(), $pass);
+} else {
 #   just download
     my $ext = PSMT::File->GetFileExt($fid);
     # Quick hack for MSKB #436616
@@ -72,7 +72,7 @@ binmode STDOUT, ':bytes';
     open(INDAT, $file);
     print <INDAT>;
     close(INDAT);
-#}
+}
 
 exit;
 

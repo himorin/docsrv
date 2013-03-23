@@ -31,6 +31,10 @@ Please check descriptions of [% terms.file %] carefully.</p>
     <span id="doc_desc_raw">[% doc_info.description FILTER html %]</span>
     <span id="doc_desc_edit" class="ui_hidden"><input type="text" size="100" name="new_description" value="[% doc_info.description FILTER html %]"></span>
     </li>
+  <li>Security flag (encrypt for download): 
+    <span id="doc_sec_raw">[% IF doc_info.secure == 1 %]Set[% ELSE %]Unset[% END %]</span>
+    <span id="doc_sec_edit" class="ui_hidden"><input type="checkbox" name="secure" [% IF doc_info.secure == 1 %]checked="checked"[% END %] /></span>
+    </li>
   <li>Accessible groups (OR): 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
     [% ELSE %](undefined)[% END %]
@@ -53,6 +57,7 @@ Please check descriptions of [% terms.file %] carefully.</p>
 <input type="hidden" name="old_name" value="[% doc_info.filename %]">
 <input type="hidden" name="old_pathid" value="[% doc_info.pathid %]">
 <input type="hidden" name="old_description" value="[% doc_info.description %]">
+<input type="hidden" name="old_secure" value="[% doc_info.secure %]">
 </form>
 
 <script type="text/javascript" src="json.cgi?format=js&amp;type=allpath"></script>
@@ -64,6 +69,8 @@ Please check descriptions of [% terms.file %] carefully.</p>
 function doc_info_update () {
   YAHOO.util.Dom.addClass(document.getElementById('doc_name_raw'), 'ui_hidden');
   YAHOO.util.Dom.removeClass(document.getElementById('doc_name_edit'), 'ui_hidden');
+  YAHOO.util.Dom.addClass(document.getElementById('doc_sec_raw'), 'ui_hidden');
+  YAHOO.util.Dom.removeClass(document.getElementById('doc_sec_edit'), 'ui_hidden');
   YAHOO.util.Dom.addClass(document.getElementById('doc_desc_raw'), 'ui_hidden');
   YAHOO.util.Dom.removeClass(document.getElementById('doc_desc_edit'), 'ui_hidden');
   YAHOO.util.Dom.removeClass(document.getElementById('doc_update'), 'ui_hidden');

@@ -10,6 +10,9 @@ attr_doc  : added at rev.146, removed at rev. 165
 attr_file : added at rev.146, removed at rev. 165
 attribute : added at rev.165
 
+doc_reg.secure : added
+  ALTER TABLE docreg ADD COLUMN secure tinyint UNSIGNED NOT NULL DEFAULT 0;
+
 */
 
 CREATE TABLE activity (
@@ -41,7 +44,8 @@ CREATE TABLE docreg (
   docid         int         UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
   pathid        int         UNSIGNED NOT NULL                            ,
   filename      text                 NOT NULL                            ,
-  description   text                     NULL                            
+  description   text                     NULL                            ,
+  secure        tinyint     UNSIGNED NOT NULL DEFAULT 0                  
 ) DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE access_path (
