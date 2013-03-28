@@ -77,6 +77,7 @@ use PSMT::HyperEstraier;
     MoveNewFile
     SaveToDav
     MakeEncZipFile
+    CheckMimeIsView
 );
 
 my $hash_each = 2;
@@ -760,6 +761,18 @@ sub CheckPathIdInParent {
     if ($check == $start) {return TRUE; }
     while (($cid = $self->GetPathIdForParent($start)) > -1) {
         if ($cid == $check) {return TRUE; }
+    }
+    return FALSE;
+}
+
+sub CheckMimeIsView {
+    my ($self, $mime) = @_;
+    my $vm = PSMT::Config->GetParam('view_mime');
+    my @view = split(/,/, $vm);
+    my $cview;
+    foreach $cview (@view) {
+        $cview =~ s/^ *(.*?) *$/$1/;
+        if (index($mime, $cview) > -1) {return TRUE; }
     }
     return FALSE;
 }

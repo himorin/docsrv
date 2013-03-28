@@ -30,6 +30,11 @@ sub get_param_list {
             type     => 'text',
             default  => '',
         },
+        {
+            name     => 'view_mime',
+            type     => 'text',
+            default  => 'image',
+        },
     );
     return @param_list;
 }

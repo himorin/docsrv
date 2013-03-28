@@ -35,3 +35,7 @@ One table added: 'attribute'.
 This table should be created by hand. (refer common.sql for schema)
 One disp_skin added: 'table.attribute' (refer docsrv_config.sql for data)
 
+* To rev 173 from prior
+
+view_mime parameter added
+

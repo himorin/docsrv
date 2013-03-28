@@ -42,6 +42,7 @@ PSMT::File->RegUserAccess($fid);
 $fname =~ s/\//_/g;
 
 binmode STDOUT, ':bytes';
+my $ext = PSMT::File->GetFileExt($fid);
 if (PSMT::Access->CheckSecureForFile($fid)) {
 #    by zip encrypted
     my $pass = PSMT::Util->GetHashString($fid);
@@ -54,9 +55,17 @@ if (PSMT::Access->CheckSecureForFile($fid)) {
     print <$fh>;
     close($fh);
     PSMT::Email->SendPassword($fid, PSMT->user->get_uid(), $pass);
+} elsif (PSMT::File->CheckMimeIsView($ext)) {
+    print $obj_cgi->header(
+            -type => "$ext",
+            -content_length => PSMT::File->GetFileSize($fid),
+        );
+    binmode STDOUT, ':bytes';
+    open(INDAT, $file);
+    print <INDAT>;
+    close(INDAT);
 } else {
 #   just download
-    my $ext = PSMT::File->GetFileExt($fid);
     # Quick hack for MSKB #436616
     if ($ENV{'HTTP_USER_AGENT'} =~ / MSIE /) {
         utf8::encode($fname);
