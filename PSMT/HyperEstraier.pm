@@ -69,7 +69,9 @@ sub AddNewFile {
         $self->_add_text($fid, $self->_parse_format($finfo->{fileext}, $fname));
     } else {
         my $fh;
-        open($fh, "$cmd $fname - |");
+        # if could not execute, just return without adding
+        # XXX shall we call error handler? (also consider command line tool)
+        open($fh, "$cmd $fname - |") or return;
         $self->_add_fh($fid, $fh);
         close($fh);
     }
