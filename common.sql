@@ -10,7 +10,7 @@ attr_doc  : added at rev.146, removed at rev. 165
 attr_file : added at rev.146, removed at rev. 165
 attribute : added at rev.165
 
-doc_reg.secure : added
+doc_reg.secure : added rev.172
   ALTER TABLE docreg ADD COLUMN secure tinyint UNSIGNED NOT NULL DEFAULT 0;
 
 */

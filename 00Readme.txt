@@ -32,10 +32,8 @@ This operation should be performed by hand.
 * To 0.5.3 from prior
 
 One table added: 'attribute'.
+One table modified: 'doc_reg.secure'.
 This table should be created by hand. (refer common.sql for schema)
 One disp_skin added: 'table.attribute' (refer docsrv_config.sql for data)
-
-* To rev 173 from prior
-
-view_mime parameter added
+view_mime parameter added (rev. 173)
 
