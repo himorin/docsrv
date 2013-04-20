@@ -125,6 +125,7 @@ sub GetDocInfo {
     $sth->execute($docid);
     if ($sth->rows != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
+    $ref = $self->AddShortDesc($ref);
     $ref->{gname} = PSMT::Access->ListDocRestrict($docid);
     $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
     $ref->{lastfile} = $self->GetDocLastPostFileInfo($docid);
@@ -414,6 +415,7 @@ sub GetPathInfo {
     $sth->execute($pathid);
     if ($sth->rows != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
+    $ref = $self->AddShortDesc($ref);
     $ref->{gname} = PSMT::Access->ListPathRestrict($pathid);
     return $ref;
 }
@@ -790,7 +792,18 @@ sub GetHashString {
     return $hash;
 }
 
-
+sub AddShortDesc {
+    my ($self, $ref) = @_;
+    if (! defined($ref->{description})) {return $ref; }
+    $ref->{short_description} = $ref->{description}
+    if ($ref->{short_description} =~ /[\r\n]/) {
+        $ref->{short_description} =~ s/^(.*)[\r\n]/$1/;
+        if (substr($ref->{short_description}, 0, 1) eq '#') {
+            $ref->{short_description} =~ s/^# *//;
+        }
+    }
+    return $ref;
+}
 
 1;
 

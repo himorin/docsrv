@@ -1,4 +1,4 @@
 DirectoryIndex index.cgi?fmt=ur
-<FilesMatch ^(.*\.pm|.*\.pl|.*\.sql)$>
+<FilesMatch ^(.*\.pm|.*\.pl|.*\.sql|.*\.md|.*\.tmpl)$>
   deny from all
 </FilesMatch>

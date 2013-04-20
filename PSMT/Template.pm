@@ -69,6 +69,7 @@ sub new {
             url_quote  => \&PSMT::Util::filter_url_quote,
             path_url   => \&PSMT::Util::filter_path_url,
             ipaddr     => \&PSMT::Util::StrToIpaddr,
+            markdown   => \&PSMT::Util::filter_markdown,
         },
         CONSTANTS => _load_constants(),
         VARIABLES => {

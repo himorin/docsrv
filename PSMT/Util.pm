@@ -16,6 +16,7 @@ use strict;
 use Template;
 use Encode;
 use Digest::MD5;
+use Text::Markdown;
 
 @PSMT::Util::EXPORT = qw(
     filter_none
@@ -26,6 +27,7 @@ use Digest::MD5;
     filter_text
     filter_url_quote
     filter_path_url
+    filter_markdown
 
     IpAddr
     GetHashString
@@ -109,6 +111,12 @@ sub filter_text {
     $var =~ s/\&quot;/\"/g;
     $var =~ s/\&amp;/\&/g;
     return $var;
+}
+
+sub filter_markdown {
+    my ($var) = @_;
+    my $obj_md = new Text::Markdown;
+    return $obj_md->markdown($var);
 }
 
 sub filter_url_quote {
