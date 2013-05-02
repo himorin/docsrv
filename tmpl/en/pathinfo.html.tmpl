@@ -33,7 +33,7 @@
       [% ELSE %](undefined)[% END %]</li>
   </ul>
   <div id="path_desc_raw">[% path_info.description FILTER markdown %]</div>
-  <div id="path_desc_edit" class="ui_hidden"><textarea name="new_description" cols="15" rows="150">[% path_info.description FILTER html %]</div>
+  <div id="path_desc_edit" class="ui_hidden"><textarea name="new_description" rows="10" cols="150">[% path_info.description FILTER html %]</div>
   <div id="path_update" class="ui_hidden">
     <input type="submit" value="Update">
   </div>
@@ -84,7 +84,7 @@
     <li>Set security flag (encrypt for download): <input type="checkbox" name="secure" /></li>
   </ul>
   <p>Description of new [% terms.document %]</p>
-  <div><textarea name="docdesc" cols="15" rows="150"></textarea></div>
+  <div><textarea name="docdesc" rows="10" cols="150"></textarea></div>
   <h4>Label for new [% terms.document %]</h4>
   <ul>
     [% FOREACH item = Label.keys %]
