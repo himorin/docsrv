@@ -10,10 +10,9 @@
 
 <div class="path_add">
 
-<ul>
-  <li>Name: <input type="text" name="newpath" value="" size="50"></li>
-  <li>Description: <input type="text" name="newdesc" value="" size="50"></li>
-</ul>
+<p>New [% terms.path %] name: <input type="text" name="newpath" value="" size="50"></p>
+<p>Description</p>
+<div><textarea name="newdesc" value="" rows="150" cols="10"></textarea></div>
 
 <p>If you turn on some groups, the [% terms.path %] will be restricted only to 
 users who are listed at least in one checked groups. 
@@ -29,7 +28,6 @@ Without any, every user can view the [% terms.path %]. </p>
 <input type="submit" value="Add new">
 <input type="reset" value="Reset">
 </form>
-</div>
 
 <script type="text/javascript">
   tweak_ToggleClass('path_add', 'ui_hidden');
