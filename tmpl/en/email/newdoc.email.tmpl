@@ -16,8 +16,12 @@ by user [% by %].
 
   New added [% terms.document %]
 Name       : [% path %][% newdoc.filename +%]
-Description: [% newdoc.description +%]
+Description: [% newdoc.short_description FILTER text +%]
 URL        : [% Param.base_uri %]docinfo.cgi?did=[% newdoc.docid +%]
+
+------
+[% newdoc.description FILTER text %]
+------
 
   New added [% terms.file %]
 Format     : [% newfile.fileext +%]

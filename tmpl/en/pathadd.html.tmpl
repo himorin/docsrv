@@ -12,10 +12,11 @@
     <li>ID: [% path_info.pathid %]</li>
     <li>Full [% terms.path %] name: [% full_path %]</li>
     <li>Upper: <a href="pathinfo.cgi?pid=[% path_info.parent %]">[% path_info.parent %]</a></li>
+    <li>Short description: [% path_info.short_description FILTER html %]</li>
     <li>Name: [% path_info.pathname %]</li>
-    <li>Description: [% path_info.description %]</li>
     <li>Group restriction: [% path_info.gname.join(', ') %]</li>
   </ul>
+  <div>[% path_info.description FILTER markdown %]</div>
 [% END %]
 
 

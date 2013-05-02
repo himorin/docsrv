@@ -27,10 +27,6 @@ Please check descriptions of [% terms.file %] carefully.</p>
     [% IF InList(file_uname, User.uid) %]
       <span id="update_link"><a href="javascript: doc_info_update();">Update</a></span>
     [% END %]</li>
-  <li>Description of [% terms.file %]:
-    <span id="doc_desc_raw">[% doc_info.description FILTER html %]</span>
-    <span id="doc_desc_edit" class="ui_hidden"><input type="text" size="100" name="new_description" value="[% doc_info.description FILTER html %]"></span>
-    </li>
   <li>Security flag (encrypt for download): 
     <span id="doc_sec_raw">[% IF doc_info.secure == 1 %]Set[% ELSE %]Unset[% END %]</span>
     <span id="doc_sec_edit" class="ui_hidden"><input type="checkbox" name="secure" [% IF doc_info.secure == 1 %]checked="checked"[% END %] /></span>
@@ -50,13 +46,16 @@ Please check descriptions of [% terms.file %] carefully.</p>
     <a href="doclabel.cgi?did=[% doc_info.docid %]">[% INCLUDE show_table_icon id = 'label_add' %]</a>
     </li>
 </ul>
+<p>Description of [% terms.file %]</p>
+    <div id="doc_desc_raw">[% doc_info.description FILTER markdown %]</div>
+    <div id="doc_desc_edit" class="ui_hidden"><textarea rows="10" cols="100" name="new_description">[% doc_info.description FILTER html %]</textarea></div>
 <div id="doc_update" class="ui_hidden">
   <input type="submit" value="Update">
 </div>
 <input type="hidden" name="did" value="[% doc_info.docid %]">
 <input type="hidden" name="old_name" value="[% doc_info.filename %]">
 <input type="hidden" name="old_pathid" value="[% doc_info.pathid %]">
-<input type="hidden" name="old_description" value="[% doc_info.description %]">
+<input type="hidden" name="old_description" value="[% doc_info.description FILTER html %]">
 <input type="hidden" name="old_secure" value="[% doc_info.secure %]">
 </form>
 

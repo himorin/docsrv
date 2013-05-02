@@ -4,7 +4,7 @@
 <ul>
   <li>Document ID: [% doc_info.docid %]</li>
   <li>Full [% terms.path %]: [% full_path %]/[% doc_info.filename %]</li>
-  <li>Description: [% doc_info.description %]</li>
+  <li>Description: [% doc_info.short_description FILTER html %]</li>
   <li>Group restrictions: [% permission.join(', ') %] </li>
 </ul>
 

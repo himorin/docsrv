@@ -46,7 +46,7 @@
         <a href="pathinfo.cgi?pid=[% item.pathid %]">[% item.pathname FILTER html %]</a>
       [% END -%]
       </td>
-    <td class="pathdesc">[% item.description FILTER html %]</td>
+    <td class="pathdesc">[% item.short_description FILTER html %]</td>
     [% IF docs_exist %]<th colspan="4"></th>[% END %]
     <td class="group">
       [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]No restriction[% END %]
@@ -81,7 +81,7 @@
     <td class="path">
       [%- INCLUDE show_mime_icon id = item.lastfile.fileext -%]
       <a href="fileget.cgi?did=[% item.docid %]">[% item.filename FILTER html %]</a></td>
-    <td class="pathdesc">[% item.description FILTER html %]</td>
+    <td class="pathdesc">[% item.short_description FILTER html %]</td>
     [% IF item.lastfile.defined %]
       <td>[% item.lastfile.uname %]</td>
       <td>[% item.lastfile.uptime %]</td>

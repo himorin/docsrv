@@ -24,9 +24,7 @@
           <option value="[% hid %]" [% IF hid == path_info.parent %]selected="selected" [% END %]>[% allpath.$hid.fullpath %]</option>
         [%- END %]
       </select>/<input type="text" name="new_name" size="50" value="[% path_info.pathname FILTER html %]"></li>
-    <li>[% terms.path %] information: 
-      <span id="path_desc_raw">[% path_info.description FILTER html %]</span>
-      <span id="path_desc_edit" class="ui_hidden"><input type="text" name="new_description" size="150" value="[% path_info.description FILTER html %]"></span>
+    <li>[% terms.path %] information: [% path_info.show_description FILTER html %]
       [% IF Admin %]
         <span id="update_link"><a href="javascript: doc_info_update();">Update or Move</a></span>
       [% END %]</li>
@@ -34,6 +32,8 @@
       [% IF path_info.gname.size > 0 %][% path_info.gname.join(', ') %]
       [% ELSE %](undefined)[% END %]</li>
   </ul>
+  <div id="path_desc_raw">[% path_info.description FILTER markdown %]</div>
+  <div id="path_desc_edit" class="ui_hidden"><textarea name="new_description" cols="15" rows="150">[% path_info.description FILTER html %]</div>
   <div id="path_update" class="ui_hidden">
     <input type="submit" value="Update">
   </div>
@@ -45,7 +45,7 @@
 
   <ul id="path_desc_json" class="ui_hidden">
     <li>Target [% terms.path %] information: 
-      <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.description FILTER html %]</span></li>
+      <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.short_description FILTER html %]</span></li>
     <li>Group restriction: 
       [% IF group_list.size > 0 %][% group_list.join(', ') %]
       [% ELSE %](undefined)[% END %]</li>
@@ -81,9 +81,10 @@
   [% PROCESS global/formopt.html.tmpl %]
   <ul>
     <li>Name of new [% terms.document %]: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
-    <li>Description of new [% terms.document %]: <input type="text" name="docdesc" value="" size="150"></li>
     <li>Set security flag (encrypt for download): <input type="checkbox" name="secure" /></li>
   </ul>
+  <p>Description of new [% terms.document %]</p>
+  <div><textarea name="docdesc" cols="15" rows="150"></textarea></div>
   <h4>Label for new [% terms.document %]</h4>
   <ul>
     [% FOREACH item = Label.keys %]

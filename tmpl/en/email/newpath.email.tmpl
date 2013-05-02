@@ -16,8 +16,12 @@ by user [% by %].
 
   New added [% terms.directory %] into "[% path %]"
 Name         : [% newpath.pathname +%]
-Description  : [% newpath.description +%]
+Description  : [% newpath.short_description FILTER text +%]
 URL          : [% Param.base_uri %]pathinfo.cgi?pid=[% newpath.pathid +%]
+
+-------
+[% newpath.description FILTER text +%]
+-------
 
 -- 
 [% terms.sitename %] Document Server System

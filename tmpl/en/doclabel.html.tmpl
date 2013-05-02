@@ -6,9 +6,9 @@
   <li>[% terms.document %] ID: [% doc_info.docid %]</li>
   <li>[% terms.path %] ID: [% doc_info.pathid %]</li>
   <li>[% terms.file %] name: [% doc_info.filename %]</li>
-  <li>Description: [% doc_info.description %]</li>
   <li>Accessible groups (OR): [% group_list.join(', ') %] </li>
 </ul>
+<div>[% doc_info.description FILTER markdown %]</div>
 
 <h3>Update Labels</h3>
 

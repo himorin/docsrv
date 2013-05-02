@@ -16,8 +16,9 @@
 
 <hr>
 
+<p>Description of [% terms.document %]</p>
+<div>[% doc_info.description FILTER markdown %]</div>
 <ul>
-  <li>Description of [% terms.document %]: [% doc_info.description FILTER html %]</li>
   <li>Group restriction (OR):
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
     [% ELSE %](undefined)[% END %]</li>

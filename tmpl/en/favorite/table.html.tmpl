@@ -19,7 +19,7 @@
       <a href="docadd.cgi?pid=[% item %]">[% INCLUDE show_table_icon id = 'add_doc' %]</a>
       </td>
     <td class="docpath"><a href="pathinfo.cgi?pid=[% item %]"><tt>[% favpath.$item.full_path %]</tt></a></td>
-    <td class="docfav">[% favpath.$item.description %]</td>
+    <td class="docfav">[% favpath.$item.short_description %]</td>
     <td class="docfav_rm"><a href="docfav.cgi?pid=[% item %]&amp;op=remove">un-fav</a></td>
     <td colspan="3" class="center"></td>
   </tr>
@@ -40,7 +40,7 @@
       </td>
     <td class="docpath">
       <a href="fileget.cgi?did=[% item %]"><tt>[% favlist.$item.full_path %][% favlist.$item.filename %]</tt></a></td>
-    <td class="docfav">[% favlist.$item.description %]</td>
+    <td class="docfav">[% favlist.$item.short_description %]</td>
     <td class="docfav_rm"><a href="docfav.cgi?did=[% favlist.$item.docid %]&amp;op=remove">un-fav</a></td>
     [% IF favlist.$item.fid.defined %]
       <td>[% favlist.$item.fid.uname %]</td>

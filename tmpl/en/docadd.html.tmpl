@@ -21,9 +21,10 @@
           [% full_path FILTER html %]
         [% END -%]
         /</tt><input type="text" name="filename" value="" size="50"></li>
-      <li>Description for new [% terms.document %]: <input type="text" name="docdesc" value="" size="150"></li>
       <li>Set security flag (encrypt for download): <input type="checkbox" name="secure" /></li>
     </ul>
+    <p>Description for new [% terms.document %]<p>
+    <textarea name="docdesc" rows="10" cols="150"></textarea>
     <h4>Labels for new [% terms.document %]</h4>
     <ul>
       [% FOREACH item = Label.keys %]
@@ -41,14 +42,16 @@
 <hr>
 
 <ul>
-  <li>Description of this [% terms.path %]: 
-    <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.description FILTER html %]</span></li>
+  <li>Name of this [% terms.path %]: 
+    <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span>
+    (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a></li>
   [% IF pid == -1 %]
     <li>Accessible groups (OR): 
       [% IF group_list.size > 0 %][% group_list.join(', ') %]
       [% ELSE %](undefined)[% END %]</li>
   [% END %]
 </ul>
+<div id="desc">[% path_info.description FILTER markdown %]</div>
 
 [% IF pid != -1 %]
   [% INCLUDE entry/table.html.tmpl       paths = path_list

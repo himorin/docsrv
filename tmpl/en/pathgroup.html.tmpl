@@ -6,7 +6,7 @@
   <li>Full [% terms.path %]: [% full_path %]</li>
   <li>Parenet: [% path_info.parent %]</li>
   <li>Name: [% path_info.pathname %]</li>
-  <li>Description: [% path_info.description %]</li>
+  <li>Description: [% path_info.short_description FILTER html %]</li>
   <li>Group restrictions: [% permission.join(', ') %] </li>
 </ul>
 
