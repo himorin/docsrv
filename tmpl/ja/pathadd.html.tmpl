@@ -13,9 +13,10 @@
     <li>フルパス: [% full_path %]</li>
     <li>一つ上: <a href="pathinfo.cgi?pid=[% path_info.parent %]">[% path_info.parent %]</a></li>
     <li>名前: [% path_info.pathname %]</li>
-    <li>説明: [% path_info.description %]</li>
+    <li>短い説明: [% path_info.short_description %]</li>
     <li>アクセス可能グループ: [% path_info.gname.join(', ') %]</li>
   </ul>
+  <div>[% path_info.description FILTER markdown %]</div>
 [% END %]
 
 

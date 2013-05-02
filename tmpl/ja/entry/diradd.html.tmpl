@@ -11,9 +11,12 @@
 <div class="path_add">
 
 <ul>
-  <li>名前: <input type="text" name="newpath" value="" size="50"></li>
-  <li>説明: <input type="text" name="newdesc" value="" size="50"></li>
+  <li>: <input type="text" name="newpath" value="" size="50"></li>
+  <li>: <input type="text" name="newdesc" value="" size="50"></li>
 </ul>
+<p>新しい [% terms.path %] 名: <input type="text" name="newpath" value="" size="50"></p>
+<p>説明</p>
+<div><textarea name="newdesc" value="" cols="150" rows="10"></textarea></div>
 
 <p>チェックを付けたグループのどれかに所属しているユーザのみが閲覧可能になります。
 全てのチェックを外すと、どのユーザも閲覧できるようになります。</p>
@@ -24,11 +27,11 @@
 [% END %]
 </ul>
 
+</div>
 <input type="hidden" name="cur_pid" value="[% cur_pid %]">
 <input type="submit" value="追加">
 <input type="reset" value="リセット">
 </form>
-</div>
 
 <script type="text/javascript">
   tweak_ToggleClass('path_add', 'ui_hidden');

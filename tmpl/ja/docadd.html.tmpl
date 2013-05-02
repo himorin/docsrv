@@ -20,9 +20,10 @@
           [% full_path FILTER html %]
         [% END -%]
         /</tt><input type="text" name="filename" value="" size="50"></li>
-      <li>新しいドキュメントの説明: <input type="text" name="docdesc" value="" size="150"></li>
       <li>セキュリティーフラグを設定する (ダウンロード時に暗号化): <input type="checkbox" name="secure" /></li>
     </ul>
+    <p>新しい [% terms.document %] の説明<p>
+    <textarea name="docdesc" rows="10" cols="150"></textarea>
     <h4>新規ドキュメントに付けるラベル</h4>
     <ul>
       [% FOREACH item = Label.keys %]
@@ -39,14 +40,16 @@
 <hr>
 
 <ul>
-  <li>ディレクトリの説明: 
-    <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.description FILTER html %]</span></li>
+  <li>[% terms.path %] の名前: 
+    <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span>
+    (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a></li>
   [% IF pid == -1 %]
     <li>アクセス可能グループ: 
       [% IF group_list.size > 0 %][% group_list.join(', ') %]
       [% ELSE %](未定義)[% END %]</li>
   [% END %]
 </ul>
+<div id="desc">[% path_info.description FILTER markdown %]</div>
 
 [% IF pid != -1 %]
   [% INCLUDE entry/table.html.tmpl       paths = path_list

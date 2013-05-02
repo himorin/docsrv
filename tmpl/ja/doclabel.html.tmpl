@@ -6,9 +6,9 @@
   <li>Document ID: [% doc_info.docid %]</li>
   <li>Path ID: [% doc_info.pathid %]</li>
   <li>File name: [% doc_info.filename %]</li>
-  <li>Description: [% doc_info.description %]</li>
   <li>Accessible groups: [% group_list.join(', ') %] </li>
 </ul>
+<div>[% doc_info.description FILTER markdown %]</div>
 
 <h3>ラベルの更新</h3>
 

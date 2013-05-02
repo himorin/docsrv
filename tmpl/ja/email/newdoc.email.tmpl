@@ -16,11 +16,16 @@ User-Agent: [% terms.sitedomain %]
 
 　追加された [% terms.document %]
 名前: [% path %][% newdoc.filename +%]
-説明: [% newdoc.description +%]
+説明: [% newdoc.short_description FILTER text +%]
 URL : [% Param.base_uri %]docinfo.cgi?did=[% newdoc.docid +%]
+
+------
+[% newdoc.description FILTER text %]
+------
+
 　追加された [% terms.file %]
 形式: [% newfile.fileext +%]
-説明: [% newfile.description +%]
+説明: [% newfile.description FILTER text +%]
 日時: [% newfile.uptime +%]
 URL : [% Param.base_uri %]fileinfo.cgi?fid=[% newfile.fileid +%]
 

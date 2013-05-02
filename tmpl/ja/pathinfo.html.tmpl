@@ -24,9 +24,7 @@
           <option value="[% hid %]" [% IF hid == path_info.parent %]selected="selected" [% END %]>[% allpath.$hid.fullpath %]</option>
         [%- END %]
       </select>/<input type="text" name="new_name" size="50" value="[% path_info.pathname FILTER html %]"></li>
-    <li>このディレクトリについて: 
-      <span id="path_desc_raw">[% path_info.description FILTER html %]</span>
-      <span id="path_desc_edit" class="ui_hidden"><input type="text" name="new_description" size="150" value="[% path_info.description FILTER html %]"></span>
+    <li>この [% terms.path %] について: [% path_info.show_description FILTER html %]
       [% IF Admin %]
         <span id="update_link"><a href="javascript: doc_info_update();">更新</a></span>
       [% END %]</li>
@@ -34,6 +32,8 @@
       [% IF path_info.gname.size > 0 %][% path_info.gname.join(', ') %]
       [% ELSE %](誰でも)[% END %]</li>
   </ul>
+  <div id="path_desc_raw">[% path_info.description FILTER markdown %]</div>
+  <div id="path_desc_edit" class="ui_hidden"><textarea name="new_description" rows="10" cols="150">[% path_info.description FILTER html %]</textarea></div>
   <div id="path_update" class="ui_hidden">
     <input type="submit" value="更新">
   </div>
@@ -45,7 +45,7 @@
 
   <ul id="path_desc_json" class="ui_hidden">
     <li>移動先ディレクトリの説明: 
-      <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.description FILTER html %]</span></li>
+      <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.short_description FILTER html %]</span></li>
     <li>アクセス可能グループ: 
       [% IF group_list.size > 0 %][% group_list.join(', ') %]
       [% ELSE %](未定義)[% END %]</li>
@@ -81,9 +81,10 @@
   [% PROCESS global/formopt.html.tmpl %]
   <ul>
     <li>新しいドキュメントの名前: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
-    <li>新しいドキュメントの説明: <input type="text" name="docdesc" value="" size="150"></li>
     <li>セキュリティーフラグを設定する (ダウンロード時に暗号化): <input type="checkbox" name="secure" /></li>
   </ul>
+  <p>新しい [% terms.document %] の説明</p>
+  <div><textarea name="docdesc" rows="10" cols="150"></textarea></div>
   <h4>新規ドキュメントに付けるラベル</h4>
   <ul>
     [% FOREACH item = Label.keys %]

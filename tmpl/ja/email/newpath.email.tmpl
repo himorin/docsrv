@@ -15,10 +15,14 @@ User-Agent: PSMT Document Server
 
 　追加されたディレクトリ
 名前: [% newpath.pathname +%]
-説明: [% newpath.description +%]
+説明: [% newpath.short_description FILTER text +%]
 URL : [% Param.base_uri %]pathinfo.cgi?pid=[% newpath.pathid +%]
 
 　追加場所は "[% path %]" です。
+
+-------
+[% newpath.description FILTER text +%]
+-------
 
 -- 
 PSMT Document Server System
