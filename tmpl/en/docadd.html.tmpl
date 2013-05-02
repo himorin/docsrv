@@ -13,7 +13,7 @@
           <select name="pid" onChange="AllPathChange();">
             <option value="0">/</option>
             [% FOREACH hid IN allpath.keys.nsort %]
-              <option value="[% hid %]">/[% allpath.$hid.fullpath %]</option>
+              <option value="[% hid %]">[% allpath.$hid.fullpath %]</option>
             [%- END %]
           </select>
         [% ELSE %]

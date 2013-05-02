@@ -60,7 +60,6 @@ function tweak_ToggleFileDisp (target) {
      ">
     <td class="filelist">
       <a href="fileget.cgi?fid=[% item.fileid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
-      <a href="fileinfo.cgi?fid=[% item.fileid %]">[% INCLUDE show_table_icon id = 'info' %]</a>
       <a href="attribute.cgi?target=file&method=get&id=[% item.fileid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
       [% IF item.enabled == 1 %]
         [% INCLUDE show_table_icon id = 'show_file' html_id = "fdisp_$item.fileid" html_class = "disp_on" %]
