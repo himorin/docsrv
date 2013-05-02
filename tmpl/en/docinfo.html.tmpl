@@ -29,7 +29,7 @@ Please check descriptions of [% terms.file %] carefully.</p>
     [% END %]</li>
   <li>Security flag (encrypt for download): 
     <span id="doc_sec_raw">[% IF doc_info.secure == 1 %]Set[% ELSE %]Unset[% END %]</span>
-    <span id="doc_sec_edit" class="ui_hidden"><input type="checkbox" name="secure" [% IF doc_info.secure == 1 %]checked="checked"[% END %] /></span>
+    <span id="doc_sec_edit" class="ui_hidden"><input type="checkbox" name="new_secure" [% IF doc_info.secure == 1 %]checked="checked"[% END %] /></span>
     </li>
   <li>Accessible groups (OR): 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]

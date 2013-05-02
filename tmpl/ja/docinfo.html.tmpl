@@ -27,7 +27,7 @@
     [% END %]</li>
   <li>セキュリティーフラグ (ダウンロード時に暗号化): 
     <span id="doc_sec_raw">[% IF doc_info.secure == 1 %]設定[% ELSE %]未設定[% END %]</span>
-    <span id="doc_sec_edit" class="ui_hidden"><input type="checkbox" name="secure" [% IF doc_info.secure == 1 %]checked="checked"[% END %] /></span>
+    <span id="doc_sec_edit" class="ui_hidden"><input type="checkbox" name="new_secure" [% IF doc_info.secure == 1 %]checked="checked"[% END %] /></span>
     </li>
   <li>アクセス可能グループ: 
     [% IF group_list.size > 0 %][% group_list.join(', ') %]
