@@ -759,9 +759,9 @@ sub MakeEncZipFile {
 
 sub CheckPathIdInParent {
     my ($self, $check, $start) = @_;
-    my $cid;
-    if ($check == $start) {return TRUE; }
-    while (($cid = $self->GetPathIdForParent($start)) > -1) {
+    my $cid = $start;
+    if ($check == $cid) {return TRUE; }
+    while (($cid = $self->GetPathIdForParent($cid)) > -1) {
         if ($cid == $check) {return TRUE; }
     }
     return FALSE;
