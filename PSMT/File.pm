@@ -795,7 +795,7 @@ sub GetHashString {
 sub AddShortDesc {
     my ($self, $ref) = @_;
     if (! defined($ref->{description})) {return $ref; }
-    $ref->{short_description} = $ref->{description}
+    $ref->{short_description} = $ref->{description};
     if ($ref->{short_description} =~ /[\r\n]/) {
         $ref->{short_description} =~ s/^(.*)[\r\n]/$1/;
         if (substr($ref->{short_description}, 0, 1) eq '#') {
