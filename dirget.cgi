@@ -57,7 +57,7 @@ while ($#lpid > -1) {
         my $cname = PSMT::File->GetFilePath($cfid) . $cfid;
         if (! -f $cname) {next; }
 
-        $zname = PSMT::File->GetFileFullPath($fid);
+        $zname = PSMT::File->GetFileFullPath($cfid);
         $zname .= '.' . $cfo->{fileext};
 #        $zname = encode('Shift_JIS', decode('UTF-8', $zname));
         PSMT::File->RegUserAccess($cfid);
