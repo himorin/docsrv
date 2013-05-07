@@ -31,6 +31,7 @@ use PSMT::HyperEstraier;
 
     ListDocsInPath
     ListPathInPath
+    ListPathIdInPath
     ListFilesInDoc
     ListUserLoad
     ListUserLoadForDoc
@@ -275,6 +276,17 @@ sub ListDocsInPath {
         push(@docs, $self->GetDocInfo($ref->{docid}));
     }
     return \@docs;
+}
+
+sub ListPathIdInPath {
+    my ($self, $pathid) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path READ');
+    my $sth = $dbh->prepare('SELECT pathid FROM path WHERE parent = ?');
+    $sth->execute($pathid);
+    my (@path, $ref);
+    while ($ref = $sth->fetchrow_hashref()) {push(@path, $ref->{pathid}); }
+    return \@path;
 }
 
 sub ListPathInPath {
