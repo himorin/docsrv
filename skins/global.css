@@ -231,8 +231,10 @@ table.config {
 
 div.markdown {
     width: 90%;
-    border-width: 1px;
-    border-color: #C3C3C3;
+    margin-left: 3%;
+    padding-left: 2%;
+    padding-right: 2%;
+    border: 1px solid #C3C3C3;
 }
 
 
