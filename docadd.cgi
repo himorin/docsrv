@@ -50,6 +50,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     my $docdesc = $obj_cgi->param('docdesc');
     my @labels = $obj_cgi->param('label');
     my $secure = defined($obj_cgi->param('secure')) ? 1 : 0;
+    my $demail = $obj_cgi->param('demail');
 
     # Add new file from source
     my $ext = 'dat';
@@ -75,7 +76,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     }
 
     # second register new file to doc
-    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, FALSE);
+    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, FALSE, $demail);
     if (! defined($fid)) {
         PSMT::Error->throw_error_user('file_register_failed');
     }

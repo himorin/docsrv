@@ -507,7 +507,7 @@ sub RegNewDoc {
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $daddrs) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
     my $fileid = undef;
     my $uname = PSMT->user()->get_uid();
@@ -530,13 +530,13 @@ sub RegNewFile {
     $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, NOW(), ?, ?, ?)');
     $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
     $dbh->db_unlock_tables();
-    if ($is_add == TRUE) {PSMT->email()->NewFileInDoc($docid, $fileid); }
-    else {PSMT->email()->NewDocInPath($docid, $fileid); }
+    if ($is_add == TRUE) {PSMT->email()->NewFileInDoc($docid, $fileid, $daddrs); }
+    else {PSMT->email()->NewDocInPath($docid, $fileid, $daddrs); }
     return $fileid;
 }
 
 sub RegNewPath {
-    my ($self, $cur, $path, $desc, $group) = @_;
+    my ($self, $cur, $path, $desc, $group, $daddrs) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('path WRITE', 'docreg WRITE');
     $self->ValidateNameInPath($cur, $path);
@@ -545,7 +545,7 @@ sub RegNewPath {
     my $pathid = $dbh->db_last_key('path', 'pathid');
     $dbh->db_unlock_tables();
     PSMT::Access->SetPathAccessGroup($pathid, $group);
-    PSMT->email()->NewPathInPath($cur, $pathid);
+    PSMT->email()->NewPathInPath($cur, $pathid, $daddrs);
     return $pathid;
 }
 

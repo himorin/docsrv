@@ -40,7 +40,7 @@ sub new {
 }
 
 sub NewDocInPath {
-    my ($self, $docid, $new) = @_;
+    my ($self, $docid, $new, $daddrs) = @_;
     my $users = $self->_get_user_for_doc($docid);
     my $obj = new PSMT::Template;
     my $docinfo = PSMT::File->GetDocInfo($docid);
@@ -49,20 +49,28 @@ sub NewDocInPath {
     $obj->set_vars('newfile', PSMT::File->GetFileInfo($new));
     $obj->set_vars('path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
     foreach (keys %$users) {$self->_send_email($obj, $_, 'newdoc'); }
+    if (defined($daddrs) && ($daddrs ne "")) {
+        my @addrs = split(/,/, $daddrs);
+        foreach (@addrs) {$self->_send_email($obj, $_, 'newdoc'); }
+    }
 }
 
 sub NewPathInPath {
-    my ($self, $pid, $new) = @_;
+    my ($self, $pid, $new, $daddrs) = @_;
     my $users = $self->_get_user_for_path($pid);
     my $obj = new PSMT::Template;
     $obj->set_vars('target', PSMT::File->GetPathInfo($pid));
     $obj->set_vars('newpath', PSMT::File->GetPathInfo($new));
     $obj->set_vars('path', PSMT::File->GetFullPathFromId($pid));
     foreach (keys %$users) {$self->_send_email($obj, $_, 'newpath'); }
+    if (defined($daddrs) && ($daddrs ne "")) {
+        my @addrs = split(/,/, $daddrs);
+        foreach (@addrs) {$self->_send_email($obj, $_, 'newpath'); }
+    }
 }
 
 sub NewFileInDoc {
-    my ($self, $did, $new) = @_;
+    my ($self, $did, $new, $daddrs) = @_;
     my $users = $self->_get_user_for_doc($did);
     my $obj = new PSMT::Template;
     my $docinfo = PSMT::File->GetDocInfo($did);
@@ -71,6 +79,10 @@ sub NewFileInDoc {
     $obj->set_vars('filesize', PSMT::File->GetFileSize($new));
     $obj->set_vars('path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
     foreach (keys %$users) {$self->_send_email($obj, $_, 'newfile'); }
+    if (defined($daddrs) && ($daddrs ne "")) {
+        my @addrs = split(/,/, $daddrs);
+        foreach (@addrs) {$self->_send_email($obj, $_, 'newfile'); }
+    }
 }
 
 sub SendPassword {
@@ -86,12 +98,16 @@ sub SendPassword {
 #------------------------------------------------------------------------
 
 sub _send_email {
-    my ($self, $obj, $uname, $tmpl) = @_;
+    my ($self, $obj, $uname, $tmpl, $is_direct) = @_;
     my $out;
     my %ref;
     $ref{uname} = $uname;
     $ref{by} = PSMT->user()->get_uid();
-    $ref{emailto} = PSMT->ldap()->GetAttrsFromUID($uname, 'mail')->{mail}[0];
+    if (defined($is_direct)) {
+        $ref{emailto} = $uname;
+    } else {
+        $ref{emailto} = PSMT->ldap()->GetAttrsFromUID($uname, 'mail')->{mail}[0];
+    }
     $obj->process('email/' . $tmpl, 'email', \%ref, \$out);
     my @args;
     push(@args, '-i');

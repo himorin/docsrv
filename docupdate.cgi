@@ -33,6 +33,7 @@ PSMT::Access->CheckForDoc($did);
 if ($obj_cgi->request_method() eq 'POST') {
     my $source = $obj_cgi->param('source');
     my $desc = $obj_cgi->param('comment');
+    my $demail = $obj_cgi->param('demail');
 
     my $ext = 'dat';
     my $src = undef;
@@ -50,7 +51,7 @@ if ($obj_cgi->request_method() eq 'POST') {
         PSMT::Error->throw_error_user('invalid_file_source');
     }
 
-    my $fid = PSMT::File->RegNewFile($ext, $did, $desc);
+    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, TRUE, $demail);
     if (! defined($fid)) {
         PSMT::Error->throw_error_user('file_register_failed');
     }

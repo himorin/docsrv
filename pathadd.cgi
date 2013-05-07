@@ -36,8 +36,9 @@ PSMT::Access->CheckForPath($target);
 my $newpath = $obj_cgi->param('newpath');
 my $newdesc = $obj_cgi->param('newdesc');
 my @newgroup = $obj_cgi->param('newgroup');
+my $demail = $obj_cgi->param('demail');
 
-my $newid = PSMT::File->RegNewPath($target, $newpath, $newdesc, \@newgroup);
+my $newid = PSMT::File->RegNewPath($target, $newpath, $newdesc, \@newgroup, $demail);
 if ($newid == 0) {PSMT::Error->throw_error_code('path_add_failed'); }
 
 # insert parameters

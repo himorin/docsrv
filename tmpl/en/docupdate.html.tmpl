@@ -8,6 +8,7 @@
   <form action="docupdate.cgi" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
     [% INCLUDE entry/docform.html.tmpl %]
+    <p>Send notification to email: <input type="text" name="demail" value="" size="50"></p>
     <input type="hidden" name="did" value="[% doc_info.docid %]">
     <input type="submit" value="Update [% terms.document %]">
     <input type="reset" value="Reset">
