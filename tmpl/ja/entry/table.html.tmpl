@@ -36,6 +36,7 @@
       [% ELSE %]
         <img id="fav_p[% item.pathid %]" class="" src="skins/images/woofunction/16/star_off.png">
       [% END %]
+      <a href="dirget.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
       </td>
     <td class="path">[% INCLUDE show_table_icon id = 'dir' %]
       [%- IF cpname.defined %]
