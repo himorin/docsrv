@@ -449,7 +449,7 @@ sub GetFileFullPath {
     my $docinfo = $self->GetDocInfo($finfo->{docid});
     if (! defined($docinfo)) {return undef; }
     my $fname = $self->GetFullPathFromId($docinfo->{pathid});
-    $fname .= '/' . $docinfo->{filename} . '.' . $finfo->{fileext};
+    $fname .= $docinfo->{filename} . '.' . $finfo->{fileext};
     return $fname;
 }
 
