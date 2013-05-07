@@ -58,7 +58,6 @@ while ($#lpid > -1) {
         if (! -f $cname) {next; }
 
         $zname = PSMT::File->GetFileFullPath($cfid);
-        $zname .= '.' . $cfo->{fileext};
 #        $zname = encode('Shift_JIS', decode('UTF-8', $zname));
         PSMT::File->RegUserAccess($cfid);
         $obj_zip->addFile($cname, $zname);
