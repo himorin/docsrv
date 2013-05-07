@@ -51,7 +51,7 @@ sub NewDocInPath {
     foreach (keys %$users) {$self->_send_email($obj, $_, 'newdoc'); }
     if (defined($daddrs) && ($daddrs ne "")) {
         my @addrs = split(/,/, $daddrs);
-        foreach (@addrs) {$self->_send_email($obj, $_, 'newdoc'); }
+        foreach (@addrs) {$self->_send_email($obj, $_, 'newdoc', TRUE); }
     }
 }
 
@@ -65,7 +65,7 @@ sub NewPathInPath {
     foreach (keys %$users) {$self->_send_email($obj, $_, 'newpath'); }
     if (defined($daddrs) && ($daddrs ne "")) {
         my @addrs = split(/,/, $daddrs);
-        foreach (@addrs) {$self->_send_email($obj, $_, 'newpath'); }
+        foreach (@addrs) {$self->_send_email($obj, $_, 'newpath', TRUE); }
     }
 }
 
@@ -81,7 +81,7 @@ sub NewFileInDoc {
     foreach (keys %$users) {$self->_send_email($obj, $_, 'newfile'); }
     if (defined($daddrs) && ($daddrs ne "")) {
         my @addrs = split(/,/, $daddrs);
-        foreach (@addrs) {$self->_send_email($obj, $_, 'newfile'); }
+        foreach (@addrs) {$self->_send_email($obj, $_, 'newfile', TRUE); }
     }
 }
 
