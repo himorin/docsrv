@@ -1,6 +1,6 @@
 From: [% Param.admin_email %]
 To: [% emailto +%]
-Subject: New [% terms.file %] was added to your [% terms.favorite %] [% terms.document %]
+Subject: New [% terms.file %] was added [% IF ! ispush.defined %]to your [% terms.favorite %] [% terms.document %][% END %]
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 User-Agent: [% terms.sitedomain %]
@@ -11,7 +11,7 @@ User-Agent: [% terms.sitedomain %]
 on [% terms.sitename %].
   Please do not reply to thi e-mail.
 
-  A new [% terms.file %] has added to the [% terms.document %] in your [% terms.favorite %]
+  A new [% terms.file %] has added to the [% terms.document %] [% IF ! ispush.defined %]in your [% terms.favorite %][% END %]
 by user [% by %].
 
   New added [% terms.file %] into "[% path %][% target.filename %]"

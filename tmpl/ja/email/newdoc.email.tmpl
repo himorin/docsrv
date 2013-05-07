@@ -1,6 +1,6 @@
 From: [% Param.admin_email %]
 To: [% emailto +%]
-Subject: New [% terms.document %] was added to your [% terms.favorite %] [% terms.path %]
+Subject: New [% terms.document %] was added [% IF ! ispush.defined %]to your [% terms.favorite %] [% terms.path %][% END %]
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 User-Agent: [% terms.sitedomain %]
@@ -11,8 +11,7 @@ User-Agent: [% terms.sitedomain %]
 からの自動通知メールです。
 　このメールには返信しないでください。
 
-　あなたが [% terms.favorite %] に入れている [% terms.path %] に、[% by %] により新しい
-[% terms.document %] が追加されました。
+　[% IF ! ispush.defined %]あなたが [% terms.favorite %] に入れている[% END %] [% terms.path %] に、[% by %] により新しい [% terms.document %] が追加されました。
 
 　追加された [% terms.document %]
 名前: [% path %][% newdoc.filename +%]

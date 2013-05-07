@@ -105,6 +105,7 @@ sub _send_email {
     $ref{by} = PSMT->user()->get_uid();
     if (defined($is_direct)) {
         $ref{emailto} = $uname;
+        $ref{ispush} = TRUE;
     } else {
         $ref{emailto} = PSMT->ldap()->GetAttrsFromUID($uname, 'mail')->{mail}[0];
     }

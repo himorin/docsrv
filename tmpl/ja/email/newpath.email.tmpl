@@ -1,17 +1,17 @@
 From: [% Param.admin_email %]
 To: [% emailto +%]
-Subject: [PSMT/DocSrv] New directory was added to your favorite directory
+Subject: New [% terms.path %] was added [% IF ! ispush.defined %]to your [% terms.favorite %] [% terms.path %][% END %]
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-User-Agent: PSMT Document Server
+User-Agent: [% terms.sitedomain %]
 
 　[%+ uname %] さま
 
-　このメールは PSMT ドキュメントサーバからの自動通知メールです。
+　このメールは [% terms.sitename %] ドキュメントサーバ
+からの自動通知メールです。
 　返信しないでください。
 
-　あなたがお気に入りに入れているディレクトリに、[% by %] により新しい
-ディレクトリが追加されました。
+　[% IF ! ispush.defined %]あなたが [% terms.favorite %] に入れている[% END %] [% terms.path %] に、[% by %] により新しい [% terms.path %] が追加されました。
 
 　追加されたディレクトリ
 名前: [% newpath.pathname +%]
@@ -25,5 +25,5 @@ URL : [% Param.base_uri %]pathinfo.cgi?pid=[% newpath.pathid +%]
 -------
 
 -- 
-PSMT Document Server System
+[% terms.sitename %] Document Server System
 [% Param.base_uri %]
