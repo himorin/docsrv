@@ -16,7 +16,7 @@
     <li>短い説明: [% path_info.short_description %]</li>
     <li>アクセス可能グループ: [% path_info.gname.join(', ') %]</li>
   </ul>
-  <div>[% path_info.description FILTER markdown %]</div>
+  <div class="markdown">[% path_info.description FILTER markdown %]</div>
 [% END %]
 
 

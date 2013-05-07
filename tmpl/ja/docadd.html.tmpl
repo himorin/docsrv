@@ -50,7 +50,7 @@
       [% ELSE %](未定義)[% END %]</li>
   [% END %]
 </ul>
-<div id="desc">[% path_info.description FILTER markdown %]</div>
+<div id="desc" class="markdown">[% path_info.description FILTER markdown %]</div>
 
 [% IF pid != -1 %]
   [% INCLUDE entry/table.html.tmpl       paths = path_list

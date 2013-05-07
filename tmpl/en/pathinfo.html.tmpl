@@ -32,7 +32,7 @@
       [% IF path_info.gname.size > 0 %][% path_info.gname.join(', ') %]
       [% ELSE %](undefined)[% END %]</li>
   </ul>
-  <div id="path_desc_raw">[% path_info.description FILTER markdown %]</div>
+  <div id="path_desc_raw" class="markdown">[% path_info.description FILTER markdown %]</div>
   <div id="path_desc_edit" class="ui_hidden"><textarea name="new_description" rows="10" cols="150">[% path_info.description FILTER html %]</textarea></div>
   <div id="path_update" class="ui_hidden">
     <input type="submit" value="Update">

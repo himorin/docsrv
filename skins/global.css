@@ -229,4 +229,10 @@ table.config {
     margin-right: 3%;
 }
 
+div.markdown {
+    width: 90%;
+    border-width: 1px;
+    border-color: #C3C3C3;
+}
+
 
