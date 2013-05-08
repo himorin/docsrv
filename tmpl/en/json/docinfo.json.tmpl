@@ -1,10 +1,14 @@
 {"type":"[% type FILTER js %]","data":{
   [%- FOREACH hid IN jsondata.keys %]
+    [%- IF ! loop.first %], [% END %]
     [%- IF (hid == "gname") OR (hid == "labelid") %]"[% hid FILTER js %]":[
-      [%- FOREACH dat IN jsondata.$hid %]"[% dat FILTER js %]",[% END %]],
+      [%- FOREACH dat IN jsondata.$hid %]
+        [% IF ! loop.first %],[% END %]"[% dat FILTER js %]"
+      [%- END %]]
     [%- ELSIF hid == "lastfile" %]"[% hid FILTER js %]":{
       [%- FOREACH hkey IN jsondata.$hid.keys -%]
-        "[%- hkey FILTER js %]":"[% jsondata.$hid.$hkey FILTER js %]",
-      [%- END %]},
-    [%- ELSE %]"[% hid FILTER js %]":"[% jsondata.$hid FILTER js %]",
+        [%- IF ! loop.first %], [% END -%]
+        "[%- hkey FILTER js %]":"[% jsondata.$hid.$hkey FILTER js %]"
+      [%- END %]}
+    [%- ELSE %]"[% hid FILTER js %]":"[% jsondata.$hid FILTER js %]"
     [%- END %][% END %]}}

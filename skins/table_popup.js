@@ -8,7 +8,6 @@ function popup_jsoncall (target) {
   var url = 'json.cgi?format=json';
   url += '&id=' + tad[1];
   url += '&type=' + tad[0] + 'info';
-  alert(url);
   YAHOO.util.Connect.asyncRequest('GET', url, popup_callback);
 }
 
@@ -16,8 +15,8 @@ var popup_callback = {
   success: function (o) {
     var messages = [];
     try { messages = YAHOO.lang.JSON.parse(o.responseText); }
-    catch (x) { alert("YUI: Invalid JSON data"); }
-    var pmes = 'SSS';
+    catch (x) { alert("YUI: Invalid JSON data"); return; }
+    var pmes = o.responseText;
     YAHOO.dst.container.panel1.setBody(pmes);
   },
   failure: function (o) {

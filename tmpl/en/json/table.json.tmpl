@@ -1,4 +1,7 @@
 {"type":"[% type %]","data":{
-  [%- FOREACH hid IN jsondata.keys %]"[% hid %]":{
-    [%- FOREACH hkey IN jsondata.$hid.keys %]"[% hkey %]":"[% jsondata.$hid.$hkey %]",[% END %]},
+  [%- FOREACH hid IN jsondata.keys %]
+    [%- IF ! loop.first %], [% END %]"[% hid %]":{
+    [%- FOREACH hkey IN jsondata.$hid.keys %]
+      [%- IF ! loop.first %], [% END %]"[% hkey %]":"[% jsondata.$hid.$hkey %]"
+    [% END %]}
   [%- END %]}}

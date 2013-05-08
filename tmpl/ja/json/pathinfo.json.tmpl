@@ -1,6 +1,9 @@
 {"type":"[% type FILTER js %]","data":{
   [%- FOREACH hid IN jsondata.keys %]
+    [%- IF ! loop.first %], [% END %]
     [%- IF hid == "gname" %]"[% hid FILTER js %]":[
-      [%- FOREACH dat IN jsondata.$hid %]"[% dat FILTER js %]",[% END %]],
-    [%- ELSE %]"[% hid FILTER js %]":"[% jsondata.$hid FILTER js %]",
+      [%- FOREACH dat IN jsondata.$hid %]
+        [%- IF ! loop.first %], [% END %]"[% dat FILTER js %]"
+      [%- END %]],
+    [%- ELSE %]"[% hid FILTER js %]":"[% jsondata.$hid FILTER js %]"
     [%- END %][% END %]}}
