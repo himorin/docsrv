@@ -89,7 +89,10 @@ use constant AVAIL_FORMATS => {
   'global/footer'      => ['html'],
   'global/header'      => ['html'],
 
-  'json/allpath'       => ['html', 'json', 'js'],
+  'json/docinfo'       => ['html', 'json'],
+  'json/pathinfo'      => ['html', 'json'],
+  'json/table'         => ['html', 'json'],
+  'json/wrap'          => ['js'],
 
   'skins/index'             => ['html'],
   'skins/list'              => ['html'],

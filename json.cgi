@@ -21,25 +21,35 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
 }
 
-my %hash;
+my $hash = {};
 my $type = $obj_cgi->param('type');
 my $iid  = $obj_cgi->param('id');
+my $outtm = $type;
 
 if ($type eq 'allpath') {
-    PSMT::File->ListAllPath(\%hash);
+    PSMT::File->ListAllPath($hash);
+    $outtm = 'table';
 } elsif ($type eq 'pathinfo') {
+    $hash = PSMT::File->GetPathInfo($iid);
 } elsif ($type eq 'docinfo') {
+    $hash = PSMT::File->GetDocInfo($iid);
 } else {PSMT::Error->throw_error_user('invalid_param'); }
+if (! defined($hash)) {PSMT::Error->throw_error_user('invalid_param'); }
 
 $obj->template->set_vars('type', $type);
+$obj->template->set_vars('outtm', $outtm);
 $obj->template->set_vars('id', $iid);
-$obj->template->set_vars('jsondata', \%hash);
+$obj->template->set_vars('jsondata', $hash);
 
 if (! defined(PSMT->cgi()->param('format'))) {
     $obj_cgi->header( -type => "application/json" );
-    $obj->template->process('json/' . $type, 'json');
+    $obj->template->process('json/' . $outtm, 'json');
 } else {
-    $obj->template->process('json/' . $type);
+    if (PSMT->cgi()->param('format') eq 'js') {
+        $obj->template->process('json/wrap');
+    } else {
+        $obj->template->process('json/' . $outtm);
+    }
 }
 
 exit;

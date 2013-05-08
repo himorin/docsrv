@@ -1,0 +1,17 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "List of configuration"
+%]
+
+<h3>List of configuration for : [% type %]</h3>
+
+<ul>
+  [% FOREACH hid IN jsondata.keys %]<li>
+    [% IF hid == "gname" %][% hid FILTER html %] : 
+      [% FOREACH dat IN jsondata.$hid %][% dat FILTER html %], [% END %]
+    [% ELSE %]
+      [% hid FILTER html %] : [% jsondata.$hid FILTER html %]
+    [% END %]
+  </li>[% END %]
+</ul>
+
+[% PROCESS global/footer.html.tmpl %]
