@@ -4,6 +4,6 @@
     [%- IF hid == "gname" %]"[% hid FILTER js %]":[
       [%- FOREACH dat IN jsondata.$hid %]
         [%- IF ! loop.first %], [% END %]"[% dat FILTER js %]"
-      [%- END %]],
+      [%- END %]]
     [%- ELSE %]"[% hid FILTER js %]":"[% jsondata.$hid FILTER js %]"
     [%- END %][% END %]}}
