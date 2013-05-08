@@ -59,7 +59,6 @@ use constant AVAIL_FORMATS => {
   'favlist'            => ['html'],
   'fileinfo'           => ['html', 'json'],
   'index'              => ['html'],
-  'json'               => ['html', 'json', 'js'],
   'labeledit'          => ['html'],
   'labellist'          => ['html'],
   'pathadd'            => ['html'],
@@ -89,6 +88,8 @@ use constant AVAIL_FORMATS => {
 
   'global/footer'      => ['html'],
   'global/header'      => ['html'],
+
+  'json/allpath'       => ['html', 'json', 'js'],
 
   'skins/index'             => ['html'],
   'skins/list'              => ['html'],
