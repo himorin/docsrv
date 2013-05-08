@@ -113,6 +113,7 @@
 </script>
 [% END %]
 
+[% IF def_popup.defined %]
 <script type="text/javascript">
   YAHOO.namespace('dst.container');
   function dst_init() {
@@ -132,5 +133,6 @@
     YAHOO.dst.container.panel1.show();
   }
 </script>
+[% END %]
 
 </table>

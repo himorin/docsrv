@@ -3,7 +3,9 @@
 %]
 
 [% IF search_result.defined %]
-  [% INCLUDE entry/table.html.tmpl       paths = {}    docs = search_result %]
+  [% INCLUDE entry/table.html.tmpl       paths = {}    docs = search_result
+                                         def_popup = 1
+  %]
 [% ELSE %]
   <p>検索結果が0件でした。</p>
 [% END %]

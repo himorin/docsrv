@@ -5,7 +5,9 @@
 
 <h3>Recently updated [% terms.document %]</h3>
 
-[% INCLUDE entry/table.html.tmpl       docs = recent %]
+[% INCLUDE entry/table.html.tmpl       docs = recent 
+                                       def_popup = 1
+  %]
 
 
 [% PROCESS global/footer.html.tmpl %]

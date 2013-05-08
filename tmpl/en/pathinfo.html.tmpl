@@ -7,10 +7,14 @@
 
 [% IF pid == 0 %]
   [% INCLUDE entry/table.html.tmpl       upper_path = -1
-                                         paths = spath_list  docs = doc_list cpname = '' %]
+                                         paths = spath_list  docs = doc_list cpname = '' 
+                                       def_popup = 1
+  %]
 [% ELSE %]
   [% INCLUDE entry/table.html.tmpl       upper_path = path_info.parent
-                                         paths = spath_list  docs = doc_list cpname = full_path %]
+                                         paths = spath_list  docs = doc_list cpname = full_path 
+                                       def_popup = 1
+  %]
 [% END %]
 
 [% IF pid != 0 %]

@@ -5,7 +5,9 @@
 
 <h3>[% terms.path %]リスト</h3>
 
-[% INCLUDE entry/table.html.tmpl       paths = topdirs   docs = doc_list  cpname = '' %]
+[% INCLUDE entry/table.html.tmpl       paths = topdirs   docs = doc_list  cpname = '' 
+                                       def_popup = 1
+  %]
 
 <h3>最近更新された[% terms.document %]</h3>
 
