@@ -7,6 +7,8 @@
     [% END %]
     <title>[% page_title %] - [% terms.sitename %] (ver. [% constants.PSMT_DOCSRV_VERSION %])</title>
     <link rel="stylesheet" href="skins/global.css">
+    <link rel="stylesheet" href="skins/yui/build/fonts/fonts-min.css" />
+    <link rel="stylesheet" href="skins/yui/build/container/assets/skins/sam/container.css" />
     [% FOREACH item = stylesheet %]
       <link rel="stylesheer" href="skins/[% item %]">
     [% END %]
@@ -17,6 +19,8 @@
     <script type="text/javascript" src="skins/yui/build/dom/dom-min.js"></script>
     <script type="text/javascript" src="skins/yui/build/connection/connection_core-min.js"></script> 
     <script type="text/javascript" src="skins/yui/build/json/json-min.js"></script>
+    <script type="text/javascript" src="skins/yui/build/dragdrop/dragdrop-min.js"></script>
+    <script type="text/javascript" src="skins/yui/build/container/container-min.js"></script>
 
     <script type="text/javascript" src="skins/global.js"></script>
     [% FOREACH item = javascript %]

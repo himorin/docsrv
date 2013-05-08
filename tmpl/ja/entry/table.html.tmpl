@@ -38,7 +38,9 @@
       [% END %]
       <a href="dirget.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
       </td>
-    <td class="path">[% INCLUDE show_table_icon id = 'dir' %]
+    <td class="path">[% INCLUDE show_table_icon 
+        id = 'dir' html_id = "path_${item.pathid}" %]
+      [% pop_list.push("path_${item.pathid}") %]
       [%- IF cpname.defined %]
         <a href="path[% IF cpname != '' %]/[% cpname FILTER path_url %][% END %]/[% item.pathname FILTER path_url %]/">[% item.pathname FILTER html %]</a>
       [% ELSE %]
@@ -77,7 +79,10 @@
       <a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
       </td>
     <td class="path">
-      [%- INCLUDE show_mime_icon id = item.lastfile.fileext -%]
+      [%- INCLUDE show_mime_icon 
+        id = item.lastfile.fileext
+        html_id = "doc_${item.docid}" -%]
+      [% pop_list.push("doc_${item.docid}") %]
       <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename FILTER html %]</a></td>
     <td class="pathdesc">[% item.short_description FILTER html %]</td>
     [% IF item.lastfile.defined %]
@@ -105,6 +110,24 @@
 <script type="text/javascript">
   var fav_mod_[% item.docid %] = function() { tweak_ToggleFav('[% item.docid %]'); }
   YAHOO.util.Event.on('fav_[% item.docid %]', 'click', fav_mod_[% item.docid %]);
+
+  YAHOO.namespace('dst.container');
+  function dst_init() {
+    YAHOO.dst.container.panel1 = new YAHOO.widget.Panel("panel1", 
+            { width:"500px", visible:false, constraintoviewport:true } );
+    YAHOO.dst.container.panel1.setHeader("Detailed information");
+    YAHOO.dst.container.panel1.setBody("");
+    YAHOO.dst.container.panel1.setFooter("");
+    YAHOO.dst.container.panel1.render("container");
+    [% FOREACH item IN pop_list %]
+      YAHOO.util.Event.addListener(item, "click", dst_show_panel);
+    [% END %]
+  }
+  YAHOO.util.Event.addListener(window, "load", dst_init);
+  function dst_show_panel (obj) {
+    YAHOO.dst.container.panel1.setBody(obj.target.id);
+    YAHOO.dst.container.panel1.show();
+  }
 </script>
 [% END %]
 

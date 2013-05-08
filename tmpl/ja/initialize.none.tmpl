@@ -51,4 +51,6 @@
   [%- ELSE -%]
     src="skins/images/[% terms.icon_def %]" title="アイコンが未定義です"
   [%- END %]
+  [% IF html_id.defined %]id="[% html_id FILTER html %]"[% END -%]
+  [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
 />[% END %]

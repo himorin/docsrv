@@ -33,6 +33,7 @@ use PSMT::HyperEstraier;
     ListPathInPath
     ListPathIdInPath
     ListFilesInDoc
+    ListExtInDoc
     ListUserLoad
     ListUserLoadForDoc
     ListFileInExt
@@ -325,6 +326,18 @@ sub ListFilesInDoc {
         push(@files, $self->GetFileInfo($ref->{fileid}, $is_all));
     }
     return \@files;
+}
+
+sub ListExtInDoc {
+    my ($self, $docid) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    my $sth;
+    $sth = $dbh->prepare('SELECT fileext FROM docinfo WHERE docid = ? AND enabled = 1 GROUP BY fileext');
+    $sth->execute($docid);
+    my @exts;
+    while ($ref = $sth->fetchrow_hashref()) {push(@exts, $ref->{fileext}); }
+    return \@exts;
 }
 
 sub ListUserLoadForDoc {
