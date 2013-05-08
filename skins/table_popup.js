@@ -23,7 +23,13 @@ var popup_callback = {
       if (messages.type == "docinfo") {
         pmes  = "ID: path = " + messages.data.pathid;
         pmes += ", document = " + messages.data.docid;
-        pmes += "<br>Name: " + messages.data.filename;
+        pmes += "<br>Name: ";
+        var ppid = 0;
+        while (ppid != messages.data.pathid) {
+          pmes += "/<a href=\"pathinfo.cgi?pid=" + messages.data.parr[ppid].pid + "\">" + messages.data.parr[ppid].name + "</a>";
+          ppid = messages.data.parr[ppid].pid;
+        }
+        pmes += "/" + messages.data.filename;
         pmes += "<br>Description: " + messages.data.short_description;
         pmes += "<br>Secure: " + messages.data.secure;
         pmes += "<br>Groups: " + messages.data.gname.join(", ");
@@ -38,7 +44,13 @@ var popup_callback = {
       } else if (messages.type == "pathinfo") {
         pmes  = "ID: path = " + messages.data.pathid;
         pmes += ", parent = " + messages.data.parent;
-        pmes += "<br>Name: " + messages.data.pathname;
+        pmes += "<br>Name: ";
+        var ppid = 0;
+        while (ppid != messages.data.pathid) {
+          pmes += "/<a href=\"pathinfo.cgi?pid=" + messages.data.parr[ppid].pid + "\">" + messages.data.parr[ppid].name + "</a>";
+          ppid = messages.data.parr[ppid].pid;
+        }
+        pmes += "/" + messages.data.pathname;
         pmes += "<br>Description: " + messages.data.short_description;
         pmes += "<br>Groups: " + messages.data.gname.join(", ");
       }
