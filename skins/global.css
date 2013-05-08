@@ -97,7 +97,7 @@ footer {
     margin-top: 1em;
 }
 
-#body {
+#container {
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
