@@ -10,5 +10,12 @@
         [%- IF ! loop.first %], [% END -%]
         "[%- hkey FILTER js %]":"[% jsondata.$hid.$hkey FILTER js %]"
       [%- END %]}
+    [%- ELSIF hid == "parr" %]"[% hid FILTER js %]":{
+      [%- FOREACH hkey IN jsondata.$hid.keys %]
+        [%- IF ! loop.first %], [% END -%]
+        "[% hkey FILTER js %]":{
+          "pid":"[% jsondata.$hid.$hkey.pathid FILTER js %]",
+          "name":"[% jsondata.$hid.$hkey.pathname FILTER js %]"
+      }[% END %]}
     [%- ELSE %]"[% hid FILTER js %]":"[% jsondata.$hid FILTER js %]"
     [%- END %][% END %]}}
