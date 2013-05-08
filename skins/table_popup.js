@@ -16,7 +16,28 @@ var popup_callback = {
     var messages = [];
     try { messages = YAHOO.lang.JSON.parse(o.responseText); }
     catch (x) { alert("YUI: Invalid JSON data"); return; }
-    var pmes = o.responseText;
+    var pmes;
+    if (messages.type == undefined) {
+      pmes = "Execute failed.";
+    } else {
+      if (messages.type == "docinfo") {
+        pmes  = "ID: path = " + messages.data.pathid;
+        pmes += ", document = " + messages.data.docid;
+        pmes += "<br>";
+        pmes += "Name: " + messages.data.filename;
+        pmes += "<br>";
+        pmes += "Description: " + messages.data.short_description;
+        pmes += "<br>";
+        pmes += "Groups: " + messages.data.gname.join(", ");
+        pmes += "<br>";
+        pmes += "Labels: " + messages.data.labelid.join(", ");
+        pmes += "<br>";
+        pmes += "Last uploaded file: <br>";
+        pmes += " - User: " + messages.data.lastfile.uname;
+        pmes += "<br>";
+      } else if (messages.type == "pathinfo") {
+      }
+    }
     YAHOO.dst.container.panel1.setBody(pmes);
   },
   failure: function (o) {
