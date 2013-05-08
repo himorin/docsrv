@@ -23,19 +23,24 @@ var popup_callback = {
       if (messages.type == "docinfo") {
         pmes  = "ID: path = " + messages.data.pathid;
         pmes += ", document = " + messages.data.docid;
-        pmes += "<br>";
-        pmes += "Name: " + messages.data.filename;
-        pmes += "<br>";
-        pmes += "Description: " + messages.data.short_description;
-        pmes += "<br>";
-        pmes += "Groups: " + messages.data.gname.join(", ");
-        pmes += "<br>";
-        pmes += "Labels: " + messages.data.labelid.join(", ");
-        pmes += "<br>";
-        pmes += "Last uploaded file: <br>";
-        pmes += " - User: " + messages.data.lastfile.uname;
-        pmes += "<br>";
+        pmes += "<br>Name: " + messages.data.filename;
+        pmes += "<br>Description: " + messages.data.short_description;
+        pmes += "<br>Secure: " + messages.data.secure;
+        pmes += "<br>Groups: " + messages.data.gname.join(", ");
+        pmes += "<br>Labels: " + messages.data.labelid.join(", ");
+        pmes += "<br>Last uploaded file";
+        pmes += "<br> - User: " + messages.data.lastfile.uname;
+        pmes += "<br> - File ID: " + messages.data.lastfile.fileid;
+        pmes += "<br> - Description: " + messages.data.lastfile.description;
+        pmes += "<br> - Type: " + messages.data.lastfile.fileext;
+        pmes += "<br> - Size: " + messages.data.lastfile.size;
+        pmes += "<br> - Date: " + messages.data.lastfile.uptime;
       } else if (messages.type == "pathinfo") {
+        pmes += "ID: path = " + messages.data.pathid;
+        pmes += ", parent = " + messages.data.parent;
+        pmes += "<br>Name: " + messages.data.pathname;
+        pmes += "<br>Description: " + messages.data.short_description;
+        pmes += "<br>Groups: " + messages.data.gname.join(", ");
       }
     }
     YAHOO.dst.container.panel1.setBody(pmes);
