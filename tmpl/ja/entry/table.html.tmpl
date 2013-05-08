@@ -113,27 +113,23 @@
 </script>
 [% END %]
 
-[% IF ! pop_list_id.defined %][% pop_list_id = 1 %]
-[% ELSE %][% pop_list_id = pop_list_id + 1 %][% END %]
-
 <script type="text/javascript">
   YAHOO.namespace('dst.container');
-  function dst_init[% pop_list_id %] () {
-    YAHOO.dst.container.panel[% pop_list_id %] = 
-        new YAHOO.widget.Panel("panel[% pop_list_id %]", 
+  function dst_init() {
+    YAHOO.dst.container.panel1 = new YAHOO.widget.Panel("panel1", 
             { width:"500px", visible:false, constraintoviewport:true } );
-    YAHOO.dst.container.panel[% pop_list_id %].setHeader("Detailed information");
-    YAHOO.dst.container.panel[% pop_list_id %].setBody("");
-    YAHOO.dst.container.panel[% pop_list_id %].setFooter("");
-    YAHOO.dst.container.panel[% pop_list_id %].render("container");
+    YAHOO.dst.container.panel1.setHeader("Detailed information");
+    YAHOO.dst.container.panel1.setBody("");
+    YAHOO.dst.container.panel1.setFooter("");
+    YAHOO.dst.container.panel1.render("container");
     [% FOREACH item IN pop_list %]
-      YAHOO.util.Event.addListener("[% item %]", "click", dst_show_panel[% pop_list_id %]);
+      YAHOO.util.Event.addListener("[% item %]", "click", dst_show_panel);
     [%- END %]
   }
-  YAHOO.util.Event.addListener(window, "load", dst_init[% pop_list_id %]);
-  function dst_show_panel[% pop_list_id %] (obj) {
-    YAHOO.dst.container.panel[% pop_list_id %].setBody(obj.target.id);
-    YAHOO.dst.container.panel[% pop_list_id %].show();
+  YAHOO.util.Event.addListener(window, "load", dst_init);
+  function dst_show_panel (obj) {
+    YAHOO.dst.container.panel1.setBody(obj.target.id);
+    YAHOO.dst.container.panel1.show();
   }
 </script>
 
