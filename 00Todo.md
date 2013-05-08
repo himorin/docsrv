@@ -1,9 +1,7 @@
 # ToDo items
 
 * Implement AJAX type path/document viewer
-* Implement Markdown for document description
 * File rename/move security model
-* Push email notification on upload
 
 # Known issues
 

@@ -1,3 +1,7 @@
+# 0.5.5
+
+* Added popup feature via path/document icon
+
 # 0.5.4
 
 * Added Markdown into path/document description

@@ -73,7 +73,8 @@ sub filter_none {
 
 sub filter_js {
     my ($var) = @_;
-    $var =~ s/([\\\'\"\/])/\\$1/g;
+#   not sure but rejected \' (error on json parsing)
+    $var =~ s/([\\\"\/])/\\$1/g;
     $var =~ s/\n/\\n/g;
     $var =~ s/\r/\\r/g;
     $var =~ s/\@/\\x40/g; # anti-spam for email addresses
