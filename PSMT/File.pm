@@ -52,6 +52,7 @@ use PSMT::HyperEstraier;
     GetPathInfo
 
     GetFullPathFromId
+    GetFullPathArray
     GetIdFromFullPath
     GetIdFromName
     GetIdFromFullName
@@ -183,6 +184,26 @@ sub GetDocLastPostFileInfo {
     my $ref = $sth->fetchrow_hashref();
     $ref->{size} = $self->GetFileSize($ref->{fileid});
     return $ref;
+}
+
+sub GetFullPathArray {
+    my ($self, $pid) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path READ');
+    my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid = ?');
+    my $ref;
+    my %path;
+    my $last = -1;
+    while ($pid != 0) {
+        $sth->execute($pid);
+        if ($sth->rows != 1) {return undef; }
+        $ref = $sth->fetchrow_hashref();
+        if ($last > -1) {$ref->{child} = $last; }
+        $path{$pid} = $ref;
+        $last = $pid;
+        $pid = $ref->{parent};
+    }
+    return \%path;
 }
 
 sub GetFullPathFromId {
