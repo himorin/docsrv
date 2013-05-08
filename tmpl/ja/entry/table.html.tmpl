@@ -110,7 +110,10 @@
 <script type="text/javascript">
   var fav_mod_[% item.docid %] = function() { tweak_ToggleFav('[% item.docid %]'); }
   YAHOO.util.Event.on('fav_[% item.docid %]', 'click', fav_mod_[% item.docid %]);
+</script>
+[% END %]
 
+<script type="text/javascript">
   YAHOO.namespace('dst.container');
   function dst_init() {
     YAHOO.dst.container.panel1 = new YAHOO.widget.Panel("panel1", 
@@ -129,6 +132,5 @@
     YAHOO.dst.container.panel1.show();
   }
 </script>
-[% END %]
 
 </table>
