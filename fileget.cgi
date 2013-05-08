@@ -23,7 +23,8 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 
 my $fid = undef;
 my $did = $obj_cgi->param('did');
-if (defined($did)) {$fid = PSMT::File->GetDocLastPostFileId($did); }
+my $ext = $obj_cgi->param('ext');
+if (defined($did)) {$fid = PSMT::File->GetDocLastPostFileId($did, $ext); }
 if (! defined($fid)) {$fid = $obj_cgi->param('fid'); }
 if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 my $fileinfo = PSMT::File->GetFileInfo($fid);

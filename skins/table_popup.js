@@ -34,6 +34,13 @@ var popup_callback = {
         pmes += "<br>Secure: " + messages.data.secure;
         pmes += "<br>Groups: " + messages.data.gname.join(", ");
         pmes += "<br>Labels: " + messages.data.labelid.join(", ");
+        pmes += "<br>Avail formats: ";
+        for (var i = 0; i < messages.data.exts.length; i++) {
+          pmes += "<a href=\"fileget.cgi?did=" + messages.data.docid + "&ext=";
+          pmes += messages.data.exts[i] + "\">" + messages.data.exts[i];
+          pmes += "</a> | ";
+        }
+        pmes += " (download newest per each format)";
         pmes += "<br>Last uploaded file";
         pmes += "<br> - User: " + messages.data.lastfile.uname;
         pmes += "<br> - File ID: " + messages.data.lastfile.fileid;

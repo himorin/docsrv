@@ -163,11 +163,16 @@ sub GetDocFiles {
 
 # Always select 'enabeld' one (for user-wide consistency)
 sub GetDocLastPostFileId {
-    my ($self ,$docid) = @_;
+    my ($self, $docid, $ext) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY uptime DESC LIMIT 1');
-    $sth->execute($docid);
+    if (defined($ext)) {
+        my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 AND fileext = ? ORDER BY uptime DESC LIMIT 1');
+        $sth->execute($docid, $ext);
+    } else {
+        my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY uptime DESC LIMIT 1');
+        $sth->execute($docid);
+    }
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
     return $ref->{fileid};

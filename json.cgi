@@ -35,6 +35,7 @@ if ($type eq 'allpath') {
 } elsif ($type eq 'docinfo') {
     $hash = PSMT::File->GetDocInfo($iid);
     $hash->{parr} = PSMT::File->GetFullPathArray($hash->{pathid});
+    $hash->{exts} = PSMT::File->ListExtInDoc($iid);
 } else {PSMT::Error->throw_error_user('invalid_param'); }
 if (! defined($hash)) {PSMT::Error->throw_error_user('invalid_param'); }
 

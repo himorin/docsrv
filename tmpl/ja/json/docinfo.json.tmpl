@@ -1,7 +1,8 @@
 {"type":"[% type FILTER js %]","data":{
   [%- FOREACH hid IN jsondata.keys %]
     [%- IF ! loop.first %], [% END %]
-    [%- IF (hid == "gname") OR (hid == "labelid") %]"[% hid FILTER js %]":[
+    [%- IF (hid == "gname") OR (hid == "labelid") OR (hid == "exts") %]
+      "[% hid FILTER js %]":[
       [%- FOREACH dat IN jsondata.$hid %]
         [% IF ! loop.first %],[% END %]"[% dat FILTER js %]"
       [%- END %]]
