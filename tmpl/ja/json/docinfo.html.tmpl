@@ -8,7 +8,7 @@
   [% FOREACH hid IN jsondata.keys %]<li>
     [% IF (hid == "gname") OR (hid == "labelid") %][% hid FILTER html %] : 
       [% FOREACH dat IN jsondata.$hid %][% dat FILTER html %], [% END %]
-    [% ELSIF hid == "lastfile" %]<ul>[% FOREACH hkey IN jsondata.$hid.keys %]
+    [% ELSIF hid == "lastfile" %][% hid FILTER html %] : <ul>[% FOREACH hkey IN jsondata.$hid.keys %]
         <li>[% hkey FILTER html %] : [% jsondata.$hid.$hkey FILTER html %]</li>
       [% END %]</ul>
     [% ELSE %]
