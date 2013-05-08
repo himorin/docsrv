@@ -36,7 +36,7 @@ var popup_callback = {
         pmes += "<br> - Size: " + messages.data.lastfile.size;
         pmes += "<br> - Date: " + messages.data.lastfile.uptime;
       } else if (messages.type == "pathinfo") {
-        pmes += "ID: path = " + messages.data.pathid;
+        pmes  = "ID: path = " + messages.data.pathid;
         pmes += ", parent = " + messages.data.parent;
         pmes += "<br>Name: " + messages.data.pathname;
         pmes += "<br>Description: " + messages.data.short_description;
