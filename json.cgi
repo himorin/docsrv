@@ -46,7 +46,7 @@ if (! defined(PSMT->cgi()->param('format'))) {
     $obj->template->process('json/' . $outtm, 'json');
 } else {
     if (PSMT->cgi()->param('format') eq 'js') {
-        $obj->template->process('json/wrap');
+        $obj->template->process('json/wrap', 'js');
     } else {
         $obj->template->process('json/' . $outtm);
     }
