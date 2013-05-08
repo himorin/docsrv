@@ -336,7 +336,7 @@ sub ListExtInDoc {
     $sth = $dbh->prepare('SELECT fileext FROM docinfo WHERE docid = ? AND enabled = 1 GROUP BY fileext');
     $sth->execute($docid);
     my @exts;
-    while ($ref = $sth->fetchrow_hashref()) {push(@exts, $ref->{fileext}); }
+    while (my $ref = $sth->fetchrow_hashref()) {push(@exts, $ref->{fileext}); }
     return \@exts;
 }
 
