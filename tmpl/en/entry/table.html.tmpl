@@ -120,8 +120,8 @@
     YAHOO.dst.container.panel1.setFooter("");
     YAHOO.dst.container.panel1.render("container");
     [% FOREACH item IN pop_list %]
-      YAHOO.util.Event.addListener(item, "click", dst_show_panel);
-    [% END %]
+      YAHOO.util.Event.addListener([% item %], "click", dst_show_panel);
+    [%- END %]
   }
   YAHOO.util.Event.addListener(window, "load", dst_init);
   function dst_show_panel (obj) {
