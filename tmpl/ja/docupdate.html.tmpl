@@ -8,7 +8,7 @@
   <form action="docupdate.cgi" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
     [% INCLUDE entry/docform.html.tmpl %]
-    <p>次のメールアドレスに通知を送信する: <input type="text" name="demail" value="" size="50"></p>
+    <p>次のメールアドレスに通知を送信する: <input type="text" name="demail" value="" size="50">  (カンマ区切りのメールアドレス)</p>
     <input type="hidden" name="did" value="[% doc_info.docid %]">
     <input type="submit" value="ドキュメント更新">
     <input type="reset" value="リセット">
