@@ -1,5 +1,7 @@
 function dst_show_panel (obj) {
   popup_jsoncall(obj.target.id);
+  YAHOO.dst.container.panel1.cfg.setProperty("x", obj.pageX + 50);
+  YAHOO.dst.container.panel1.cfg.setProperty("y", obj.pageY + 50);
   YAHOO.dst.container.panel1.show();
 }
 
@@ -62,7 +64,7 @@ var popup_callback = {
       }
       // attribute table
       pmes += "<br>Attributes:";
-      pmes += "<table><thead><th>key</th><th>value</th></thead><tbody>";
+      pmes += "<table border=1><thead><th>key</th><th>value</th></thead><tbody>";
       for (var i in messages.data.attr) {
         pmes += "<tr><td>" + i + "</td><td>" + messages.data.attr[i] + "</td></tr>";
       }
