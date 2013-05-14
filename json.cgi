@@ -13,6 +13,7 @@ use PSMT::Util;
 use PSMT::File;
 use PSMT::NetLdap;
 use PSMT::Access;
+use PSMT::Attribute;
 
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
@@ -25,6 +26,7 @@ my $hash = {};
 my $type = $obj_cgi->param('type');
 my $iid  = $obj_cgi->param('id');
 my $outtm = $type;
+my $objattr;
 
 if ($type eq 'allpath') {
     PSMT::File->ListAllPath($hash);
@@ -32,10 +34,16 @@ if ($type eq 'allpath') {
 } elsif ($type eq 'pathinfo') {
     $hash = PSMT::File->GetPathInfo($iid);
     $hash->{parr} = PSMT::File->GetFullPathArray($iid);
+    $objattr = PSMT::Attribute->new();
+    $objattr->SetTarget('path');
+    $hash->{attr} = $objattr->GetAttrForId($iid);
 } elsif ($type eq 'docinfo') {
     $hash = PSMT::File->GetDocInfo($iid);
     $hash->{parr} = PSMT::File->GetFullPathArray($hash->{pathid});
     $hash->{exts} = PSMT::File->ListExtInDoc($iid);
+    $objattr = PSMT::Attribute->new();
+    $objattr->SetTarget('doc');
+    $hash->{attr} = $objattr->GetAttrForId($iid);
 } else {PSMT::Error->throw_error_user('invalid_param'); }
 if (! defined($hash)) {PSMT::Error->throw_error_user('invalid_param'); }
 

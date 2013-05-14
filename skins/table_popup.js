@@ -60,6 +60,13 @@ var popup_callback = {
         pmes += "<br>Description: " + messages.data.short_description;
         pmes += "<br>Groups: " + messages.data.gname.join(", ");
       }
+      // attribute table
+      pmes += "<br>Attributes:";
+      pmes += "<table><thead><th>key</th><th>value</th></thead><tbody>";
+      for (var i in messages.data.attr) {
+        pmes += "<tr><td>" + i + "</td><td>" + messages.data.attr[i] + "</td></tr>";
+      }
+      pmes += "</tbody></table>";
     }
     YAHOO.dst.container.panel1.setBody(pmes);
   },
