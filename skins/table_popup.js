@@ -1,8 +1,8 @@
 function dst_show_panel (obj) {
   popup_jsoncall(obj.target.id);
-  YAHOO.dst.container.panel1.cfg.setProperty("x", obj.pageX + 50);
-  YAHOO.dst.container.panel1.cfg.setProperty("y", obj.pageY + 50);
-  YAHOO.dst.container.panel1.show();
+  YAHOO.dst.container.enttbldi.cfg.setProperty("x", obj.pageX + 50);
+  YAHOO.dst.container.enttbldi.cfg.setProperty("y", obj.pageY + 50);
+  YAHOO.dst.container.enttbldi.show();
 }
 
 function popup_jsoncall (target) {
@@ -70,7 +70,7 @@ var popup_callback = {
       }
       pmes += "</tbody></table>";
     }
-    YAHOO.dst.container.panel1.setBody(pmes);
+    YAHOO.dst.container.enttbldi.setBody(pmes);
   },
   failure: function (o) {
     if (! YAHOO.util.Connect.isCallInProgress(o)) {
