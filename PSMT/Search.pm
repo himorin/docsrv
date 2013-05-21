@@ -105,6 +105,8 @@ sub CreateResult {
             $ref->{filename} = PSMT::File->GetFullPathFromId($ref->{pathid}) . $ref->{filename};
             $ref->{labelid} = PSMT::Label->ListLabelOnDoc($cid);
             $ref->{lastfile} = PSMT::File->GetDocLastPostFileInfo($cid);
+            $ref->{gname} = PSMT::Access->ListDocRestrict($docid);
+            $ref = PSMT::Util->AddShortDesc($ref);
             push(@result, $ref);
         }
     }

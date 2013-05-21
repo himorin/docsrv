@@ -31,6 +31,8 @@ use Text::Markdown;
 
     IpAddr
     GetHashString
+
+    AddShortDesc
 );
 
 sub StrToIpaddr {
@@ -137,6 +139,18 @@ sub filter_path_url {
     $var =~ s/([^a-zA-Z0-9_\-.\/])/uc sprintf("%%%02x",ord($1))/eg;
     return $var;
 }
+
+sub AddShortDesc {
+    my ($self, $ref) = @_;
+    if (! defined($ref->{description})) {return $ref; }
+    $ref->{short_description} = $ref->{description};
+    if ($ref->{short_description} =~ /[\r\n]/) {
+        $ref->{short_description} =~ /^#* *(.+?)[\r\n]/;
+        $ref->{short_description} = $1;
+    }
+    return $ref;
+}
+
 
 1;
 
