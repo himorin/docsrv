@@ -56,7 +56,7 @@ if (defined($path)) {
 }
 if ($pid > 0) {
     $path = PSMT::File->GetFullPathFromId($pid);
-} else {
+} elsif ($pid < 0) {
     PSMT::Error->throw_error_user('invalid_path_id');
 }
 
