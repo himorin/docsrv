@@ -147,6 +147,9 @@ sub AddShortDesc {
     if ($ref->{short_description} =~ /[\r\n]/) {
         $ref->{short_description} =~ /^#* *(.+?)[\r\n]/;
         $ref->{short_description} = $1;
+    } else {
+        $ref->{short_description} =~ /^#* *(.+)/;
+        $ref->{short_description} = $1;
     }
     return $ref;
 }
