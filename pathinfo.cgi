@@ -37,6 +37,7 @@ if (defined($pid)) {
 if (defined($path_info) && (! defined($path)) && (! defined($pid))) {
     $path = $path_info;
 }
+# make $path at last
 if (defined($path)) {
     # if path != undef, make path/pid from path
     $pid = PSMT::File->GetIdFromFullPath($path);
@@ -45,10 +46,6 @@ if (defined($path)) {
     $pathinfo = PSMT::File->GetPathInfo($pid);
 } elsif (defined($pid)) {
     if ($pid == 0) {$path = '/'; }
-    else {
-        # create path from pid
-        $path = PSMT::File->GetFullPathFromId($pid);
-    }
 } elsif ($obj_cgi->request_method() eq 'POST') {
     # NOT allow path is empty for POST
     PSMT::Error->throw_error_user('invalid_path_id');
@@ -56,6 +53,11 @@ if (defined($path)) {
     # For default, use pid = 0 (root)
     $pid = 0;
     $path = '/';
+}
+if ($pid > 0) {
+    $path = PSMT::File->GetFullPathFromId($pid);
+} else {
+    PSMT::Error->throw_error_user('invalid_path_id');
 }
 
 # check permission
