@@ -37,7 +37,7 @@
       [% ELSE %](誰でも)[% END %]</li>
   </ul>
   <div id="path_desc_raw" class="markdown">[% path_info.description FILTER markdown %]</div>
-  <div id="path_desc_edit" class="ui_hidden"><textarea name="new_description" rows="10" cols="150">[% path_info.description FILTER html %]</textarea></div>
+  <div id="path_desc_edit" class="ui_hidden"> (markdown書式が利用可能)<br /><textarea name="new_description" rows="10" cols="150">[% path_info.description FILTER html %]</textarea></div>
   <div id="path_update" class="ui_hidden">
     <input type="submit" value="更新">
   </div>
@@ -88,7 +88,7 @@
     <li>セキュリティーフラグを設定する (ダウンロード時に暗号化): <input type="checkbox" name="secure" /></li>
     <li>次のメールアドレスに通知を送信する: <input type="text" name="demail" value="" size="50"> (カンマ区切りのメールアドレス)</li>
   </ul>
-  <p>新しい [% terms.document %] の説明</p>
+  <p>新しい [% terms.document %] の説明 (markdown書式が利用可能)</p>
   <div><textarea name="docdesc" rows="10" cols="150"></textarea></div>
   <h4>新規ドキュメントに付けるラベル</h4>
   <ul>
