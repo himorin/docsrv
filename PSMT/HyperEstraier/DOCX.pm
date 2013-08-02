@@ -48,9 +48,12 @@ sub DumpText {
     if (! defined($obj_doc)) {return ""; }
     my $nodes = $obj_doc->getElementsByTagName('w:t');
     my $node_cnt = $nodes->getLength;
+    my $node_obj;
     for (my $node_id = 0; $node_id < $node_cnt; $node_id ++) {
-        $dump_text .= $nodes->item($node_id)->getFirstChild()->getData();
-        $dump_text .= ' ';
+        if (defined($node_obj = $nodes->item($node_id)->getFirstChild())) {
+            $dump_text .= $node_obj->getData();
+            $dump_text .= ' ';
+        }
     }
     return $dump_text;
 }
