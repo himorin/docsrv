@@ -1,3 +1,10 @@
+[% IF ! did.defined %]
+
+[% ELSE %]
+  <input type="hidden" name="did" value="[% doc_info.docid %]">
+[% END %]
+
+
 <h4>Select file to add into this [% terms.document %]</h4>
 
 <p>
@@ -30,6 +37,11 @@
   </p>
 [% END %]
 
-<p>
-Comment to this [% terms.file %]: <input type="text" name="comment" value="" size="80">
-</p>
+<p>Comment to this [% terms.file %]: <input type="text" name="comment" value="" size="80"></p>
+
+<h4>Notification</h4>
+
+<p>Send notification to following email addresses:
+<input type="text" name="demail" value="" size="50"><br />
+Type multiple email addresses with comma (<b>,</b>) separated.</p>
+

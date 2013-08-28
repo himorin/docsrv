@@ -1,3 +1,9 @@
+[% IF ! did.defined %]
+
+[% ELSE %]
+  <input type="hidden" name="did" value="[% doc_info.docid %]">
+[% END %]
+
 <h4>ドキュメントに追加するファイルの選択</h4>
 
 <p>
@@ -29,6 +35,11 @@
   </p>
 [% END %]
 
-<p>
-このファイルへのコメント: <input type="text" name="comment" value="" size="80">
-</p>
+<p>このファイルへのコメント: <input type="text" name="comment" value="" size="80"></p>
+
+<h4>通知</h4>
+
+<p>次のメールアドレスに通知を送信する:
+<input type="text" name="demail" value="" size="50"><br />
+複数の場合、カンマ(<b>,</b>)区切りでメールアドレスを入力してください。</p>
+

@@ -1,16 +1,14 @@
 [% PROCESS global/header.html.tmpl %]
 
 [% IF added.defined %]
-  <h3>'[% full_path FILTER html %][% doc_info.filename %]' にファイル
+  <h3><a href="docinfo.cgi?did=[% doc_info.docid %]">'[% full_path FILTER html %][% doc_info.filename %]'</a> にファイル
   [% added FILTER html %] が追加されました</h3>
 [% ELSE %]
-  <h3>新しいドキュメントの追加 - <tt>[% full_path %][% doc_info.filename %]</tt></h3>
+  <h3>新しい[% terms.file %]の追加 - <tt>[% full_path %][% doc_info.filename %]</tt></h3>
   <form action="docupdate.cgi" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
-    [% INCLUDE entry/docform.html.tmpl %]
-    <p>次のメールアドレスに通知を送信する: <input type="text" name="demail" value="" size="50">  (カンマ区切りのメールアドレス)</p>
-    <input type="hidden" name="did" value="[% doc_info.docid %]">
-    <input type="submit" value="ドキュメント更新">
+    [% INCLUDE entry/docform.html.tmpl    did = doc_info.docid %]
+    <input type="submit" value="[% terms.document %]更新">
     <input type="reset" value="リセット">
   </form>
 [% END %]
