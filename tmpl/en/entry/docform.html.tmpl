@@ -1,5 +1,29 @@
 [% IF ! did.defined %]
-
+  <ul>
+    <li>Name for new [% terms.document %]: <tt>
+      [%- IF pid == -1 %]
+        <select name="pid" onChange="AllPathChange();">
+          <option value="0">/</option>
+          [% FOREACH hid IN allpath.keys.nsort %]
+            <option value="[% hid %]">[% allpath.$hid.fullpath %]</option>
+          [%- END %]
+        </select>/
+      [%- ELSE %]
+        <input type="hidden" name="pid" value="[% path_info.pathid %]">
+        /[% full_path FILTER html %]
+      [%- END -%]
+    </tt><input type="text" name="filename" value="" size="50"></li>
+    <li>Set security flag (encrypt for download): <input type="checkbox" name="secure" /></li>
+  </ul>
+  <p>Description for new [% terms.document %] (in markdown format)<p>
+  <div><textarea name="docdesc" rows="10" style="width: 90%"></textarea></div>
+  <h4>Labels for new [% terms.document %]</h4>
+  <ul>
+    [% FOREACH item = Label.keys %]
+      <li><label><input type="checkbox" name="label" value="[% item %]" />
+        [% Label.$item.name %] ([% Label.$item.description %])</label></li>
+    [%- END %]
+  </ul>
 [% ELSE %]
   <input type="hidden" name="did" value="[% doc_info.docid %]">
 [% END %]

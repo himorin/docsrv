@@ -209,6 +209,7 @@ sub GetFullPathArray {
     return \%path;
 }
 
+# return path name starts without "/"
 sub GetFullPathFromId {
     my ($self, $pid) = @_;
     my $path;
@@ -412,6 +413,7 @@ sub IsUserUpForDoc {
 # List all path in DB
 #   if defined($all), ignore restriction
 #   if $all = 1, ignore restriction
+#   returned "path" names start with "/"
 sub ListAllPath {
     my ($self, $hash, $all) = @_;
     my $dbh = PSMT->dbh;

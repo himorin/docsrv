@@ -6,33 +6,8 @@
   <h3>新しいドキュメントの追加</h3>
   <form action="docadd.cgi" name="docadd_set" method="POST" enctype="multipart/form-data">
     [% PROCESS global/formopt.html.tmpl %]
-    <ul>
-      <li>新しいドキュメントの名前: <tt>
-        [%- IF pid == -1 %]
-          <select name="pid" onChange="AllPathChange();">
-            <option value="0">/</option>
-            [% FOREACH hid IN allpath.keys.nsort %]
-              <option value="[% hid %]">[% allpath.$hid.fullpath %]</option>
-            [%- END %]
-          </select>
-        [% ELSE %]
-          <input type="hidden" name="pid" value="[% path_info.pathid %]">
-          [% full_path FILTER html %]
-        [% END -%]
-        /</tt><input type="text" name="filename" value="" size="50"></li>
-      <li>セキュリティーフラグを設定する (ダウンロード時に暗号化): <input type="checkbox" name="secure" /></li>
-    </ul>
-    <p>新しい [% terms.document %] の説明 (markdown書式が利用可能)<p>
-    <textarea name="docdesc" rows="10" cols="150"></textarea>
-    <h4>新規ドキュメントに付けるラベル</h4>
-    <ul>
-      [% FOREACH item = Label.keys %]
-        <li><input type="checkbox" name="label" value="[% item %]" />
-          [% Label.$item.name %] ([% Label.$item.description %])</li>
-      [% END %]
-    </ul>
-    [% INCLUDE entry/docform.html.tmpl %]
-    <input type="submit" value="Add document">
+    [% INCLUDE entry/docform.html.tmpl  pid = pid %]
+    <input type="submit" value="[% terms.document %] 追加">
     <input type="reset" value="Reset">
   </form>
 [% END %]

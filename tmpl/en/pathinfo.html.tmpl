@@ -83,21 +83,7 @@
 <div class="doc_add">
 <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
   [% PROCESS global/formopt.html.tmpl %]
-  <ul>
-    <li>Name of new [% terms.document %]: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
-    <li>Set security flag (encrypt for download): <input type="checkbox" name="secure" /></li>
-  </ul>
-  <p>Description of new [% terms.document %] (in markdown format)</p>
-  <div><textarea name="docdesc" rows="10" cols="150"></textarea></div>
-  <h4>Label for new [% terms.document %]</h4>
-  <ul>
-    [% FOREACH item = Label.keys %]
-      <li><input type="checkbox" name="label" value="[% item %]" />
-        [% Label.$item.name %] ([% Label.$item.description %])</li>
-    [% END %]
-  </ul>
-  [% INCLUDE entry/docform.html.tmpl %]
-  <input type="hidden" name="pid" value="[% pid %]">
+  [% INCLUDE entry/docform.html.tmpl   pid = pid %]
   <input type="submit" value="Add new [% terms.document %]">
   <input type="reset" value="Reset">
 </form>

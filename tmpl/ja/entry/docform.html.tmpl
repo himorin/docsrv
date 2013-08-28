@@ -1,10 +1,34 @@
 [% IF ! did.defined %]
-
+  <ul>
+    <li>新しい[% terms.document %]の名前: <tt>
+      [%- IF pid == -1 %]
+        <select name="pid" onChange="AllPathChange();">
+          <option value="0">/</option>
+          [% FOREACH hid IN allpath.keys.nsort -%]
+            <option value="[% hid %]">[% allpath.$hid.fullpath %]</option>
+          [%- END %]
+        </select>/
+      [%- ELSE %]
+        <input type="hidden" name="pid" value="[% pid %]">
+        /[% full_path FILTER html %]
+      [%- END -%]
+    </tt><input type="text" name="filename" value="" size="50"></li>
+    <li>セキュリティーフラグを設定する (ダウンロード時に暗号化): <input type="checkbox" name="secure" /></li>
+  </ul>
+  <p>新しい [% terms.document %] の説明 (markdown書式が利用可能)</p>
+  <div><textarea name="docdesc" rows="10" style="width: 90%"></textarea></div>
+  <h4>新規[% terms.document %]に付けるラベル</h4>
+  <ul>
+    [% FOREACH item = Label.keys -%]
+      <li><label><input type="checkbox" name="label" value="[% item %]" />
+        [% Label.$item.name %] ([% Label.$item.description %])</label></li>
+    [%- END %]
+  </ul>
 [% ELSE %]
   <input type="hidden" name="did" value="[% doc_info.docid %]">
 [% END %]
 
-<h4>ドキュメントに追加するファイルの選択</h4>
+<h4>[% terms.document %]に追加するファイルの選択</h4>
 
 <p>
   <input type="radio" name="source" value="upload" checked="checked" /> ローカルファイルをアップロード: 

@@ -83,22 +83,8 @@
 <div class="doc_add">
 <form action="docadd.cgi" method="POST" enctype="multipart/form-data">
   [% PROCESS global/formopt.html.tmpl %]
-  <ul>
-    <li>新しいドキュメントの名前: <tt>[% full_path FILTER html %]</tt><input type="text" name="filename" value="" size="50"></li>
-    <li>セキュリティーフラグを設定する (ダウンロード時に暗号化): <input type="checkbox" name="secure" /></li>
-  </ul>
-  <p>新しい [% terms.document %] の説明 (markdown書式が利用可能)</p>
-  <div><textarea name="docdesc" rows="10" cols="150"></textarea></div>
-  <h4>新規ドキュメントに付けるラベル</h4>
-  <ul>
-    [% FOREACH item = Label.keys %]
-      <li><input type="checkbox" name="label" value="[% item %]" />
-        [% Label.$item.name %] ([% Label.$item.description %])</li>
-    [% END %]
-  </ul>
-  [% INCLUDE entry/docform.html.tmpl %]
-  <input type="hidden" name="pid" value="[% pid %]">
-  <input type="submit" value="ドキュメント追加">
+  [% INCLUDE entry/docform.html.tmpl  pid = pid %]
+  <input type="submit" value="[% terms.document %] 追加">
   <input type="reset" value="リセット">
 </form>
 </div>
