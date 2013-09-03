@@ -6,25 +6,26 @@
 <form action="query.cgi" method="POST">
 [% INCLUDE global/formopt.html.tmpl %]
 
-<div id="error">
-<div class="info">
-現在、ドキュメント全文検索は試験中です。<br />
-全文検索を指定した場合、ドキュメント情報についての検索条件は無視されます。<br />
-また、
-[% constants.HE_FILE_FILTER.keys.sort.join(', ') %]
-のみしかインデックス化されておりません。
-</div>
-</div>
+<p>以下の各条件を利用する場合、先頭のチェックボックスにチェックを入れてください。</p>
 
-<h3>ドキュメント全文検索</h3>
+<h3><label><input type="checkbox" name="searchcond" value="sc_full">
+ドキュメント全文検索</label></h3>
 
-<p><a href="http://fallabs.com/hyperestraier/uguide-ja.html#searchcond">HyperEstraierの検索条件節</a>
-を直接指定してください。</p>
-
+<div class="searchcond">
+<p>[% constants.HE_FILE_FILTER.keys.sort.join(', ') %]
+のみしかインデックス化されておりません。これら以外のファイルは検索されません。</p>
 <input type="text" name="docs_he" value="" size="100"></input>
+<p>(<a href="http://fallabs.com/hyperestraier/uguide-ja.html#searchcond">HyperEstraierの検索条件節</a>
+を直接指定してください。)</p>
+</div>
 
 
-<h3>ドキュメント情報についての検索条件指定</h3>
+
+
+<h3><label><input type="checkbox" name="searchcond" value="sc_item">
+ドキュメント情報についての検索条件指定</label></h3>
+
+<div class="searchcond">
 
 <p>各[% terms.document %]の名前、説明、[% terms.document %]に付けたラベルに
 対して検索条件を指定可能です。
@@ -77,6 +78,7 @@
 </select>
 </div>
 
+</div>
 
 <div>
 <input type="submit" value="検索実行">

@@ -6,26 +6,27 @@
 <form action="query.cgi" method="POST">
 [% INCLUDE global/formopt.html.tmpl %]
 
-<div id="error">
-<div class="info">
-Full text search is on development. <br />
-If you use full text search, any search condition on the [% terms.document %] information 
-or index will be ignored. <br />
-Current suppoerted formats of full text index are:
+<p>To use each condition, check the box just before each title.</p>
+
+<h3><label><input type="checkbox" name="searchcond" value="sc_full">
+Full text indexed search</label></h3>
+
+<div class="searchcond">
+<p>Current suppoerted formats of full text index are:
 [% constants.HE_FILE_FILTER.keys.sort.join(', ') %].
-</div>
-</div>
-
-<h3>Full text indexed search</h3>
-
-<p>Please specify the 
+Evey file in these formats will be queried, but any others will be just 
+ignored.</p>
+<input type="text" name="docs_he" value="" class="inputwide"></input>
+<p>(Please specify the 
 <a href="http://fallabs.com/hyperestraier/uguide-en.html#searchcond">search condition format of HyperEstraier</a>
-directly into this box.</p>
+directly into box above.)</p>
+</div>
 
-<input type="text" name="docs_he" value="" size="100"></input>
 
+<h3><label><input type="checkbox" name="searchcond" value="sc_item">
+Search by information of [% terms.document %]</label></h3>
 
-<h3>Search by information of [% terms.document %]</h3>
+<div class="searchcond">
 
 <p>You can search by name, description and labels of [% terms.document %].
 If you don't specify in some category (name, description etc), these categories 
@@ -75,6 +76,7 @@ of the following labels :
 </select>
 </div>
 
+</div>
 
 <div>
 <input type="submit" value="Search">

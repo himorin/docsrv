@@ -237,4 +237,14 @@ div.markdown {
     border: 1px solid #C3C3C3;
 }
 
+div.searchcond {
+    width: 90%;
+    margin-left: 3%;
+    border: 1px solid #C3C3C3;
+}
+
+input.inputwide, 
+textarea.inputwide {
+    width: 90%;
+}
 
