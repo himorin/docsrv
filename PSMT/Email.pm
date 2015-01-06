@@ -116,6 +116,7 @@ sub _send_email {
     push(@args, '-ODeliveryMode=deferred');
     # XXX: this line is for quick hack
     while ($out =~ s/^[\r\n]//g) {}
+    # header tweak
     my $mailer = Email::Send->new({ mailer => 'Sendmail', mailer_args => \@args});
     my $retval = $mailer->send($out);
 }
@@ -163,18 +164,6 @@ sub _merge_fav_path {
     }
     return $hash;
 }
-
-
-#    my $dbh = PSMT->dbh;
-#    my $sth = $dbh->prepare('SELECT * FROM setting');
-#    $sth->execute();
-#    my $ref;
-#    while ($ref = $sth->fetchrow_hashref()) {
-
-#    if ($sth->rows != 1) {return undef; }
-#    my $uname = PSMT->user->get_uid();
-#    $dbh->db_lock_tables('docreg WRITE', 'path WRITE');
-#    $dbh->db_unlock_tables();
 
 
 

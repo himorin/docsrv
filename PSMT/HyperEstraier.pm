@@ -20,7 +20,7 @@ use PSMT::Error;
 use PSMT::Template;
 use PSMT::File;
 
-use Estraier;
+#use Estraier;
 
 %PSMT::HyperEstraier::EXPORT = qw(
     new
@@ -38,6 +38,10 @@ sub END {
 
 sub new {
     my ($self, $mode) = @_;
+    my $module = 1;
+    eval {require Estraier; 1; } or $module = 0;
+    eval {require Search::Estraier; 1; } or $module = 0;
+    if ($module == 0) {return undef; }
     $self->_open($mode);
     return $self;
 }
