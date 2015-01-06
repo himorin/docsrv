@@ -6,7 +6,8 @@
 <form action="query.cgi" method="POST">
 [% INCLUDE global/formopt.html.tmpl %]
 
-<p>以下の各条件を利用する場合、先頭のチェックボックスにチェックを入れてください。</p>
+<p>以下の各条件を利用する場合、先頭のチェックボックスにチェックを入れてください。
+チェックされた最初の条件のみが利用されます。</p>
 
 <h3><label><input type="checkbox" name="searchcond" value="sc_full">
 ドキュメント全文検索</label></h3>
