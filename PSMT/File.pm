@@ -725,6 +725,9 @@ sub MoveNewFile {
         PSMT::Error->throw_error_user('file_move_failed');
     }
     rename($src, $newpath . $fid);
+    # file reg finished, unlock WRITE temporary, if we need do READ again
+    my $dbh = PSMT->dbh;
+    $dbh->db_unlock_tables(TRUE);
     # Exec HyperEstraier Index
     my $obj = new PSMT::HyperEstraier(TRUE);
     $obj->AddNewFile($fid);
