@@ -76,7 +76,12 @@ sub AddNewFile {
         my $fh;
         # if could not execute, just return without adding
         # XXX shall we call error handler? (also consider command line tool)
-        open($fh, "$cmd $fname - |") or return;
+        if (index($cmd, '|') != -1) {
+            $cmd = "cat $fname | $cmd |";
+        } else {
+            $cmd = "$cmd $fname - |";
+        }
+        open($fh, $cmd) or return;
         $self->_add_fh($fid, $fh);
         close($fh);
     }
