@@ -236,7 +236,7 @@ sub _lang_install {
 sub _lang_client {
     my ($self, $def_lang) = @_;
     my @lang;
-    if (defined($lang) && ($lang ne '')) {push(@lang, $def_lang); }
+    if (defined($def_lang) && ($def_lang ne '')) {push(@lang, $def_lang); }
     if (defined(PSMT->cgi()->cookie('LANG'))) {
         push(@lang, PSMT->cgi()->cookie('LANG'));
     }
