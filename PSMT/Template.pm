@@ -199,7 +199,7 @@ sub update_lang {
     my ($self, $cat) = @_;
     if ($cat eq 'email') {
         $conf_template->{INCLUDE_PATH}
-            = $this->_lang_template(PSMT->config->GetParam('email_lang'));
+            = $self->_lang_template(PSMT->config->GetParam('email_lang'));
     }
 }
 
