@@ -101,6 +101,7 @@ sub _send_email {
     my ($self, $obj, $uname, $tmpl, $is_direct) = @_;
     my $out;
     my %ref;
+    $obj->update_lang('email');
     $ref{uname} = $uname;
     $ref{by} = PSMT->user()->get_uid();
     if (defined($is_direct)) {

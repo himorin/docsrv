@@ -21,16 +21,42 @@ You need the following softwares.
 4. Import database table definitions - common.sql
 5. Import initial configuration parameters - docsrv_config.sql
 
-# Reamrks and Notes
+## Reamrks and Notes
 
 * Database of HyperEstraier will be initialized automatically
 * Hash directories will be created by software
 * DAV area will be used as temporary storage, too
 
-# Apache Alias for query path
+## Apache Alias for query path
 
 * Alias <base_uri>/path/ <dir>/pathinfo.cgi/
 * Alias <base_uri>/doc/  <dir>/docinfo.cgi/
+
+## Configuration after installation (data/params)
+
+* admin_email ; Administrator email to be dispayed
+* admingroup ; LDAP Group who are marked site admin
+* base_uri : URI base of installation
+* cookie_domain : cookie domain restriction if need to restrict
+* cookie_expires : default cookie expire period
+* cookie_path : cookie path if need to restrict
+* dav_path : data temporary uploaded target directory
+* dav_uri : WebDAV URI for use to upload
+* db_driver : DB driver name
+* db_err_maxlen : Max error string length to be displayed on error
+* db_host : DB host name
+* db_name : DB name
+* db_pass : DB password
+* db_port : DB port to access
+* db_sock : DB local sock file name
+* db_user : DB user
+* email_lang : Default language for email
+* file_path : Files to be stored
+* hash_depth : Hash directory depth to store files
+* he_dir : Hyper Estraier data direrctory
+* ldap_basedn : LDAP base dn
+* ldap_uri : LDAP URI
+* view_mime : MIME type to be used for browser display ('image' by default)
 
 # UPGRADE NOTES
 
@@ -50,4 +76,3 @@ You need the following softwares.
 
 * 'access_label' table droped and migrated into 'access_doc'.
 * This operation should be performed by hand.
-

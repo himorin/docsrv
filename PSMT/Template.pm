@@ -35,6 +35,7 @@ use PSMT::Skin;
     add_avail_format
     set_vars
     vars
+    update_lang
 );
 
 our $obj_config;
@@ -194,13 +195,21 @@ sub vars {
     return \%hash_vars;
 }
 
+sub update_lang {
+    my ($self, $cat) = @_;
+    if ($cat eq 'email') {
+        $conf_template->{INCLUDE_PATH}
+            = $this->_lang_template(PSMT->config->GetParam('email_lang'));
+    }
+}
+
 ################################################################## PRIVATE
 
 sub _lang_template {
-    my ($self) = @_;
+    my ($self, $lang) = @_;
     my @dirs;
     my $lang_install = $self->_lang_install();
-    my $lang_client  = $self->_lang_client();
+    my $lang_client  = $self->_lang_client($lang);
     foreach my $cli (@$lang_client) {
     foreach (@$lang_install) {
         if ($_ eq $cli) {
@@ -225,8 +234,9 @@ sub _lang_install {
 }
 
 sub _lang_client {
-    my ($self) = @_;
+    my ($self, $def_lang) = @_;
     my @lang;
+    if (defined($lang) && ($lang ne '')) {push(@lang, $def_lang); }
     if (defined(PSMT->cgi()->cookie('LANG'))) {
         push(@lang, PSMT->cgi()->cookie('LANG'));
     }

@@ -35,6 +35,11 @@ sub get_param_list {
             type     => 'text',
             default  => 'image',
         },
+        {
+            name     => 'email_lang',
+            type     => 'text',
+            default  => '',
+        },
     );
     return @param_list;
 }
