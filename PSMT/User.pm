@@ -76,16 +76,16 @@ sub is_ingroup {
 sub is_inadmin {
     my ($self, $ign_cookie) = @_;
     if (! $self->is_ingroup(PSMT::Config->GetParam('admingroup'))) {
-        return false;
+        return FALSE;
     }
     # if ign_cookie is TRUE, ignore cookie and return TRUE
-    if (defined($ign_cookie) && $ign_cookie) {return true; }
+    if (defined($ign_cookie) && $ign_cookie) {return TRUE; }
     # by default, check cookie(admin) and return false if "disable"
     my $cookie_admin = PSMT->cgi()->cookie('admin');
     if (defined($cookie_admin) && ($cookie_admin eq 'disable')) {
-        return false;
+        return FALSE;
     }
-    return true;
+    return TRUE;
 }
 
 sub is_infav_doc {
