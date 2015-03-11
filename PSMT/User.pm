@@ -79,7 +79,7 @@ sub is_inadmin {
         return false;
     }
     # if ign_cookie is TRUE, ignore cookie and return TRUE
-    if (defined($cookie) && $cookie) {return true; }
+    if (defined($ign_cookie) && $ign_cookie) {return true; }
     # by default, check cookie(admin) and return false if "disable"
     my $cookie_admin = PSMT->cgi()->cookie('admin');
     if (defined($cookie_admin) && ($cookie_admin eq 'disable')) {
