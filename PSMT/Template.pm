@@ -77,6 +77,7 @@ sub new {
             'User'     => PSMT->user()->user_data(),
             'UConf'    => PSMT->user_config->Config(),
             'Admin'    => PSMT->user()->is_inadmin(),
+            'AdminGr'  => PSMT->user()->is_inadmin(TRUE),
             'Group'    => PSMT->ldap()->GetAvailGroups(),
             'Label'    => PSMT::Label->ListAllLabel(),
             'IcoTable' => PSMT::Skin->ListIconsTable(TRUE),

@@ -108,6 +108,11 @@ function hide_infotip() {
     document.getElementById(def_gbit_id).style.display = 'none';
 }
 
-
+// admin flag
+function set_admin(target) {
+    if (target == 'enable') {$.cookie('admin', 'enable', {expires: 28}); }
+    else {$.cookie('admin', 'disable', {expires: 28}); }
+    location.reload();
+}
 
 

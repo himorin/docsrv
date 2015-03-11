@@ -22,6 +22,8 @@
     <script type="text/javascript" src="skins/yui/build/dragdrop/dragdrop-min.js"></script>
     <script type="text/javascript" src="skins/yui/build/container/container-min.js"></script>
 
+    <script type="text/javascript" src="skins/jquery/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="skins/jquery/jquery.cookie-1.4.1.js"></script>
     <script type="text/javascript" src="skins/global.js"></script>
     [% FOREACH item = javascript %]
       <script src="skins/[% item %]"></script>
@@ -70,7 +72,11 @@
     <ul class="account">
       <li><span class="target">ユーザ</span> <span class="data">[% User.uid %]</span></li>
       <li><span class="target">所属</span> <span class="data">[% User.gid.join(',') %]</span></li>
-      [% IF Admin %]<li><span class="data">(管理者)</span></li>[% END %]
+      [% IF AdminGr %]
+        <li><span class="data">(管理者
+          [% IF Admin %]<a onclick="set_admin('disable');">有効</a>
+          [% ELSE %]<a onclick="set_admin('enable');">無効</a>[% END -%])</span></li>
+      [% END %]
       <li><span class="target">[% terms.favorite %]数</span> <span class="data">[% User.favs.size %]</span></li>
     </ul>
   </div>

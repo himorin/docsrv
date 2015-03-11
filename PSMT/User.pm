@@ -20,6 +20,7 @@ use base qw(Exporter);
 use PSMT::DB;
 use PSMT::Constants;
 use PSMT::NetLdap;
+use PSMT::CGI;
 
 %PSMT::Config::EXPORT = qw(
     new
@@ -71,9 +72,20 @@ sub is_ingroup {
     return FALSE;
 }
 
+# ign_cookie : ignore cookie if TRUE
 sub is_inadmin {
-    my ($self) = @_;
-    return $self->is_ingroup(PSMT::Config->GetParam('admingroup'));
+    my ($self, $ign_cookie) = @_;
+    if (! $self->is_ingroup(PSMT::Config->GetParam('admingroup'))) {
+        return false;
+    }
+    # if ign_cookie is TRUE, ignore cookie and return TRUE
+    if (defined($cookie) && $cookie) {return true; }
+    # by default, check cookie(admin) and return false if "disable"
+    my $cookie_admin = PSMT->cgi()->cookie('admin');
+    if (defined($cookie_admin) && ($cookie_admin eq 'disable')) {
+        return false;
+    }
+    return true;
 }
 
 sub is_infav_doc {
