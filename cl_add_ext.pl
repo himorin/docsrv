@@ -32,10 +32,12 @@ foreach (@$arr_fids) {
     if (defined($obj_doc)) {
         print "Already registerd : $_\n";
     } else {
-        print "Adding $_\n";
+        print "Adding $_";
         $obj_he->AddNewFile($_);
+        print " (done)\n";
     }
 }
+print "Finished\n";
 
 exit;
 
