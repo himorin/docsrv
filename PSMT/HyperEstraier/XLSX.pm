@@ -47,6 +47,7 @@ sub DumpText {
     my $obj_doc = $obj_dom->parse($doc_cont);
     if (! defined($obj_doc)) {return ""; }
     my $nodes = $obj_doc->getElementsByTagName('t');
+    if (! defined($nodes)) {return ""; }
     my $node_cnt = $nodes->getLength;
     my $node_obj;
     for (my $node_id = 0; $node_id < $node_cnt; $node_id ++) {
