@@ -37,20 +37,22 @@
   #%]
 [%- BLOCK show_table_icon %]<img 
   [%- IF IcoTable.$id.defined -%]
-    src="skins/images/[% IcoTable.$id.value %]" title="[% IcoTable.$id.tiphelp %]"
+    src="skins/images/[% IcoTable.$id.value %]" alt="[% IcoTable.$id.tiphelp %]"
   [%- ELSE -%]
-    src="skins/images/[% terms.icon_def %]" title="Icon undefined"
+    src="skins/images/[% terms.icon_def %]" alt="Icon undefined"
   [%- END %]
   [% IF html_id.defined %]id="[% html_id FILTER html %]"[% END -%]
   [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
+  [% IF title.defined %]title="[% title FILTER html %]"[% END -%]
 />[% END -%]
 
 [%- BLOCK show_mime_icon %]<img 
   [%- IF IcoMime.$id.defined -%]
-    src="skins/images/[% IcoMime.$id.value %]" title="[% IcoMime.$id.tiphelp %]"
+    src="skins/images/[% IcoMime.$id.value %]" alt="[% IcoMime.$id.tiphelp %]"
   [%- ELSE -%]
-    src="skins/images/[% terms.icon_def %]" title="Icon undefined"
+    src="skins/images/[% terms.icon_def %]" alt="Icon undefined"
   [%- END %]
   [% IF html_id.defined %]id="[% html_id FILTER html %]"[% END -%]
   [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
+  [% IF title.defined %]title="[% title FILTER html %]"[% END -%]
 />[% END %]

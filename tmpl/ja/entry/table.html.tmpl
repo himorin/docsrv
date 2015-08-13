@@ -2,16 +2,22 @@
 [% docs_exist = 1  IF docs.size > 0 %]
 [% pop_list = [] %]
 
-<table class="dirlist">
+<table class="dirlist tablesorter">
+<thead>
   <tr>
-    <th></th>
-    <th>名前</th>
-    <th class="description">説明</th>
-    [% IF docs_exist %]<th colspan="4">最新版</th>[% END %]
-    <th>グループ</th>
-    <th>ラベル</th>
+    <th rowspan="2"></th>
+    <th rowspan="2">名前</th>
+    <th rowspan="2">説明</th>
+    [% IF docs_exist %]<td colspan="4" class="tdhead">最新版</td>[% END %]
+    <th rowspan="2">グループ</th>
+    <th rowspan="2">ラベル</th>
   </tr>
-
+  <tr>
+    <th>Uploader</th>
+    <th>Date</th>
+    <th>Size</th>
+    <th></th>
+  </tr>
 [% IF upper_path.defined AND upper_path > -1 %]
   <tr class="upper_path row_even">
     <td class="docmanage"></td>
@@ -19,11 +25,13 @@
       <a href="pathinfo.cgi?pid=[% upper_path %]">一つ上</a></td>
     <td></td>
     [% IF docs_exist %]<td colspan="4"></td>[% END %]
-    <th>---</th>
-    <th>---</th>
+    <td>---</td>
+    <td>---</td>
   </tr>
 [% END %]
+</thead>
 
+<tbody>
 [% FOREACH item IN paths %]
   [% count = loop.count() %]
   <tr 
@@ -41,7 +49,8 @@
       <a href="dirget.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
       </td>
     <td class="path">[% INCLUDE show_table_icon 
-        id = 'dir' html_id = "path_${item.pathid}" %]
+        id = 'dir' html_id = "path_${item.pathid}"
+        title = "d_${item.pathname}" %]
       [% pop_list.push("path_${item.pathid}") %]
       [%- IF cpname.defined %]
         <a href="path[% IF cpname != '' %]/[% cpname FILTER path_url %][% END %]/[% item.pathname FILTER path_url %]/">[% item.pathname FILTER html %]</a>
@@ -50,7 +59,7 @@
       [% END -%]
       </td>
     <td class="pathdesc">[% item.short_description FILTER html %]</td>
-    [% IF docs_exist %]<th colspan="4"></th>[% END %]
+    [% IF docs_exist %]<td></td><td></td><td></td><td></td>[% END %]
     <td class="group">
       [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]制限なし[% END %]
       <a href="pathgroup.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
@@ -83,7 +92,8 @@
     <td class="path">
       [%- INCLUDE show_mime_icon 
         id = item.lastfile.fileext
-        html_id = "doc_${item.docid}" -%]
+        html_id = "doc_${item.docid}"
+        title = "f_${item.filename}" -%]
       [% pop_list.push("doc_${item.docid}") %]
       <a href="docinfo.cgi?did=[% item.docid %]">[% item.filename FILTER html %]</a></td>
     <td class="pathdesc">[% item.short_description FILTER html %]</td>
@@ -134,4 +144,5 @@
 <script type="text/javascript" src="skins/table_popup.js"></script>
 [% END %]
 
+</tbody>
 </table>
