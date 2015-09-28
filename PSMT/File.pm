@@ -807,7 +807,8 @@ sub MakeEncZipFile {
     $tfname = $dir . '/' . $tfname;
     symlink($self->GetFilePath($fid) . '/' . $fid, $tfname) or return undef;
     my $fh;
-    open($fh, "$bin_zip -P \"$pass\" - $tfname |") or return undef;
+    $tfname =~ s/'/\\'/g;
+    open($fh, "$bin_zip -P \"$pass\" - '$tfname' |") or return undef;
     return $fh;
 }
 
