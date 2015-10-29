@@ -26,6 +26,7 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 
 my $pid = $obj_cgi->param('pid');
 if (! defined($pid)) {PSMT::Error->throw_error_user('invalid_pathid'); }
+my $pext = $obj_cgi->param('ext');
 
 my @lpid;
 push(@lpid, $pid);
@@ -34,7 +35,8 @@ push(@lpid, $pid);
 my $obj_zip = Archive::Zip->new();
 
 # seek @lpid, add found child to end of @lpid
-my ($cpid, $cpo, $cdo, $cfo, $cname, $zname, $cfid, $ch);
+my ($cpid, $cpo, $cdo, $cfo, $cname, $zname, $cfid, $ch, $cext, @acext);
+if ((! defined($pext)) || ($pext ne 'ALL')) {push (@acext, $pext); }
 while ($#lpid > -1) {
     $cpid = shift(@lpid);
     # per path: check group restriction, add to zip
@@ -49,20 +51,27 @@ while ($#lpid > -1) {
     push(@lpid, @$ch);
     $ch = PSMT::File->ListDocsInPath($cpid);
     foreach (@$ch) {
-        # per doc: get last fid, check security flag, check group restriction
-        #          get full path + ext, get storage path
-        $cfid = PSMT::File->GetDocLastPostFileId($_->{docid});
-        if (! PSMT::Access->CheckForFile($cfid, FALSE)) {next; }
-        if (PSMT::Access->CheckSecureForFile($cfid)) {next; }
-        $cfo = PSMT::File->GetFileInfo($cfid);
+        if (defined($pext) && ($pext eq 'ALL')) {
+            $cext = PSMT::File->ListExtInDoc($_->{docid});
+            @acext = (@$cext);
+        }
+        foreach (@acext) {
+            # per doc: get last fid, check security flag, check group restriction
+            #          get full path + ext, get storage path
+            $cfid = PSMT::File->GetDocLastPostFileId($_->{docid}, $pext);
+            if (! defined($cfid)) {next; }
+            if (! PSMT::Access->CheckForFile($cfid, FALSE)) {next; }
+            if (PSMT::Access->CheckSecureForFile($cfid)) {next; }
+            $cfo = PSMT::File->GetFileInfo($cfid);
 
-        my $cname = PSMT::File->GetFilePath($cfid) . $cfid;
-        if (! -f $cname) {next; }
+            my $cname = PSMT::File->GetFilePath($cfid) . $cfid;
+            if (! -f $cname) {next; }
 
-        $zname = PSMT::File->GetFileFullPath($cfid);
-#        $zname = encode('Shift_JIS', decode('UTF-8', $zname));
-        PSMT::File->RegUserAccess($cfid);
-        $obj_zip->addFile($cname, $zname);
+            $zname = PSMT::File->GetFileFullPath($cfid);
+    #        $zname = encode('Shift_JIS', decode('UTF-8', $zname));
+            PSMT::File->RegUserAccess($cfid);
+            $obj_zip->addFile($cname, $zname);
+        }
     }
 }
 
