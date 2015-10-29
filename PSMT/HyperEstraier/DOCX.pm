@@ -37,6 +37,7 @@ sub DumpText {
 
     my $obj_zip = Archive::Zip->new($fname);
     if (! defined($obj_zip)) {return ""; }
+    if (! defined($obj_zip->memberNamed($docx_file))) {return ""; }
     my $obj_fh = Archive::Zip::MemberRead->new($obj_zip, $docx_file);
     if (! defined($obj_fh)) {return ""; }
     my $line;
