@@ -64,11 +64,13 @@ while ($#lpid > -1) {
     }
 }
 
+my $dname = PSMT::File->GetFullPathFromId($pid);
+$dname =~ s/\//_/g;
 # output to client, just name $pid.zip
 binmode STDOUT, ':bytes';
 print $obj_cgi->header(
-    -type => PSMT::File->GetFileExt("zip") . "; name=\"$pid.zip\"",
-    -content_disposition => "attachment; filename=\"$pid.zip\"",
+    -type => PSMT::File->GetFileExt("zip") . "; name=\"$dname.zip\"",
+    -content_disposition => "attachment; filename=\"$dname.zip\"",
 );
 $obj_zip->writeToFileHandle(*STDOUT);
 
