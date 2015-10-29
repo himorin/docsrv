@@ -35,7 +35,7 @@ push(@lpid, $pid);
 my $obj_zip = Archive::Zip->new();
 
 # seek @lpid, add found child to end of @lpid
-my ($cpid, $cpo, $cdo, $cfo, $cname, $zname, $cfid, $ch, $cext, @acext);
+my ($cpid, $cpo, $cdo, $cfo, $cname, $zname, $cfid, $ch, $cext, @acext, $chid);
 if ((! defined($pext)) || ($pext ne 'ALL')) {push (@acext, $pext); }
 while ($#lpid > -1) {
     $cpid = shift(@lpid);
@@ -51,14 +51,15 @@ while ($#lpid > -1) {
     push(@lpid, @$ch);
     $ch = PSMT::File->ListDocsInPath($cpid);
     foreach (@$ch) {
+        $chid = $_;
         if (defined($pext) && ($pext eq 'ALL')) {
-            $cext = PSMT::File->ListExtInDoc($_->{docid});
+            $cext = PSMT::File->ListExtInDoc($chid->{docid});
             @acext = (@$cext);
         }
         foreach (@acext) {
             # per doc: get last fid, check security flag, check group restriction
             #          get full path + ext, get storage path
-            $cfid = PSMT::File->GetDocLastPostFileId($_->{docid}, $pext);
+            $cfid = PSMT::File->GetDocLastPostFileId($chid->{docid}, $_);
             if (! defined($cfid)) {next; }
             if (! PSMT::Access->CheckForFile($cfid, FALSE)) {next; }
             if (PSMT::Access->CheckSecureForFile($cfid)) {next; }
