@@ -39,10 +39,12 @@ while ($#lpid > -1) {
     $cpid = shift(@lpid);
     # per path: check group restriction, add to zip
     #           push every subpath into @lpid, seek docs in $cpid
-    $cpo = PSMT::File->GetPathInfo($cpid);
-    if (! defined($cpo)) {next; }
-    if (! PSMT::Access->CheckForPath($cpid, FALSE)) {next; }
-    $obj_zip->addDirectory(PSMT::File->GetFullPathFromId($cpid));
+    if ($cpid != 0) {
+        $cpo = PSMT::File->GetPathInfo($cpid);
+        if (! defined($cpo)) {next; }
+        if (! PSMT::Access->CheckForPath($cpid, FALSE)) {next; }
+        $obj_zip->addDirectory(PSMT::File->GetFullPathFromId($cpid));
+    }
     $ch = PSMT::File->ListPathIdInPath($cpid);
     push(@lpid, @$ch);
     $ch = PSMT::File->ListDocsInPath($cpid);
@@ -65,6 +67,7 @@ while ($#lpid > -1) {
 }
 
 my $dname = PSMT::File->GetFullPathFromId($pid);
+if ($dname eq '') {$dname = 'topdir'; }
 $dname =~ s/\//_/g;
 # output to client, just name $pid.zip
 binmode STDOUT, ':bytes';
