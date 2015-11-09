@@ -4,7 +4,7 @@ use strict;
 
 use PSMT;
 use PSMT::Constants;
-use PSMT::HyperEstraier;
+use PSMT::FullSearchHE;
 
 $ENV{'REMOTE_USER'} = 'shimono';
 
@@ -21,7 +21,7 @@ if (! defined($fid)) {
 }
 
 print "Open DB\n";
-my $obj = new PSMT::HyperEstraier(TRUE);
+my $obj = new PSMT::FullSearchHE(TRUE);
 print "Opened\n";
 
 print "Adding $fid\n";

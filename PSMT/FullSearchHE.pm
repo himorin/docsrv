@@ -6,7 +6,7 @@
 # Contributor(s):
 #   Atsushi Shimono <shimono@nano-opt.jp>
 
-package PSMT::HyperEstraier;
+package PSMT::FullSearchHE;
 
 use strict;
 
@@ -22,7 +22,7 @@ use PSMT::File;
 
 use Estraier;
 
-%PSMT::HyperEstraier::EXPORT = qw(
+%PSMT::FullSearchHE::EXPORT = qw(
     new
     AddNewFile
     ExecSearch
@@ -105,7 +105,7 @@ sub GetFileInfo {
 sub _parse_format {
     my ($self, $ext, $fname) = @_;
     my $text = '';
-    my $pkg_module = 'PSMT::HyperEstraier::' . uc($ext);
+    my $pkg_module = 'PSMT::FullSearch::' . uc($ext);
     eval ("require $pkg_module") || return "";
     return $pkg_module->DumpText($fname);
 }

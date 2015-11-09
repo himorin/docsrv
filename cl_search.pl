@@ -3,7 +3,7 @@
 use strict;
 
 use PSMT;
-use PSMT::HyperEstraier;
+use PSMT::FullSearchHE;
 
 $ENV{'REMOTE_USER'} = 'shimono';
 
@@ -14,7 +14,7 @@ if (! defined($cond)) {
 }
 
 print "Open DB\n";
-my $obj = new PSMT::HyperEstraier();
+my $obj = new PSMT::FullSearchHE();
 print "Opened\n";
 
 print "Searching $cond\n";

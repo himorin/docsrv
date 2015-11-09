@@ -5,7 +5,7 @@ use strict;
 use PSMT;
 use PSMT::File;
 use PSMT::Constants;
-use PSMT::HyperEstraier;
+use PSMT::FullSearchHE;
 
 $ENV{'REMOTE_USER'} = 'atsushi.shimono';
 
@@ -22,7 +22,7 @@ if (! defined($ext)) {
 }
 
 print "Open DB\n";
-my $obj_he = new PSMT::HyperEstraier(TRUE);
+my $obj_he = new PSMT::FullSearchHE(TRUE);
 print "Opened\n";
 
 my $obj_file = new PSMT::File;

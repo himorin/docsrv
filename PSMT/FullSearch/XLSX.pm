@@ -1,13 +1,13 @@
 # -*- Mode: perl; indent-tabs-mode: nil -*-
 #
-# Module for - File Dumper - docx
+# Module for - File Dumper - xlsx
 #
 # Copyright (C) 2011 - IPMU/PFS
 # License: GPL, MPL (dual)
 # Contributor(s):
 #   Atsushi Shimono <atsushi.shimono@ipmu.jp>
 
-package PSMT::HyperEstraier::DOCX;
+package PSMT::FullSearch::XLSX;
 
 use strict;
 
@@ -19,12 +19,12 @@ use Archive::Zip;
 use Archive::Zip::MemberRead;
 use XML::DOM;
 
-%PSMT::HyperEstraier::DOCX::EXPORT = qw(
+%PSMT::FullSearch::XLSX::EXPORT = qw(
     new
     DumpText
 );
 
-my $docx_file = 'word/document.xml';
+my $xlsx_file = 'xl/sharedStrings.xml';
 
 sub new {
     return @_;
@@ -37,8 +37,8 @@ sub DumpText {
 
     my $obj_zip = Archive::Zip->new($fname);
     if (! defined($obj_zip)) {return ""; }
-    if (! defined($obj_zip->memberNamed($docx_file))) {return ""; }
-    my $obj_fh = Archive::Zip::MemberRead->new($obj_zip, $docx_file);
+    if (! defined($obj_zip->memberNamed($xlsx_file))) {return ""; }
+    my $obj_fh = Archive::Zip::MemberRead->new($obj_zip, $xlsx_file);
     if (! defined($obj_fh)) {return ""; }
     my $line;
     my $doc_cont = '';
@@ -47,7 +47,8 @@ sub DumpText {
     my $obj_dom = new XML::DOM::Parser;
     my $obj_doc = $obj_dom->parse($doc_cont);
     if (! defined($obj_doc)) {return ""; }
-    my $nodes = $obj_doc->getElementsByTagName('w:t');
+    my $nodes = $obj_doc->getElementsByTagName('t');
+    if (! defined($nodes)) {return ""; }
     my $node_cnt = $nodes->getLength;
     my $node_obj;
     for (my $node_id = 0; $node_id < $node_cnt; $node_id ++) {

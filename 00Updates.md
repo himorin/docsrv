@@ -1,3 +1,11 @@
+# 0.5.6
+
+* Renamed HyperEstraier modules to FullSearch*
+* Fixed xml parse handling error on FullSearch/*
+* Extended .zip download
+* Added tablesort
+* Added jQuery, under migration from YUI to jQuery
+
 # 0.5.5
 
 * Added popup feature via path/document icon

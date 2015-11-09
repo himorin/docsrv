@@ -7,7 +7,7 @@
 # Contributor(s):
 #   Atsushi Shimono <atsushi.shimono@ipmu.jp>
 
-package PSMT::HyperEstraier::PPTX;
+package PSMT::FullSearch::PPTX;
 
 use strict;
 
@@ -19,7 +19,7 @@ use Archive::Zip;
 use Archive::Zip::MemberRead;
 use XML::DOM;
 
-%PSMT::HyperEstraier::PPTX::EXPORT = qw(
+%PSMT::FullSearch::PPTX::EXPORT = qw(
     new
     DumpText
 );
