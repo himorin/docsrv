@@ -3,6 +3,7 @@
 You need the following softwares.
 
 * MySQL server (or its compatible)
+    * Mroonga engine
 * Perl
     * TemplateToolkit
     * Email::Send
@@ -11,7 +12,6 @@ You need the following softwares.
     * XML::DOM
     * Text::Markdown
 * Apache (with LDAP auth)
-* HyperEstraier (with perl binding libraries)
 
 # Installation procedure
 
@@ -23,7 +23,6 @@ You need the following softwares.
 
 ## Reamrks and Notes
 
-* Database of HyperEstraier will be initialized automatically
 * Hash directories will be created by software
 * DAV area will be used as temporary storage, too
 
@@ -53,7 +52,7 @@ You need the following softwares.
 * email_lang : Default language for email
 * file_path : Files to be stored
 * hash_depth : Hash directory depth to store files
-* he_dir : Hyper Estraier data direrctory
+* he_dir : Hyper Estraier data direrctory <NOT USED NOW>
 * ldap_basedn : LDAP base dn
 * ldap_uri : LDAP URI
 * view_mime : MIME type to be used for browser display ('image' by default)
