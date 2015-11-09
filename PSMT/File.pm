@@ -22,7 +22,7 @@ use PSMT::Util;
 use PSMT::Label;
 use PSMT::Access;
 use PSMT::Email;
-use PSMT::FullSearchHE;
+use PSMT::FullSearchMroonga;
 
 %PSMT::File::EXPORT = qw(
     new
@@ -729,7 +729,7 @@ sub MoveNewFile {
     my $dbh = PSMT->dbh;
     $dbh->db_unlock_tables(TRUE);
     # Exec HyperEstraier Index
-    my $obj = new PSMT::FullSearchHE(TRUE);
+    my $obj = new PSMT::FullSearchMroonga(TRUE);
     $obj->AddNewFile($fid);
     return TRUE;
 }

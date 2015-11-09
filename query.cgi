@@ -13,7 +13,7 @@ use PSMT::Util;
 use PSMT::File;
 use PSMT::Search;
 
-use PSMT::FullSearchHE;
+use PSMT::FullSearchMroonga;
 
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
@@ -32,7 +32,7 @@ foreach ($obj_cgi->param('searchcond')) {$p_sc{$_} = 1; }
 my $docs_he = $obj_cgi->param('docs_he');
 # XXX to modify...
 if (defined($p_sc{'sc_full'}) && defined($docs_he) && ($docs_he ne '')) {
-    my $obj_he = new PSMT::FullSearchHE();
+    my $obj_he = new PSMT::FullSearchMroonga();
     my $res = $obj_he->ExecSearch($docs_he);
     my (@data, $finfo, $dinfo);
     foreach (@$res) {

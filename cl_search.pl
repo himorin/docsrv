@@ -3,7 +3,7 @@
 use strict;
 
 use PSMT;
-use PSMT::FullSearchHE;
+use PSMT::FullSearchMroonga;
 
 $ENV{'REMOTE_USER'} = 'shimono';
 
@@ -14,7 +14,7 @@ if (! defined($cond)) {
 }
 
 print "Open DB\n";
-my $obj = new PSMT::FullSearchHE();
+my $obj = new PSMT::FullSearchMroonga();
 print "Opened\n";
 
 print "Searching $cond\n";

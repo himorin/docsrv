@@ -60,6 +60,11 @@ You need the following softwares.
 
 # UPGRADE NOTES
 
+## To 0.5.7 from 0.5.6
+
+* Fulltext index replaced with Groonga (or MariaDB port - mroonga)
+    * New table added, index need to be re-created by cl_add_ext.pl
+
 ## To 0.5.4 from prior
 
 * Require new Perl module: Text::Markdown

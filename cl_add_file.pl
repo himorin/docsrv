@@ -4,7 +4,7 @@ use strict;
 
 use PSMT;
 use PSMT::Constants;
-use PSMT::FullSearchHE;
+use PSMT::FullSearchMroonga;
 
 $ENV{'REMOTE_USER'} = 'shimono';
 
@@ -21,7 +21,7 @@ if (! defined($fid)) {
 }
 
 print "Open DB\n";
-my $obj = new PSMT::FullSearchHE(TRUE);
+my $obj = new PSMT::FullSearchMroonga(TRUE);
 print "Opened\n";
 
 print "Adding $fid\n";

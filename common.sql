@@ -139,4 +139,10 @@ CREATE TABLE attribute (
   value         varchar(255)             NULL                            
 ) DEFAULT CHARSET=utf8 ;
 
+CREATE TABLE fullindex (
+  fileid        text                 NOT NULL                            ,
+  content       text                 NOT NULL                            ,
+  FULLTEXT INDEX (content)
+) engine=mroonga default charset=utf8;
+
 

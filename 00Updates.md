@@ -1,3 +1,8 @@
+# 0.5.7
+
+* Replaced FullSearchHE to FullSearchMroonga
+* Added new table for full text search - fullindex
+
 # 0.5.6
 
 * Renamed HyperEstraier modules to FullSearch*
