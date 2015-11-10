@@ -61,6 +61,10 @@ You need the following softwares.
 
 ## To 0.5.7 from 0.5.6
 
+* YUI has removed, and changed into jQuery
+
+## To 0.5.6 from 0.5.5
+
 * Fulltext index replaced with Groonga (or MariaDB port - mroonga)
     * New table added, index need to be re-created by cl_add_ext.pl
 
