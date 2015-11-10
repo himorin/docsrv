@@ -26,14 +26,10 @@
 <script type="text/javascript">
 <!--
 function file_info_update () {
-  var ui = document.getElementById('file_desc_raw');
-  YAHOO.util.Dom.addClass(ui, 'ui_hidden');
-  ui = document.getElementById('file_desc_edit');
-  YAHOO.util.Dom.removeClass(ui, 'ui_hidden');
-  ui = document.getElementById('file_update');
-  YAHOO.util.Dom.removeClass(ui, 'ui_hidden');
-  ui = document.getElementById('update_link');
-  YAHOO.util.Dom.addClass(ui, 'ui_hidden');
+  \$("#file_desc_raw").addClass("ui_hidden");
+  \$("#file_desc_edit").removeClass("ui_hidden");
+  \$("#file_update").removeClass("ui_hidden");
+  \$("#update_link").addClass("ui_hidden");
 }
 // -->
 </script>

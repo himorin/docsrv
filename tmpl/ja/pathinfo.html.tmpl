@@ -63,12 +63,12 @@
   <script type="text/javascript">
   <!--
   function doc_info_update () {
-    YAHOO.util.Dom.removeClass(document.getElementById('path_name_edit'), 'ui_hidden');
-    YAHOO.util.Dom.addClass(document.getElementById('path_desc_raw'), 'ui_hidden');
-    YAHOO.util.Dom.removeClass(document.getElementById('path_desc_edit'), 'ui_hidden');
-    YAHOO.util.Dom.removeClass(document.getElementById('path_update'), 'ui_hidden');
-    YAHOO.util.Dom.addClass(document.getElementById('update_link'), 'ui_hidden');
-    YAHOO.util.Dom.removeClass(document.getElementById('path_desc_json'), 'ui_hidden');
+    \$("#path_name_edit").removeClass("ui_hidden");
+    \$("#path_desc_raw").addClass("ui_hidden");
+    \$("#path_desc_edit").removeClass("ui_hidden");
+    \$("#path_update").removeClass("ui_hidden");
+    \$("#update_link").addClass("ui_hidden");
+    \$("#path_desc_json").removeClass("ui_hidden");
   }
   // -->
   </script>
@@ -77,8 +77,7 @@
 
 <h3 id="doc_add" class="ui_clickable">新しいドキュメントの追加</h3>
 <script type="text/javascript">
-  var doc_add_disp = function() { tweak_ToggleClass('doc_add', 'ui_hidden'); }
-  YAHOO.util.Event.on('doc_add', 'click', doc_add_disp);
+  \$("#doc_add").click(function(event) {tweak_ToggleClass('doc_add', 'ui_hidden'); });
 </script>
 
 <div class="doc_add">

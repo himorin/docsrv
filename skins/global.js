@@ -1,83 +1,65 @@
 // general toggle class
 
 function tweak_ToggleClass (target, css) {
-  var elem = YAHOO.util.Dom.getElementsByClassName(target);
+  var elem = $("." + target);
   for (var i = 0; i < elem.length; i++) {
-    if (YAHOO.util.Dom.hasClass(elem[i], css)) {YAHOO.util.Dom.removeClass(elem[i], css); }
-    else {YAHOO.util.Dom.addClass(elem[i], css); }
+    if ($(elem[i]).hasClass(css)) {$(elem[i]).removeClass(css); }
+    else {$(elem[i]).addClass(css); }
   }
 }
 
 // favorite
 
-var fav_callback = {
-  success: function (o) {
-    var messages = [];
-    try { messages = YAHOO.lang.JSON.parse(o.responseText); }
-    catch (x) { alert("YUI: Invalid JSON data"); }
-    if (messages.fav == undefined) {
-      alert("Exec failed." + o.responseText);
-    } else {
-      if (messages.fav.did == undefined) {
-        if (messages.fav.pid == undefined) {
-          alert("Invalid operation: no target");
-          return;
-        }
-        // path mode
-        var elem = document.getElementById('fav_p' + messages.fav.pid);
-        if (elem == undefined) {
-          alert("No such id " + messages.fav.pid);
-        } else if (messages.fav.op == 'add') {
-          YAHOO.util.Dom.addClass(elem, 'fav_on');
-          elem.src = 'skins/images/woofunction/16/star.png';
-        } else if (messages.fav.op == 'remove') {
-          YAHOO.util.Dom.removeClass(elem, 'fav_on');
-          elem.src = 'skins/images/woofunction/16/star_off.png';
-        } else {
-          alert('Invalid operation: ' + messages.fav.pid + ' / ' + messages.fav.op);
-        }
-      } else {
-        // doc mode
-        var elem = document.getElementById('fav_' + messages.fav.did);
-        if (elem == undefined) {
-          alert("No such id " + messages.fav.did);
-        } else if (messages.fav.op == 'add') {
-          YAHOO.util.Dom.addClass(elem, 'fav_on');
-          elem.src = 'skins/images/woofunction/16/star.png';
-        } else if (messages.fav.op == 'remove') {
-          YAHOO.util.Dom.removeClass(elem, 'fav_on');
-          elem.src = 'skins/images/woofunction/16/star_off.png';
-        } else {
-          alert('Invalid operation: ' + messages.fav.did + ' / ' + messages.fav.op);
-        }
-      }
+var fav_callback_success = function(data) {
+  if (data.fav == undefined) {
+    alert("Exec failed: " + data.error.message);
+    return;
+  }
+  var elem, target_id;
+  if (data.fav.did == undefined) {
+    if (data.fav.pid == undefined) {
+      alert("Invalid operation: no target");
+      return;
     }
-  },
-  failure: function (o) {
-    if (! YAHOO.util.Connect.isCallInProgress(o)) {
-      alert("YUI: Async call failed");
-    }
-  },
-  timeout: 3000,
+    // path
+    elem = $("#fav_p" + data.fav.pid)[0];
+    target_id = data.fav.pid;
+  } else {
+    elem = $("#fav_" + data.fav.did)[0];
+    target_id = data.fav.did;
+  }
+  if (elem == undefined) {alert("No such id " + target_id); }
+  else if (data.fav.op == 'add') {
+    $(elem).addClass('fav_on');
+    elem.src = 'skins/images/default/woofunction_16_star.png';
+  } else if (data.fav.op == 'remove') {
+    $(elem).removeClass('fav_on');
+    elem.src = 'skins/images/default/woofunction_16_star_off.png';
+  } else {alert('Invalid operation: ' + target_id + ' / ' + data.fav.op);}
 }
 
 function tweak_ToggleFav (target) {
-  var elem = document.getElementById('fav_' + target);
+  var elem = $("#fav_" + target)[0];
+  if (!(elem != undefined)) {return ; }
   var url = 'docfav.cgi?format=json&did=' + target + '&op=';
-  if (YAHOO.util.Dom.hasClass(elem, 'fav_on')) {url += 'remove'; } 
+  if ($(elem).hasClass('fav_on')) {url += 'remove'; }
   else {url += 'add'; }
-  YAHOO.util.Connect.asyncRequest('GET', url, fav_callback);
+  $.ajax({type: 'GET', url: url, dataType: 'json'}).done(fav_callback_success
+    ).fail(function(data, stat, errorTh){alert("Async call failed: " + stat);});
 }
 
 function tweak_ToggleFavPath (target) {
-  var elem = document.getElementById('fav_p' + target);
+  var elem = $("#fav_p" + target)[0];
+  if (!(elem != undefined)) {return ; }
   var url = 'docfav.cgi?format=json&pid=' + target + '&op=';
-  if (YAHOO.util.Dom.hasClass(elem, 'fav_on')) {url += 'remove'; } 
+  if ($(elem).hasClass('fav_on')) {url += 'remove'; }
   else {url += 'add'; }
-  YAHOO.util.Connect.asyncRequest('GET', url, fav_callback);
+  $.ajax({type: 'GET', url: url, dataType: 'json'}).done(fav_callback_success
+    ).fail(function(data, stat, errorTh){alert("Async call failed: " + stat);});
 }
 
 function AllPathChange() {
+/*
   var selid = document.docadd_set.pid.selectedIndex;
   var hid = document.docadd_set.pid.options[selid].value;
   if (hid == 0) {
@@ -89,6 +71,7 @@ function AllPathChange() {
     document.getElementById("fullpath").innerHTML = conf_data_allpath.data[hid].fullpath;
     document.getElementById("desc").innerHTML = conf_data_allpath.data[hid].description;
   }
+*/
 }
 
 

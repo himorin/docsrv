@@ -41,9 +41,9 @@
      ">
     <td class="docmanage">
       [% IF InList(User.favs_path, item.pathid) %]
-        <img id="fav_p[% item.pathid %]" class="fav_on" src="skins/images/woofunction/16/star.png">
+        <img id="fav_p[% item.pathid %]" class="fav_on" src="skins/images/default/woofunction_16_star.png">
       [% ELSE %]
-        <img id="fav_p[% item.pathid %]" class="" src="skins/images/woofunction/16/star_off.png">
+        <img id="fav_p[% item.pathid %]" class="" src="skins/images/default/woofunction_16_star_off.png">
       [% END %]
       <a href="attribute.cgi?target=path&method=get&id=[% item.pathid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
       <a href="dirget.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
@@ -67,8 +67,7 @@
     <td class="label">---</td>
   </tr>
 <script type="text/javascript">
-  var fav_mod_path_[% item.pathid %] = function() { tweak_ToggleFavPath('[% item.pathid %]'); }
-  YAHOO.util.Event.on('fav_p[% item.pathid %]', 'click', fav_mod_path_[% item.pathid %]);
+  \$("#fav_p[% item.pathid %]").click(function(event) {tweak_ToggleFavPath('[% item.pathid %]'); });
 </script>
 [% END %]
 
@@ -82,9 +81,9 @@
      ">
     <td class="docmanage">
       [% IF InList(User.favs, item.docid) %]
-        <img id="fav_[% item.docid %]" class="fav_on" src="skins/images/woofunction/16/star.png">
+        <img id="fav_[% item.docid %]" class="fav_on" src="skins/images/default/woofunction_16_star.png">
       [% ELSE %]
-        <img id="fav_[% item.docid %]" class="" src="skins/images/woofunction/16/star_off.png">
+        <img id="fav_[% item.docid %]" class="" src="skins/images/default/woofunction_16_star_off.png">
       [% END %]
       <a href="attribute.cgi?target=doc&method=get&id=[% item.docid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
       <a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
@@ -120,28 +119,20 @@
       </td>
   </tr>
 <script type="text/javascript">
-  var fav_mod_[% item.docid %] = function() { tweak_ToggleFav('[% item.docid %]'); }
-  YAHOO.util.Event.on('fav_[% item.docid %]', 'click', fav_mod_[% item.docid %]);
+  \$("#fav_[% item.docid %]").click(function(event) {tweak_ToggleFav('[% item.docid %]'); });
 </script>
 [% END %]
 
 [% IF def_popup.defined %]
-<script type="text/javascript">
-  YAHOO.namespace('dst.container');
-  function dst_init() {
-    YAHOO.dst.container.enttbldi = new YAHOO.widget.Panel("enttbldi", 
-            { width:"500px", visible:false, constraintoviewport:true } );
-    YAHOO.dst.container.enttbldi.setHeader("Detailed information");
-    YAHOO.dst.container.enttbldi.setBody("");
-    YAHOO.dst.container.enttbldi.setFooter("");
-    YAHOO.dst.container.enttbldi.render("container");
-    [% FOREACH item IN pop_list %]
-      YAHOO.util.Event.addListener("[% item %]", "click", dst_show_panel);
-    [%- END %]
-  }
-  YAHOO.util.Event.addListener(window, "load", dst_init);
-</script>
+<div id="popup_dialog" title="Detailed information" class="ui_hidden">
+</div>
+<script type="text/javascript" src="skins/jquery/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 <script type="text/javascript" src="skins/table_popup.js"></script>
+<script type="text/javascript">
+[% FOREACH item IN pop_list %]
+  \$("#[% item %]").click(function(event) {popup_jsoncall("[% item %]");});
+[%- END %]
+</script>
 [% END %]
 
 </tbody>

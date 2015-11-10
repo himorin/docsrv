@@ -6,21 +6,11 @@
       <base href="[% Param.base_uri %]">
     [% END %]
     <title>[% page_title %] - [% terms.sitename %] (ver. [% constants.PSMT_DOCSRV_VERSION %])</title>
-    <link rel="stylesheet" href="skins/yui/build/fonts/fonts-min.css" />
-    <link rel="stylesheet" href="skins/yui/build/container/assets/skins/sam/container.css" />
     [% FOREACH item = stylesheet %]
       <link rel="stylesheet" href="skins/[% item %]">
     [% END %]
+    <link rel="stylesheet" href="skins/jquery/jquery-ui-1.11.4/jquery-ui.css">
     <link rel="stylesheet" href="skins/global.css">
-
-    <!-- yui -->
-    <script type="text/javascript" src="skins/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-    <script type="text/javascript" src="skins/yui/build/yahoo/yahoo-min.js"></script>
-    <script type="text/javascript" src="skins/yui/build/dom/dom-min.js"></script>
-    <script type="text/javascript" src="skins/yui/build/connection/connection_core-min.js"></script> 
-    <script type="text/javascript" src="skins/yui/build/json/json-min.js"></script>
-    <script type="text/javascript" src="skins/yui/build/dragdrop/dragdrop-min.js"></script>
-    <script type="text/javascript" src="skins/yui/build/container/container-min.js"></script>
 
     <script type="text/javascript" src="skins/jquery/jquery-2.1.3.min.js"></script>
     <script type="text/javascript" src="skins/jquery/jquery.cookie-1.4.1.js"></script>
@@ -34,7 +24,6 @@
   <body
     [% IF onload.defined %]onload="[% onload %]"[% END %]
     [% IF bodyclass.defined AND bodyclass.size > 0 %]class="[% FOREACH item = bodyclass %][% item %][% END %]"[% END %]
-    class="yui-skin-sam"
     >
 
 <div id="header">

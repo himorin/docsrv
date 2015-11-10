@@ -4,8 +4,7 @@
 
 <h3 id="path_add" class="ui_clickable">Add new [% terms.path %]</h3>
 <script type="text/javascript">
-  var path_add_disp = function() { tweak_ToggleClass('path_add', 'ui_hidden'); }
-  YAHOO.util.Event.on('path_add', 'click', path_add_disp);
+  \$("#path_add").click(function(event) {tweak_ToggleClass('path_add', 'ui_hidden'); });
 </script>
 
 <div class="path_add">

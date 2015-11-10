@@ -1,42 +1,33 @@
 <script type="text/javascript">
 <!--
-// File display flag
-var fdisp_callback = {
-  success: function (o) {
-    var messages = [];
-    try { messages = YAHOO.lang.JSON.parse(o.responseText); }
-    catch (x) { alert("YUI: Invalid JSON data"); }
-    if (messages.finfo == undefined) {
-      alert("Exec failed." + o.responseText);
-    } else {
-      var elem = document.getElementById('fdisp_' + messages.finfo.fid);
-      if (elem == undefined) {
-        alert("No such id " + messages.finfo.fid);
-      } else if (messages.finfo.enabled == '1') {
-        YAHOO.util.Dom.addClass(elem, 'disp_on');
-        elem.src = 'skins/images/[% IcoTable.show_file.value FILTER js %]';
-        elem.title = '[% IcoTable.show_file.tiphelp FILTER js %]';
-      } else {
-        YAHOO.util.Dom.removeClass(elem, 'disp_on');
-        elem.src = 'skins/images/[% IcoTable.hide_file.value FILTER js %]';
-        elem.title = '[% IcoTable.hide_file.tiphelp FILTER js %]';
-      }
-    }
-  },
-  failure: function (o) {
-    if (! YAHOO.util.Connect.isCallInProgress(o)) {
-      alret("YUI: Async call failed");
-    }
-  },
-  timeout: 3000,
+// File display toggle
+var fdisp_success = function(data) {
+  if (data.finfo == undefined) {
+    alert("Exec failed: " + data.error.message);
+    return;
+  }
+  var elem = \$("#fdisp_" + data.finfo.fid);
+  if (elem == undefined) {
+    alert("No such id " + data.finfo.fid);
+  } else if (data.finfo.enabled == '1') {
+    \$(elem).addClass('disp_on');
+    \$(elem).attr('src', 'skins/images/[% IcoTable.show_file.value FILTER js %]');
+    \$(elem).attr('title', '[% IcoTable.show_file.tiphelp FILTER js %]');
+  } else {
+    \$(elem).removeClass('disp_on');
+    \$(elem).attr('src', 'skins/images/[% IcoTable.hide_file.value FILTER js %]');
+    \$(elem).attr('title', '[% IcoTable.hide_file.tiphelp FILTER js %]');
+  }
 }
 
 function tweak_ToggleFileDisp (target) {
-  var elem = document.getElementById('fdisp_' + target);
+  var elem = \$("#fdisp_" + target)[0];
+  if (!(elem != undefined)) {return ;}
   var url = 'fileinfo.cgi?format=json&fid=' + target + '&method=';
-  if (YAHOO.util.Dom.hasClass(elem, 'disp_on')) {url += 'disable'; }
+  if (\$(elem).hasClass('disp_on')) {url += 'disable'; }
   else {url += 'enable'; }
-  YAHOO.util.Connect.asyncRequest('GET', url, fdisp_callback);
+  \$.ajax({type: 'GET', url: url, dataType: 'json'}).done(fdisp_success
+    ).fail(function(data, stat, errorTh){alert("Async call failed: " + stat);});
 }
 // -->
 </script>
@@ -77,8 +68,7 @@ function tweak_ToggleFileDisp (target) {
     <td class="docsize">[% SizeDisp(item.size) %]</td>
   </tr>
 <script type="text/javascript">
-  var fdisp_mod_[% count %] = function() { tweak_ToggleFileDisp('[% item.fileid %]'); }
-  YAHOO.util.Event.on('fdisp_[% item.fileid %]', 'click', fdisp_mod_[% count %]);
+  \$("#fdisp_[% item.fileid %]").click(function(event) {tweak_ToggleFileDisp('[% item.fileid %]'); });
 </script>
 [% END %]
 
