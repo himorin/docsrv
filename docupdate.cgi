@@ -66,7 +66,7 @@ if ($obj_cgi->request_method() eq 'POST') {
 $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
 $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
 $obj->template->set_vars('doc_info', $docinfo);
-$obj->template->set_vars('file_list', PSMT::File->GetDocFiles($did));
+$obj->template->set_vars('file_list', PSMT::File->ListFilesInDoc($did));
 $obj->template->set_vars('group_list', PSMT::Access->ListDocRestrict($did));
 
 $obj->template->process('docupdate', 'html');

@@ -57,7 +57,7 @@ if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); 
 # check permission
 PSMT::Access->CheckForDoc($did);
 
-my $file_list = PSMT::File->GetDocFiles($did);
+my $file_list = PSMT::File->ListFilesInDoc($did);
 my @file_users;
 foreach (@$file_list) {push(@file_users, $_->{uname}); }
 my %hash;

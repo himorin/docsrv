@@ -38,7 +38,7 @@ if (defined($did)) {
   $obj->template->set_vars('did', $did);
   $obj->template->set_vars('doc_info', $docinfo);
   $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
-  $obj->template->set_vars('file_list', PSMT::File->GetDocFiles($did));
+  $obj->template->set_vars('file_list', PSMT::File->ListFilesInDoc($did));
   $obj->template->set_vars('group_list', PSMT::Access->ListDocRestrict($did));
 } else {
   my $pathinfo = PSMT::File->GetPathInfo($pid);
