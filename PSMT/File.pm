@@ -32,7 +32,6 @@ use PSMT::FullSearchMroonga;
     ListDocsInPath
     ListPathInPath
     ListPathIdInPath
-    ListFilesInDoc
     ListExtInDoc
     ListUserLoad
     ListUserLoadForDoc
@@ -326,31 +325,6 @@ sub ListPathInPath {
         push(@path, $self->GetPathInfo($ref->{pathid}));
     }
     return \@path;
-}
-
-# XXX: NOT USED??
-# by default : For admin all, for non-admin enabled + self-uploaded
-# is_all : default (undef) is FALSE, return all if TRUE
-sub ListFilesInDoc {
-    my ($self, $docid, $is_all) = @_;
-    my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
-    my $sth;
-    if (! defined($is_all)) {$is_all = FALSE; }
-    my $uname = PSMT->user->get_uid();
-    if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
-    if ($is_all) {
-        $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ? ORDER BY docinfo.uptime DESC');
-        $sth->execute($docid);
-    } else {
-        $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE docid = ? AND (enabled = 1 OR uname = ?) ORDER BY docinfo.uptime DESC');
-        $sth->execute($docid, $uname);
-    }
-    my (@files, $ref);
-    while ($ref = $sth->fetchrow_hashref()) {
-        push(@files, $self->GetFileInfo($ref->{fileid}, $is_all));
-    }
-    return \@files;
 }
 
 sub ListExtInDoc {
