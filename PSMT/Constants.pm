@@ -65,6 +65,7 @@ use constant AVAIL_FORMATS => {
   'pathgroup'          => ['html'],
   'pathinfo'           => ['html'],
   'recent'             => ['html'],
+  'zipadd'             => ['html'],
 
   'attribute/list'     => ['html', 'json'],
   'attribute/get'      => ['html', 'json'],

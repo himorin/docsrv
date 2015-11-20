@@ -43,6 +43,8 @@ use PSMT::FullSearchMroonga;
     GetPathIdForDoc
     CheckPathIdInParent
 
+    CheckPathExist
+
     ListUserUpForDoc
     IsUserUpForDoc
 
@@ -71,6 +73,7 @@ use PSMT::FullSearchMroonga;
     RegNewPath
     RegNewDoc
     RegNewFile
+    RegNewFileTime
     UpdatePathInfo
     UpdateDocInfo
     UpdateFileInfo
@@ -560,7 +563,12 @@ sub RegNewDoc {
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add, $daddrs) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $daddrs) = @_;
+    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $daddrs);
+}
+
+sub RegNewFileTime {
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $daddrs) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
     my $fileid = undef;
     my $uname = PSMT->user()->get_uid();
@@ -580,8 +588,13 @@ sub RegNewFile {
         }
     }
     $ext = lc($ext);
-    $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, NOW(), ?, ?, ?)');
-    $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
+    if ($uptime < 0) {
+        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, NOW(), ?, ?, ?)');
+        $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
+    } else {
+        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, from_unixtime(?), ?, ?, ?)');
+        $sth->execute($fileid, $ext, $docid, $uptime, $uname, $srcip, $desc);
+    }
     $dbh->db_unlock_tables();
     if ($is_add == TRUE) {PSMT->email()->NewFileInDoc($docid, $fileid, $daddrs); }
     else {PSMT->email()->NewDocInPath($docid, $fileid, $daddrs); }
@@ -729,10 +742,9 @@ sub MoveNewFile {
     rename($src, $newpath . $fid);
     # file reg finished, unlock WRITE temporary, if we need do READ again
     my $dbh = PSMT->dbh;
-    $dbh->db_unlock_tables(TRUE);
-    # Exec HyperEstraier Index
-    my $obj = new PSMT::FullSearchMroonga(TRUE);
-    $obj->AddNewFile($fid);
+    $dbh->db_lock_tables('fullindex WRITE');
+    my $fidx_obj = new PSMT::FullSearchMroonga(TRUE);
+    $fidx_obj->AddNewFile($fid);
     return TRUE;
 }
 
@@ -834,6 +846,17 @@ sub CheckMimeIsView {
         if (index($mime, $cview) > -1) {return TRUE; }
     }
     return FALSE;
+}
+
+# check pathname exists or not with name and parentId
+sub CheckPathExist {
+    my ($self, $pid, $name) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path READ');
+    my $sth = $dbh->prepare('SELECT pathid FROM path WHERE parent = ? AND pathname = ?');
+    $sth->execute($pid, $name);
+    if ($sth->rows() == 0) {return -1; }
+    return $sth->fetchrow_hashref()->{pathid};
 }
 
 ################################################################## PRIVATE

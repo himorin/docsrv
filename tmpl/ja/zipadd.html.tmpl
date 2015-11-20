@@ -1,0 +1,67 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "zipadd"
+  page_title = "アーカイブでの一括アップロード"
+  javascript = "table_sort.js"
+%]
+
+[% IF mode == 'upload' %]
+<h3>[% terms.path %] "/[% full_path %]" への一括アップロード</h3>
+<form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
+<input type="hidden" name="pid" value="[% pid %]"></li>
+<ul>
+<li><label><input type="radio" name="source" value="dav" />WebDAV にあるファイル</label> /
+    <label><input type="radio" name="source" value="upload" />ファイルアップロード</label></li>
+<li><label>WebDAV のファイル名 : <input type="text" name="dav_source" size="50"></label></li>
+<li><label>アップロードファイル : <input type="file" name="target_file" /></label></li>
+</ul>
+<input type="submit" />
+</form>
+[% ELSIF mode == 'result' %]
+<h3>[% terms.path %] "/[% full_path %]" への一括アップロード結果</h3>
+[% IF up_succ.size > 0 %]
+<h4>追加成功ファイルリスト</h4>
+<table class="dirlist tablesorter">
+<tr>
+  <th>[% terms.document %] 名</th>
+  <th>拡張子</th>
+  <th>[% terms.document %] ID</th>
+  <th>[% terms.file %] ID</th>
+  <th>最終更新</th>
+  <th>サイズ</th>
+</tr>
+[% FOREACH item IN up_succ %]
+<tr>
+  <td>[% full_path %][% item.storename %]</td>
+  <td>[% item.ext %]</td>
+  <td>[% item.did %]</td>
+  <td>[% item.fid %]</td>
+  <td>[% item.lastmodified %]</td>
+  <td>[% SizeDisp(item.size) %]</td>
+</tr>
+[% END %]
+</table>
+[% END %]
+
+[% IF up_fail.size > 0 %]
+<h4>追加失敗ファイルリスト</h4>
+<table class="dirlist tablesorter">
+<tr>
+  <th>アーカイブ中のファイル名</th>
+  <th>最終更新</th>
+  <th>サイズ</th>
+</tr>
+[% FOREACH item IN up_fail %]
+<tr>
+  <td>[% item.dirname %]/[% item.filename %]</td>
+  <td>[% item.lastmodified %]</td>
+  <td>[% SizeDisp(item.size) %]</td>
+</tr>
+[% END %]
+</table>
+[% END %]
+
+[% ELSE %]
+<h3>未定義の操作です。</h3>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

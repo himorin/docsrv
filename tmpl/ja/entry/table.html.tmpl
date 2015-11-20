@@ -8,7 +8,7 @@
     <th rowspan="2"></th>
     <th rowspan="2">名前</th>
     <th rowspan="2">説明</th>
-    [% IF docs_exist %]<td colspan="4" class="tdhead">最新版</td>[% END %]
+    <td colspan="4" class="tdhead">最新版</td>
     <th rowspan="2">グループ</th>
     <th rowspan="2">ラベル</th>
   </tr>
@@ -24,7 +24,7 @@
     <td class="path">[% INCLUDE show_table_icon id = 'dir_up' %]
       <a href="pathinfo.cgi?pid=[% upper_path %]">一つ上</a></td>
     <td></td>
-    [% IF docs_exist %]<td colspan="4"></td>[% END %]
+    <td colspan="4"></td>
     <td>---</td>
     <td>---</td>
   </tr>
@@ -59,7 +59,8 @@
       [% END -%]
       </td>
     <td class="pathdesc">[% item.short_description FILTER html %]</td>
-    [% IF docs_exist %]<td></td><td></td><td></td><td></td>[% END %]
+    <td></td><td></td><td></td>
+    <td><a href="zipadd.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a></td>
     <td class="group">
       [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]制限なし[% END %]
       <a href="pathgroup.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>

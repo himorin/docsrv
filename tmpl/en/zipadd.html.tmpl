@@ -1,0 +1,67 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "zipadd"
+  page_title = "Uploaded files via archive"
+  javascript = "table_sort.js"
+%]
+
+[% IF mode == 'upload' %]
+<h3>Upload files to [% terms.path %] "/[% full_path %]"</h3>
+<form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
+<input type="hidden" name="pid" value="[% pid %]"></li>
+<ul>
+<li><label><input type="radio" name="source" value="dav" />WebDAV</label> /
+    <label><input type="radio" name="source" value="upload" />Upload</label></li>
+<li><label>dav source : <input type="text" name="dav_source" size="50"></label></li>
+<li><label>File : <input type="file" name="target_file" /></label></li>
+</ul>
+<input type="submit" />
+</form>
+[% ELSIF mode == 'result' %]
+<h3>Uploaded files to [% terms.path %] "/[% full_path %]"</h3>
+[% IF up_succ.size > 0 %]
+<h4>List of succeeded files</h4>
+<table class="dirlist tablesorter">
+<tr>
+  <th>[% terms.document %] name</th>
+  <th>Extension</th>
+  <th>[% terms.document %] ID</th>
+  <th>[% terms.file %] ID</th>
+  <th>Last modified</th>
+  <th>Size</th>
+</tr>
+[% FOREACH item IN up_succ %]
+<tr>
+  <td>[% full_path %][% item.storename %]</td>
+  <td>[% item.ext %]</td>
+  <td>[% item.did %]</td>
+  <td>[% item.fid %]</td>
+  <td>[% item.lastmodified %]</td>
+  <td>[% SizeDisp(item.size) %]</td>
+</tr>
+[% END %]
+</table>
+[% END %]
+
+[% IF up_fail.size > 0 %]
+<h4>List of failed files</h4>
+<table class="dirlist tablesorter">
+<tr>
+  <th>[% terms.document %] name in archive</th>
+  <th>Last modified</th>
+  <th>Size</th>
+</tr>
+[% FOREACH item IN up_fail %]
+<tr>
+  <td>[% item.dirname %]/[% item.filename %]</td>
+  <td>[% item.lastmodified %]</td>
+  <td>[% SizeDisp(item.size) %]</td>
+</tr>
+[% END %]
+</table>
+[% END %]
+
+[% ELSE %]
+<h3>Unknown operation</h3>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]
