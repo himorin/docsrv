@@ -40,6 +40,11 @@ sub get_param_list {
             type     => 'text',
             default  => '',
         },
+        {
+            name     => 'zip_win_encoding',
+            type     => 'text',
+            default  => 'cp932',
+        },
     );
     return @param_list;
 }
