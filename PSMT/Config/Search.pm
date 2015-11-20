@@ -17,11 +17,6 @@ $PSMT::Config::Search::sortkey = "01";
 sub get_param_list {
     my $class = shift;
     my @param_list = (
-        {
-            name     => 'he_dir',
-            type     => 'text',
-            default  => '',
-        },
     );
     return @param_list;
 }
