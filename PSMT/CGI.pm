@@ -106,6 +106,12 @@ sub remove_cookie {
                       '-value'   => 0);
 }
 
+sub is_windows {
+    my $self = shift;
+    if ($self->user_agent() =~ /Windows/) {return TRUE; }
+    return FALSE;
+}
+
 ################################################################## PRIVATE
 
 1;

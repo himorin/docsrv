@@ -33,6 +33,8 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
 }
 
+my $zip_enc = PSMT::Config->GetParam('zip_win_encoding');
+
 my $pid = $obj_cgi->param('pid');
 if (! defined($pid)) {PSMT::Error->throw_error_user('invalid_pathid'); }
 my $pext = $obj_cgi->param('ext');
@@ -62,7 +64,7 @@ while ($#lpid > -1) {
         $cpo = PSMT::File->GetPathInfo($cpid);
         if (! defined($cpo)) {next; }
         if (! PSMT::Access->CheckForPath($cpid, FALSE)) {next; }
-        $obj_zip->addDirectory(PSMT::File->GetFullPathFromId($cpid));
+        &AddDirToZip($obj_zip, PSMT::File->GetFullPathFromId($cpid));
     }
     $ch = PSMT::File->ListPathIdInPath($cpid);
     push(@lpid, @$ch);
@@ -112,6 +114,7 @@ while ($#lpid > -1) {
 
 my $dname = PSMT::File->GetFullPathFromId($pid);
 if ($dname eq '') {$dname = 'topdir'; }
+$dname =~ s/\/$//g;
 $dname =~ s/\//_/g;
 # output to client, just name $pid.zip
 binmode STDOUT, ':bytes';
@@ -129,6 +132,14 @@ sub DateStrMod {
     return $source;
 }
 
+sub AddDirToZip {
+    my ($obj_zip, $dname) = @_;
+    Encode::decode_utf8($dname);
+    if ($obj_cgi->is_windows()) {$dname = Encode::encode($zip_enc, $dname); }
+    else {$dname = Encode::encode('utf8', $dname); }
+    $obj_zip->addDirectory($dname);
+}
+
 sub AddToZip {
     my ($obj_zip, $cfid, $postfix) = @_;
     my ($cname, $zname);
@@ -140,13 +151,14 @@ sub AddToZip {
     if (! -f $cname) {return; }
 
     $zname = PSMT::File->GetFileFullPath($cfid);
-#    $zname = encode('Shift_JIS', decode('UTF-8', $zname));
     PSMT::File->RegUserAccess($cfid);
     if (defined($postfix)) {
         my $extidx = rindex($zname, '.');
         $zname = substr($zname, 0, $extidx) . '_' . $postfix . substr($zname, $extidx);
     }
+    Encode::decode_utf8($zname);
+    if ($obj_cgi->is_windows()) {$zname = Encode::encode($zip_enc, $zname); }
+    else {$zname = Encode::encode('utf8', $zname); }
     $obj_zip->addFile($cname, $zname);
 }
-
 
