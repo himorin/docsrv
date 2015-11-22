@@ -69,10 +69,14 @@ if ($source eq 'dav') {
     PSMT::Error->throw_error_user('invalid_file_source');
 }
 my ($flist, $dlist) = &ExtractZip($src);
-#unlink($src);
+if ((! defined($flist)) || ($#$flist < 0)) {
+    PSMT::Error->throw_error_user('null_file_upload');
+}
+unlink($src);
 
 # entry directories
 my (%didlist, $cdir, $cpid, $tid, $cpdir, $cldir);
+$didlist{''} = $pid;
 foreach $cdir (@$dlist) {
     if (index($cdir, '/') != -1) {
         $cpdir = substr($cdir, 0, rindex($cdir, '/'));
