@@ -74,20 +74,26 @@ if ((! defined($flist)) || ($#$flist < 0)) {
 }
 unlink($src);
 
+# Ignore directory/file with:
+#  file with '._XXXX'
+#  directory as '__MACOSX' (exact)
 # entry directories
-my (%didlist, $cdir, $cpid, $tid, $cpdir, $cldir);
+my (%didlist, %didign, $cdir, $cpid, $tid, $cpdir, $cldir);
 $didlist{''} = $pid;
 foreach $cdir (@$dlist) {
     if (index($cdir, '/') != -1) {
         $cpdir = substr($cdir, 0, rindex($cdir, '/'));
         $cldir = substr($cdir, rindex($cdir, '/') + 1);
+        if (defined($didign{$cpdir})) {$didign{$cdir} = TRUE; next; }
         if (! defined($didlist{$cpdir})) {push(@$dlist, $cdir); next; }
         $cpid = $didlist{$cpdir};
     } else {
         $cpid = $pid;
         $cldir = $cdir;
     }
-    if (($tid = PSMT::File->CheckPathExist($cpid, $cldir)) != -1) {
+    if ($cldir eq '__MACOSX') {
+        $didign{$cdir} = TRUE;
+    } elsif (($tid = PSMT::File->CheckPathExist($cpid, $cldir)) != -1) {
         $didlist{$cdir} = $tid;
     } else {
         $didlist{$cdir} = PSMT::File->RegNewPath($cpid, $cldir, '', undef, undef);
@@ -105,6 +111,10 @@ foreach (@$flist) {
         $cext = substr($cname, rindex($cname, '.') + 1);
         $cname = substr($cname, 0, rindex($cname, '.'));
     }
+    # check directory valid
+    if (defined($didign{$_->{dirname}})) {push(@upfailed, $_); next; }
+    # check filename valid
+    if (substr($_->{filename}, 0, 2) eq '._') {push(@upfailed, $_); next; }
     # check doc exist
     $cdid = PSMT::File->GetIdFromName($didlist{$_->{dirname}}, $cname);
     if ($cdid == 0) {
@@ -147,6 +157,7 @@ $obj->template->process('zipadd', 'html');
 
 exit;
 
+# XXX: check on path/file names non-UTF8
 sub ExtractZip {
     my ($fname) = @_;
     my $obj_zip = Archive::Zip->new();
