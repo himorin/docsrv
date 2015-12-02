@@ -50,6 +50,7 @@ use constant HEADER_LINKS => (
 use constant AVAIL_FORMATS => {
   'admin'              => ['html'],
   'config'             => ['html'],
+  'delpath'            => ['html'],
   'docadd'             => ['html'],
   'docfav'             => ['html', 'json'],
   'docgroup'           => ['html'],

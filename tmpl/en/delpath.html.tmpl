@@ -1,0 +1,31 @@
+[% PROCESS global/header.html.tmpl %]
+
+[% IF deleted.size > 0 %]
+<h3>List of [% terms.path %] deleted</h3>
+<ul>
+  [% FOREACH item = deleted %]
+    <li>[% item %]</li>
+  [% END %]
+</ul>
+[% END %]
+
+[% IF targets.size > 0 %]
+<h3>Delete empty [% terms.path %]</h3>
+<p>Select from list below
+<form action="delpath.cgi" method="POST">
+  [% PROCESS global/formopt.html.tmpl %]
+  <ul>[% FOREACH item IN targets.keys %]
+    <li><label>
+      <input type="checkbox" name="target_path" value="[% item %]" />
+      [% targets.$item %]
+    </label></li>
+  [% END %]</ul>
+  <input type="submit" value="Delete [% terms.path %]">
+  <input type="reset" value="Reset">
+</form>
+</p>
+[% ELSE %]
+<h3>No empty [% terms.path %] exists</h3>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

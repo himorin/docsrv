@@ -38,12 +38,14 @@ use PSMT::FullSearchMroonga;
     ListFileInExt
 
     ListAllPath
+    ListNullPath
 
     GetPathIdForParent
     GetPathIdForDoc
     CheckPathIdInParent
 
     CheckPathExist
+    DeleteEmptyPath
 
     ListUserUpForDoc
     IsUserUpForDoc
@@ -463,6 +465,63 @@ sub ListAllPath {
     return $hash;
 }
 
+# list path with no file nor subpath
+sub ListNullPath {
+    my ($self) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path READ', 'docreg READ');
+# NOT WORKING WITH WARNING "Table 'path' was not locked with LOCK TABLES"
+#    my $sth = $dbh->prepare(
+#        qq {    SELECT pathid, pathnum, docnum
+#                  FROM (
+#                SELECT pathdoc.pathid, pathdoc.docnum,
+#                       count(path.pathid) AS pathnum
+#                  FROM (
+#                SELECT path.pathid, count(docreg.pathid) AS docnum
+#                  FROM path
+#       LEFT OUTER JOIN docreg
+#                    ON path.pathid = docreg.pathid 
+#              GROUP BY path.pathid)
+#                    AS pathdoc
+#       LEFT OUTER JOIN path
+#                    ON pathdoc.pathid = path.parent
+#              GROUP BY path.pathid )
+#                    AS pdnum
+#                 WHERE pathnum = 0 AND docnum = 0
+#           });
+    # document count
+    my $sth = $dbh->prepare(
+        qq{    SELECT pathid, entries
+                 FROM (
+               SELECT path.pathid, COUNT(docreg.pathid) AS entries
+                 FROM path
+      LEFT OUTER JOIN docreg
+                   ON path.pathid = docreg.pathid
+             GROUP BY path.pathid )
+                   AS docnum
+                WHERE entries = 0
+        });
+    $sth->execute();
+    if ($sth->rows == 0) {return undef; }
+    my (@dlist, %hdlist);
+    while (my $ref = $sth->fetchrow_hashref()) {
+        push(@dlist, $ref->{pathid});
+        $hdlist{$ref->{pathid}} = 1;
+    }
+    # path count
+    $sth = $dbh->prepare('SELECT parent, COUNT(pathid) FROM path WHERE parent IN (' . ('?,' x $#dlist) . '?) GROUP BY parent');
+    $sth->execute(@dlist);
+    if ($sth->rows == 0) {return undef; }
+    my @plist;
+    while (my $ref = $sth->fetchrow_hashref()) {
+        delete($hdlist{$ref->{parent}});
+    }
+    my @ref = keys(%hdlist);
+    return \@ref;
+#    while (my $ref = $sth->fetchrow_hashref()) {push(@plist, $ref->{parent}); }
+#    return \@plist;
+}
+
 sub GetPathInfo {
     my ($self, $pathid) = @_;
     my $dbh = PSMT->dbh;
@@ -857,6 +916,22 @@ sub CheckPathExist {
     $sth->execute($pid, $name);
     if ($sth->rows() == 0) {return -1; }
     return $sth->fetchrow_hashref()->{pathid};
+}
+
+sub DeleteEmptyPath {
+    my ($self, $pid) = @_;
+    my $tnum;
+    $tnum = $self->ListDocsInPath($pid);
+    if ($#$tnum > -1) {return FALSE; }
+    $tnum = $self->ListPathIdInPath($_);
+    if ($#$tnum > -1) {return FALSE; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path WRITE');
+    my $sth = $dbh->prepare('DELETE FROM path WHERE pathid = ?');
+    if ($sth->execute($pid) == 0) {
+        return FALSE;
+    }
+    return TRUE;
 }
 
 ################################################################## PRIVATE

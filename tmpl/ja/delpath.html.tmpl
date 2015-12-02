@@ -1,0 +1,31 @@
+[% PROCESS global/header.html.tmpl %]
+
+[% IF deleted.size > 0 %]
+<h3>削除された [% terms.path %] リスト</h3>
+<ul>
+  [% FOREACH item = deleted %]
+    <li>[% item %]</li>
+  [% END %]
+</ul>
+[% END %]
+
+[% IF targets.size > 0 %]
+<h3>空の [% terms.path %] の削除</h3>
+<p>以下のリストから選択してください
+<form action="delpath.cgi" method="POST">
+  [% PROCESS global/formopt.html.tmpl %]
+  <ul>[% FOREACH item IN targets.keys %]
+    <li><label>
+      <input type="checkbox" name="target_path" value="[% item %]" />
+      [% targets.$item %]
+    </label></li>
+  [% END %]</ul>
+  <input type="submit" value="[% terms.path %] 削除">
+  <input type="reset" value="Reset">
+</form>
+</p>
+[% ELSE %]
+<h3>空の [% terms.path %] は存在しません</h3>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]
