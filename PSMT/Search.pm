@@ -22,7 +22,7 @@ use PSMT::File;
 %PSMT::Search::EXPORT = qw(
     new
 
-    Search
+    SearchDoc
     RecentUpdate
 );
 
@@ -59,11 +59,11 @@ sub RecentUpdate {
     return $self->CreateResult($sth);
 }
 
-sub Search {
+sub SearchDoc {
     my ($self, $conf, $cond) = @_;
     my ($sql, @data);
     $sql =
-        'SELECT docreg.*
+        'SELECT docreg.docid
          FROM docreg
          LEFT JOIN label_doc ON docreg.docid = label_doc.docid
          WHERE 
@@ -92,7 +92,9 @@ sub Search {
     my $sth = $dbh->prepare($sql);
     $sth->execute(@data);
     if ($sth->rows() == 0) {return undef; }
-    return $self->CreateResult($sth);
+    my ($ref, @res);
+    foreach ($ref = $sth->fetchrow_hashref()) {push(@res, $ref->{docid}); }
+    return \@res;
 }
 
 sub CreateResult {

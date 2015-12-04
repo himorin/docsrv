@@ -3,88 +3,54 @@
   page_title = "Set search conditions"
 %]
 
-<form action="query.cgi" method="POST">
+<form action="search.cgi" method="POST">
 [% INCLUDE global/formopt.html.tmpl %]
 
 <p>
 To use each condition, check the box just before each title.
-First checked item will be used in search.
+Merge results as <select name="global_cond">
+<option value="AND" selected="selected">ALL</option>
+<option value="OR">OR</option></select>.
+<br />
+Note, [% terms.path %] matched in each section except for <em>restriction</em> 
+part will be shown in separated and not taken in account for 
+[% terms.document %] matching (to prevent showing all [% terms.document %] in 
+matched [% terms.path %]).
 </p>
 
-<h3><label><input type="checkbox" name="searchcond" value="sc_full">
-Full text indexed search</label></h3>
+<div class="searchcond">
+<h3>Search conditions</h3>
 
+<p><label>
+<input type="checkbox" name="searchcond" value="sc_full" checked="checked">
+Full text indexed search</label></p>
 <div class="searchcond">
 <p>Current suppoerted formats of full text index are:
 [% constants.HE_FILE_FILTER.keys.sort.join(', ') %].
 Evey file in these formats will be queried, but any others will be just 
 ignored.</p>
-<input type="text" name="docs_he" value="" class="inputwide"></input>
-<p>(Please specify the 
-<a href="http://fallabs.com/hyperestraier/uguide-en.html#searchcond">search condition format of HyperEstraier</a>
-directly into box above.)</p>
+<p><input type="text" name="fullindex" value="" class="inputwide"></p>
 </div>
 
+<p><label><input type="checkbox" name="searchcond" value="sc_name">
+Search by name</label>:
+<input type="text" name="cnd_name" value="" size="60"></p>
 
-<h3><label><input type="checkbox" name="searchcond" value="sc_item">
-Search by information of [% terms.document %]</label></h3>
+<p><label><input type="checkbox" name="searchcond" value="sc_desc">
+Search by description</label>:
+<input type="text" name="cnd_desc" value="" size="60"></p>
 
+</div>
 <div class="searchcond">
+<h3>Restrictions</h3>
+<p>To be implemented.</p>
+</div>
 
-<p>You can search by name, description and labels of [% terms.document %].
-If you don't specify in some category (name, description etc), these categories 
-will be simply ignored.</p>
 
 <p>
-Display items match 
-<select name="global_cond">
-  <option value="AND" selected="selected">ALL</option>
-  <option value="OR">ANY</option>
-</select>
-of following condition for categories.
-</p>
-
-<h4>Name of [% terms.document %]</h4>
-
-<div>Under construction</div>
-
-<h4>Description of [% terms.document %]</h4>
-
-<div>
-Search [% terms.document %] with its description contains 
-<select name="docreg_desc_cond">
-  <option value="and" selected="selected">all of</option>
-  <option value="or">any of</option>
-</select>
-words of: 
-<input type="text" name="docreg_desc" value="[% linfo.name %]" size="100"></input>
-</div>
-
-<div>Please specify multiple words in separated with white space (" ").
-You cannot specify words quoted with "".</div>
-
-<h4>Labels for [% terms.document %]</h4>
-
-<div>Search [% terms.document %] with 
-<select name="doc_label_cond">
-  <option value="and" selected="selected">ALL</option>
-  <option value="or">ANY</option>
-</select>
-of the following labels :
-
-<select name="doc_label" size="5" multiple="multiple">
-  [% FOREACH item = Label.keys %]
-    <option value="[% item %]">[% Label.$item.name %]</option>
-  [% END %]
-</select>
-</div>
-
-</div>
-
-<div>
 <input type="submit" value="Search">
 <input type="reset">
-</div>
+</p>
 
 </form>
 

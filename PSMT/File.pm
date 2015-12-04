@@ -40,6 +40,9 @@ use PSMT::FullSearchMroonga;
     ListAllPath
     ListNullPath
 
+    SearchPath
+    SearchDocFile
+
     GetPathIdForParent
     GetPathIdForDoc
     CheckPathIdInParent
@@ -53,6 +56,8 @@ use PSMT::FullSearchMroonga;
 
     ListDavFile
 
+    HashFileToDoc
+
     GetPathInfo
 
     GetFullPathFromId
@@ -62,16 +67,19 @@ use PSMT::FullSearchMroonga;
     GetIdFromFullName
 
     GetDocInfo
+    GetDocsInfo
     ListFilesInDoc
     ListFilesInDocByExt
     GetDocLastPostFileId
     GetDocLastPostFileInfo
 
     GetFileInfo
+    GetFilesInfo
     GetFileSize
     GetFilePath
     GetFileFullPath
     GetFileExt
+    GetFileInfoInDocs
 
     RegNewPath
     RegNewDoc
@@ -139,6 +147,54 @@ sub GetDocInfo {
     $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
     $ref->{lastfile} = $self->GetDocLastPostFileInfo($docid);
     return $ref;
+}
+
+# GetDocsInfo($docid)
+#   Return hash of hash reference, with document information (basic, shortdesc,
+#   restriction, label). No doc->file information.
+#   Omit unaccessible documents.
+sub GetDocsInfo {
+    my ($self, $docid) = @_;
+    if (! defined($docid)) {return undef; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg READ');
+    my $stmp = '(' . ('?, ' x $#$docid) . '?)';
+    my $sth = $dbh->prepare('SELECT * FROM docreg WHERE docid IN ' . $stmp);
+    $sth->execute(@$docid);
+    my %ret;
+    while ((my $ref = $sth->fetchrow_hashref())) {
+        if (! PSMT::Access->CheckForDoc($ref->{docid})) {next; }
+        $ref = PSMT::Util->AddShortDesc($ref);
+        $ref->{gname} = PSMT::Access->ListDocRestrict($ref->{docid});
+        $ref->{labelid} = PSMT::Label->ListLabelOnDoc($ref->{docid});
+        $ret{$ref->{docid}} = $ref;
+    }
+    # name
+    my %pathname;
+    foreach (keys %ret) {
+        if (! defined($pathname{$ret{$_}->{pathid}})) {
+            $pathname{$ret{$_}->{pathid}}
+                = PSMT::File->GetFullPathFromId($ret{$_}->{pathid});
+        }
+        $ret{$_}->{fullname} = $pathname{$ret{$_}->{pathid}} 
+            . $ret{$_}->{filename};
+    }
+    return \%ret;
+}
+
+sub HashFileToDoc {
+    my ($self, $fid) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    my $stmp = '(' . ('?, ' x $#$fid) . '?)';
+    my $sth = $dbh->prepare('SELECT docid, fileid FROM docinfo WHERE fileid IN ' . $stmp);
+    $sth->execute(@$fid);
+    if ($sth->rows() == 0) {return undef; }
+    my %hash;
+    while ((my $ref = $sth->fetchrow_hashref())) {
+        $hash{$ref->{fileid}} = $ref->{docid};
+    }
+    return \%hash;
 }
 
 # by default : For admin all, for non-admin enabled + self-uploaded
@@ -359,6 +415,47 @@ sub ListPathInPath {
         push(@path, $self->GetPathInfo($ref->{pathid}));
     }
     return \@path;
+}
+
+# GetFileInfoInDocs(\@docid, $is_all)
+#   Return array of hash reference, file information (basic).
+#   Lists files registered in a document. all files for admin, enabled + self 
+#   uploaded for non-admin. 
+#   If is_all is set and is TRUE, return all
+#   Note, no group restriction to file.
+sub GetFileInfoInDocs {
+    my ($self, $docid, $is_all) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    if (! defined($is_all)) {$is_all = FALSE; }
+    my $uname = PSMT->user->get_uid();
+    if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
+    my $stmp = '(' . ('?, ' x $#$docid) . '?)';
+    my $sth;
+    # XXX "ORDER BY docinfo.uptime DESC" is for later listing, remove if no need
+    if ($is_all) {
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid IN ' . $stmp . 
+               ' ORDER BY docinfo.uptime DESC');
+        $sth->execute(@$docid);
+    } else {
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid IN ' . $stmp . 
+               ' AND (enabled = 1 OR uname = ?) ORDER BY docinfo.uptime DESC');
+        $sth->execute(@$docid, $uname);
+    }
+
+    my (%docs, $files, $ref);  # doc->{docid}->{fileid}
+    while ($ref = $sth->fetchrow_hashref()) {
+        if (! defined($docs{$ref->{docid}})) {
+            $files = ();
+            $docs{$ref->{docid}} = $files;
+        } else {
+            $files = $docs{$ref->{docid}};
+        }
+        $ref->{size} = $self->GetFileSize($ref->{fileid});
+        push(@$files, $ref);
+        $docs{$ref->{docid}} = $files;
+    }
+    return \%docs;
 }
 
 sub ListExtInDoc {
@@ -605,6 +702,29 @@ sub GetFileInfo {
     }
     if ($sth->rows != 1) {return undef; }
     return $sth->fetchrow_hashref();
+}
+
+sub GetFilesInfo {
+    my ($self, $fileids) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    my $sth;
+    my $uname = PSMT->user->get_uid();
+    my $sthstr = 'SELECT * FROM docinfo WHERE fileid IN (' . ('?, ' x $#$fileids) . '?) ';
+    if (PSMT->user->is_inadmin()) {
+        $sth = $dbh->prepare($sthstr);
+        $sth->execute(@$fileids);
+    } else {
+        $sth = $dbh->prepare($sthstr . 'AND (enabled = 1 OR uname = ?');
+        $sth->execute(@$fileids, $uname);
+    }
+    if ($sth->rows() == 0) {return undef; }
+    my ($ref, %ret);
+    while ($ref = $sth->fetchrow_hashref()) {
+        $ret{$ref->{fileid}} = $ref;
+        $ret{$ref->{fileid}}->{size} = $self->GetFileSize($ref->{fileid});
+    }
+    return \%ret;
 }
 
 sub RegNewDoc {
@@ -944,6 +1064,64 @@ sub DeleteEmptyPath {
     }
     return TRUE;
 }
+
+sub SearchPath {
+    my ($self, $name, $desc, $cond) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path READ');
+    my $sthstr = 'SELECT * FROM path WHERE ';
+    my @stharg;
+    if (defined($name)) {
+        $sthstr .= 'pathname REGEXP ? ';
+        if (defined($desc)) {$sthstr .= ($cond) ? 'AND ' : 'OR '; }
+        push(@stharg, $name);
+    }
+    if (defined($desc)) {
+        $sthstr .= 'description REGEXP ?';
+        push(@stharg, $desc);
+    }
+    my $sth = $dbh->prepare($sthstr);
+    $sth->execute(@stharg);
+    if ($sth->rows() == 0) {return undef; }
+    my ($ref, %ret);
+    while ($ref = $sth->fetchrow_hashref()) {
+        $ret{$ref->{pathid}} = $ref;
+    }
+    return \%ret;
+}
+
+sub SearchDocFile {
+    my ($self, $name, $desc, $cond) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg READ', 'docinfo READ');
+    my $sthstr = 
+        qq {  SELECT docinfo.docid AS docid, docinfo.fileid AS fileid
+                FROM docinfo
+          INNER JOIN docreg
+                  ON docinfo.docid = docreg.docid
+               WHERE docinfo.enabled = 1
+                 AND };
+    my @stharg;
+    if (defined($name)) {
+        $sthstr .= 'docreg.filename REGEXP ? ';
+        if (defined($desc)) {$sthstr .= ($cond) ? 'AND ' : 'OR '; }
+        push(@stharg, $name);
+    }
+    if (defined($desc)) {
+        $sthstr .= '(docinfo.description REGEXP ? OR docreg.description REGEXP ?)';
+        push(@stharg, $desc);
+        push(@stharg, $desc);
+    }
+    my $sth = $dbh->prepare($sthstr);
+    $sth->execute(@stharg);
+    if ($sth->rows() == 0) {return undef; }
+    my ($ref, %ret);
+    while ($ref = $sth->fetchrow_hashref()) {
+        $ret{$ref->{fileid}} = $ref->{docid};
+    }
+    return \%ret;
+}
+
 
 ################################################################## PRIVATE
 

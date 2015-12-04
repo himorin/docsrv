@@ -1,13 +1,73 @@
 [% PROCESS global/header.html.tmpl
-  page_title = "検索結果"
+  page_title = "Search result"
 %]
 
-[% IF search_result.defined %]
-  [% INCLUDE entry/table.html.tmpl       paths = {}    docs = search_result
+[% IF list_path.defined %]
+<h3>[% terms.path %] の結果</h3>
+  [% INCLUDE entry/table.html.tmpl       paths = list_path    docs = {}
                                          def_popup = 1
   %]
+[% END %]
+
+[% IF list_doc.defined %]
+<h3>[% terms.document %] と [% terms.file %] の結果</h3>
+<table class="dirlist tablesorter">
+<tbody>
+<tr>
+  <th rowspan="2"></th>
+  <th rowspan="2">名前</th>
+  <th rowspan="2">説明</th>
+  <th colspan="3">[% terms.file %]</th>
+  <th rowspan="2">グループ</th>
+  <th rowspan="2">ラベル</th>
+</tr><tr>
+  <th>投稿者</th>
+  <th>日付</th>
+  <th>サイズ</th>
+</tr>
+[% FOREACH item IN list_doc.keys %]
+<tr>
+  <td>
+    <a href="attribute.cgi?target=file&amp;method=get&amp;id=[% list_doc.$item.fid.0 %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
+    <a href="fileget.cgi?fid=[% list_doc.$item.fid.0 %]">[% INCLUDE show_table_icon id = 'download' %]</a>
+  </td>
+  <td rowspan="[% list_doc.$item.fid.size() %]">[% list_doc.$item.fullname FILTER html %]</td>
+  <td rowspan="[% list_doc.$item.fid.size() %]">[% list_doc.$item.short_description FILTER html %]</td>
+  [% zeroid = list_doc.$item.fid.0 %]
+  <td>[% list_file.$zeroid.uname FILTER html %]</td>
+  <td>[% list_file.$zeroid.uptime FILTER html %]</td>
+  <td>[% SizeDisp(list_file.$zeroid.size) %]</td>
+  <td class="group" rowspan="[% list_doc.$item.fid.size() %]">
+    [% IF list_doc.$item.gname.defined %]
+      [% FOREACH gid = list_doc.$item.gname %][% IF NOT loop.first %], [% END %][% gid FILTER html %][% END %]
+    [% ELSE %](なし)
+    [% END %]
+    <a href="docgroup.cgi?did=[% list_doc.$item.docid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
+    </td>
+  <td class="label" rowspan="[% list_doc.$item.fid.size() %]">
+    [% IF list_doc.$item.labelid.defined %]
+      [% FOREACH lid = list_doc.$item.labelid %][% IF NOT loop.first %], [% END %][% Label.$lid.name FILTER html %][% END %]
+      [% ELSE %]No label[% END %]
+      <a href="doclabel.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'label_add' %]</a>
+      </td>
+</tr>
+[% FOREACH cfid IN list_doc.$item.fid %][% IF NOT loop.first %]
+<tr>
+  <td>
+    <a href="attribute.cgi?target=file&amp;method=get&amp;id=[% cfid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
+    <a href="fileget.cgi?fid=[% cfid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
+  </td>
+  <td>[% list_file.$cfid.uname FILTER html %]</td>
+  <td>[% list_file.$cfid.uptime FILTER html %]</td>
+  <td>[% SizeDisp(list_file.$cfid.size) %]</td>
+</tr>
+[% END %][% END %]
+</tr>
+[% END %]
+</tbody>
+</table>
 [% ELSE %]
-  <p>検索結果が0件でした。</p>
+<h3>見つかりませんでした。</h3>
 [% END %]
 
 [% PROCESS global/footer.html.tmpl %]

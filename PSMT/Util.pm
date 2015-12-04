@@ -34,6 +34,13 @@ use Text::Markdown;
     ValidateEncoding
 
     AddShortDesc
+    GetLastFileId
+
+    MakeReverseHash
+    MergeArrayAnd
+    MergeArrayOr
+    MergeHashAnd
+    MergeHashOr
 );
 
 sub StrToIpaddr {
@@ -173,7 +180,74 @@ sub ValidateEncoding {
     return 0;
 }
 
+sub GetLastFileId {
+    my ($self, $arr) = @_;
+    my $lastid = undef;
+    my $lastup = undef;
+    foreach (@$arr) {
+        if (! (defined($_->{fileid}) && defined($_->{uptime}))) {next; }
+        if (! defined($lastid)) {
+            $lastid = $_->{fileid};
+            $lastup = $_->{uptime};
+            next;
+        }
+    }
+    return $lastid;
+}
 
+sub MakeReverseHash {
+    my ($self, $ref) = @_;
+    my %hash;
+    foreach (keys(%$ref)) {
+        if (defined($hash{$ref->{$_}})) {
+            push(@{$hash{$ref->{$_}}}, $_);
+        } else {
+            my @arr = ($_);
+            $hash{$ref->{$_}} = \@arr;
+        }
+    }
+    return \%hash;
+}
+
+sub MergeArrayAnd {
+    my ($self, $arr1, $arr2) = @_;
+    my (%hash, @res);
+    foreach (@$arr1) {$hash{$_} = 1; }
+    foreach (@$arr2) {if (defined($hash{$_})) {push(@res, $_); } }
+    return \@res;
+}
+
+sub MergeArrayOr {
+    my ($self, $arr1, $arr2) = @_;
+    my (@arr, @res, $last);
+    @arr = @$arr1;
+    push(@arr, @$arr2);
+    $last = shift(@arr);
+    push(@res, $last);
+    foreach (sort @arr) {
+        if ($last ne $_) {$last = $_; push(@res, $last); }
+    }
+    return \@res;
+}
+
+sub MergeHashAnd {
+    my ($self, $hash1, $hash2) = @_;
+    my %hash;
+    foreach (keys %$hash1) {
+        if (defined($hash2->{$_})) {$hash{$_} = $hash1->{$_}; }
+    }
+    return \%hash;
+}
+
+sub MergeHashOr {
+    my ($self, $hash1, $hash2) = @_;
+    my %hash;
+    foreach (keys %$hash1) {$hash{$_} = $hash1->{$_}; }
+    foreach (keys %$hash2) {
+        if (! defined($hash{$_})) {$hash{$_} = $hash2->{$_}; }
+    }
+    return \%hash;
+}
 
 1;
 

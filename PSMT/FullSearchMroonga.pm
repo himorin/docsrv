@@ -25,6 +25,7 @@ use PSMT::DB;
     new
     AddNewFile
     ExecSearch
+    ExecSearchHash
 
     GetFileInfo
 );
@@ -39,11 +40,26 @@ sub ExecSearch {
     my @fids;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('fullindex READ');
-    my $sth = $dbh->prepare('SELECT fileid FROM fullindex WHERE MATCH (content) AGAINST (?)');
+    my $sth = $dbh->prepare('SELECT fullindex.fileid AS fileid FROM fullindex INNER JOIN docinfo ON fullindex.fileid = docinfo.fileid WHERE MATCH (fullindex.content) AGAINST (?) AND docinfo.enabled = 1');
     $sth->execute($phrase);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {push(@fids, $ref->{fileid}); }
     return \@fids;
+}
+
+sub ExecSearchHash {
+    my ($self, $phrase) = @_;
+    my %fids;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('fullindex READ', 'docinfo READ');
+    my $sth = $dbh->prepare('SELECT fullindex.fileid AS fileid, docinfo.docid as docid FROM fullindex INNER JOIN docinfo ON fullindex.fileid = docinfo.fileid WHERE MATCH (fullindex.content) AGAINST (?) AND docinfo.enabled = 1');
+    $sth->execute($phrase);
+    if ($sth->rows() == 0) {return undef; }
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {
+        $fids{$ref->{fileid}} = $ref->{docid};
+    }
+    return \%fids;
 }
 
 sub AddNewFile {

@@ -42,19 +42,19 @@
   </div>
   <div id="gmenu">
     <ul class="links">
-      [% FOREACH item = header_links %]
+      [% FOREACH item = header_links -%]
         [%- IF header_links_def.$item.defined %]
           [%- IF header_links_def.$item.group.defined AND
                 (NOT InGroup(header_links_def.$item.group)) %]
             [%# must NOT display %]
           [%- ELSE %]
             <li>
-              [%- IF NOT loop.first %]<span class="separator">|</span>[% END %]
+              [%- IF NOT loop.first %]<span class="separator">|</span> [% END %]
               [%- IF item == current_page %]
                 [% header_links_def.$item.name %]
-              [%- ELSE %]
+              [%- ELSE -%]
                 <a href="[% header_links_def.$item.url %]">[% header_links_def.$item.name %]</a>
-              [%- END %]
+              [%- END -%]
             </li>
           [%- END %]
         [%- END %]

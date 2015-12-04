@@ -239,7 +239,10 @@ div.markdown {
 
 div.searchcond {
     width: 90%;
+    margin-top: 1em;
     margin-left: 3%;
+    padding-left: 2em;
+    padding-right: 2em;
     border: 1px solid #C3C3C3;
 }
 
