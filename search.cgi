@@ -97,10 +97,16 @@ if ($use_doc) {
 #  2. merge fulltext and name/description search in fid based
 #    AND: AND(fulltext.fid, doc.fid)
 #    OR:  OR(fulltext, doc)
-if ($res_cond) {
-    $res_merge = PSMT::Util->MergeHashAnd($res_full_fd, $res_doc_file); 
-} else {
-    $res_merge = PSMT::Util->MergeHashOr($res_full_fd, $res_doc_file); 
+if ($use_full && $use_doc) {
+    if ($res_cond) {
+        $res_merge = PSMT::Util->MergeHashAnd($res_full_fd, $res_doc_file); 
+    } else {
+        $res_merge = PSMT::Util->MergeHashOr($res_full_fd, $res_doc_file); 
+    }
+} elsif ($use_full) {
+    $res_merge = $res_full_fd;
+} elsif ($use_doc) {
+    $res_merge = $res_doc_file;
 }
 
 # 3. XXX
