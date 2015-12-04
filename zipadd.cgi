@@ -118,7 +118,7 @@ foreach $cdir (@$dlist) {
 
 # entry files
 my ($cdid, $cname, $cext, $cfid);
-foreach (@$iflist) {&AddUpfailed($thash, 'doc', 'invalid_encoding'); }
+foreach (@$iflist) {&AddUpfailed($_, 'doc', 'invalid_encoding'); }
 foreach (@$flist) {
     $cext = 'dat';
     $cname = $_->{filename};
