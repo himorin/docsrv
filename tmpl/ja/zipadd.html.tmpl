@@ -31,7 +31,7 @@
 </tr>
 [% FOREACH item IN up_succ %]
 <tr>
-  <td>[% full_path FILTER html %][% item.storename FILTER html %]</td>
+  <td>[% full_path %][% item.storename %]</td>
   <td>[% item.ext %]</td>
   <td>[% item.did %]</td>
   <td>[% item.fid %]</td>
@@ -47,10 +47,14 @@
 <table class="dirlist tablesorter">
 <tr>
   <th>アーカイブ中のファイル名</th>
+  <th>最終更新</th>
+  <th>サイズ</th>
 </tr>
 [% FOREACH item IN up_fail %]
 <tr>
-  <td>[% item FILTER html %]</td>
+  <td>[% item.dirname %]/[% item.filename %]</td>
+  <td>[% item.lastmodified %]</td>
+  <td>[% SizeDisp(item.size) %]</td>
 </tr>
 [% END %]
 </table>
