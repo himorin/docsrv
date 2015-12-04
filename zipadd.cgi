@@ -174,10 +174,6 @@ sub ExtractZip {
             if ($obj_cgi->is_windows()) {
                 $hret->{fullname} = Encode::decode($zip_enc, $hret->{fullname});
             }
-            if (PSMT::Util->ValidateEncoding($hret->{fullname}) > 0) {
-                push(@invfile, $hret);
-                next;
-            }
             $hret->{lastmodified} = $_->lastModTime();
             $hret->{size} = $_->{uncompressedSize};
             if (index($hret->{fullname}, '/') > -1) {
@@ -188,6 +184,10 @@ sub ExtractZip {
             } else {
                 $hret->{filename} = $hret->{fullname};
                 $hret->{dirname} = '';
+            }
+            if (PSMT::Util->ValidateEncoding($hret->{fullname}) > 0) {
+                push(@invfile, $hret);
+                next;
             }
             ($out, $extfile) = tempfile( DIR => PSMT::Config->GetParam('dav_path'));
             close $out;
