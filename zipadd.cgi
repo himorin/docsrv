@@ -68,7 +68,7 @@ if ($source eq 'dav') {
 } else {
     PSMT::Error->throw_error_user('invalid_file_source');
 }
-my ($flist, $dlist) = &ExtractZip($src);
+my ($flist, $dlist, $iflist, $idlist) = &ExtractZip($src);
 if ((! defined($flist)) || ($#$flist < 0)) {
     PSMT::Error->throw_error_user('null_file_upload');
 }
@@ -80,6 +80,7 @@ unlink($src);
 # entry directories
 my (%didlist, %didign, $cdir, $cpid, $tid, $cpdir, $cldir);
 $didlist{''} = $pid;
+foreach $cdir (@$idlist) {$didign{$cdir} = TRUE; }
 foreach $cdir (@$dlist) {
     if (index($cdir, '/') != -1) {
         $cpdir = substr($cdir, 0, rindex($cdir, '/'));
@@ -98,12 +99,12 @@ foreach $cdir (@$dlist) {
     } else {
         $didlist{$cdir} = PSMT::File->RegNewPath($cpid, $cldir, '', undef, undef);
     }
-
 }
 
 # entry files
 my ($cdid, $cname, $cext, $cfid);
 my (@upfailed, @uploaded);
+foreach (@$iflist) {push(@upfailed, $_); }
 foreach (@$flist) {
     $cext = 'dat';
     $cname = $_->{filename};
@@ -165,13 +166,17 @@ sub ExtractZip {
         return undef;
     }
     my @fmem = $obj_zip->members();
-    my (@rfile, @rdir, $dtdos, $extfile, $out);
+    my (@rfile, @rdir, @invfile, @invdir, $dtdos, $extfile, $out);
     foreach (@fmem) {
         my $hret = {};
         if (ref $_ eq 'Archive::Zip::ZipFileMember') {
             $hret->{fullname} = $_->{fileName};
             if ($obj_cgi->is_windows()) {
                 $hret->{fullname} = Encode::decode($zip_enc, $hret->{fullname});
+            }
+            if (PSMT::Util->ValidateEncoding($hret->{fullname}) > 0) {
+                push(@invfile, $hret);
+                next;
             }
             $hret->{lastmodified} = $_->lastModTime();
             $hret->{size} = $_->{uncompressedSize};
@@ -195,12 +200,16 @@ sub ExtractZip {
             if ($obj_cgi->is_windows()) {
                 $extfile = Encode::decode($zip_enc, $extfile);
             }
+            if (PSMT::Util->ValidateEncoding($extfile) > 0) {
+                push(@invfile, $extfile);
+                next;
+            }
             if (substr($extfile, length($extfile) - 1) eq '/') {
                 $extfile = substr($extfile, 0, length($extfile) - 1);
             }
             push(@rdir, $extfile);
         }
     }
-    return (\@rfile, \@rdir);
+    return (\@rfile, \@rdir, \@invfile, \@invdir);
 }
 

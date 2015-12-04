@@ -31,6 +31,7 @@ use Text::Markdown;
 
     IpAddr
     GetHashString
+    ValidateEncoding
 
     AddShortDesc
 );
@@ -153,6 +154,25 @@ sub AddShortDesc {
     }
     return $ref;
 }
+
+sub ValidateEncoding {
+    my ($self, $str) = @_;
+    while (length($str) > 0){
+        if ($str =~ /^[\x00-\x7f]/) {$str = substr($str, 1); }
+        elsif ($str =~ /^[\xC2-\xDF][\x80-\xBF]/) {$str = substr($str, 2); }
+        elsif ($str =~ /^[\xE0-\xEF][\x80-\xBF][\x80-\xBF]/)
+            {$str = substr($str, 3); }
+        elsif ($str =~ /^[\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF]/)
+            {$str = substr($str, 4); }
+        elsif ($str =~ /^[\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF]/)
+            {$str = substr($str, 5); }
+        elsif ($str =~ /^[\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF]/)
+            {$str = substr($str, 6); }
+        else {return length($str); }
+    }
+    return 0;
+}
+
 
 
 1;
