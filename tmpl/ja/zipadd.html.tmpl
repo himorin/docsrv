@@ -46,15 +46,26 @@
 <h4>追加失敗ファイルリスト</h4>
 <table class="dirlist tablesorter">
 <tr>
+  <th>種別</th>
   <th>アーカイブ中のファイル名</th>
   <th>最終更新</th>
   <th>サイズ</th>
+  <th>エラー</th>
 </tr>
 [% FOREACH item IN up_fail %]
 <tr>
-  <td>[% item.dirname %]/[% item.filename %]</td>
-  <td>[% item.lastmodified %]</td>
-  <td>[% SizeDisp(item.size) %]</td>
+  <td>[% IF item.mode == 'path' %][% terms.path %][% ELSE %][% terms.document %][% END %]</td>
+  <td>[% item.fullname %]</td>
+  <td>[% IF item.mode == 'doc' %][% item.lastmodified %][% END %]</td>
+  <td>[% IF item.mode == 'doc' %][% SizeDisp(item.size) %][% END %]</td>
+  <td>[% IF item.error == 'invalid_encoding' %]無効な文字コード[%
+      ELSIF item.error == 'in_invalid_path' %]無効な [% terms.path %] 中に存在[%
+      ELSIF item.error == 'invalid_path' %]無効な [% terms.path %] 名[%
+      ELSIF item.error == 'path_db_doc' %]既存の [% terms.path %] か [% terms.document %] と同名[%
+      ELSIF item.error == 'invalid_doc' %]無効な [% terms.document %] 名[%
+      ELSIF item.error == 'fail_add_file' %][% terms.document %] への [% terms.file %] の追加失敗[%
+      ELSIF item.error == 'fail_store_file' %][% terms.file %] 保存失敗[%
+      ELSE %][% item.error %][% END %]</td>
 </tr>
 [% END %]
 </table>

@@ -45,6 +45,7 @@ use PSMT::FullSearchMroonga;
     CheckPathIdInParent
 
     CheckPathExist
+    CheckDocExist
     DeleteEmptyPath
 
     ListUserUpForDoc
@@ -916,6 +917,16 @@ sub CheckPathExist {
     $sth->execute($pid, $name);
     if ($sth->rows() == 0) {return -1; }
     return $sth->fetchrow_hashref()->{pathid};
+}
+
+sub CheckDocExist {
+    my ($self, $pid, $name) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg READ');
+    my $sth = $dbh->prepare('SELECT docid FROM docreg WHERE pathid = ? AND filename = ?');
+    $sth->execute($pid, $name);
+    if ($sth->rows() == 0) {return -1; }
+    return $sth->fetchrow_hashref()->{docid};
 }
 
 sub DeleteEmptyPath {

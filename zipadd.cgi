@@ -74,18 +74,29 @@ if ((! defined($flist)) || ($#$flist < 0)) {
 }
 unlink($src);
 
+# uploaded only contains hash for document
+# upfailed both path and document, also 'error' value
+my (@upfailed, @uploaded);
+
 # Ignore directory/file with:
 #  file with '._XXXX'
 #  directory as '__MACOSX' (exact)
 # entry directories
 my (%didlist, %didign, $cdir, $cpid, $tid, $cpdir, $cldir);
 $didlist{''} = $pid;
-foreach $cdir (@$idlist) {$didign{$cdir} = TRUE; }
+foreach $cdir (@$idlist) {
+    &AddUpfailed({'fullname' => $cdir}, 'path', 'invalid_encoding');
+    $didign{$cdir} = TRUE;
+}
 foreach $cdir (@$dlist) {
     if (index($cdir, '/') != -1) {
         $cpdir = substr($cdir, 0, rindex($cdir, '/'));
         $cldir = substr($cdir, rindex($cdir, '/') + 1);
-        if (defined($didign{$cpdir})) {$didign{$cdir} = TRUE; next; }
+        if (defined($didign{$cpdir})) {
+            $didign{$cdir} = TRUE;
+            &AddUpfailed({'fullname' => $cdir}, 'path', 'in_invalid_path');
+            next;
+        }
         if (! defined($didlist{$cpdir})) {push(@$dlist, $cdir); next; }
         $cpid = $didlist{$cpdir};
     } else {
@@ -94,8 +105,12 @@ foreach $cdir (@$dlist) {
     }
     if ($cldir eq '__MACOSX') {
         $didign{$cdir} = TRUE;
+        &AddUpfailed({'fullname' => $cdir}, 'path', 'invalid_path');
     } elsif (($tid = PSMT::File->CheckPathExist($cpid, $cldir)) != -1) {
         $didlist{$cdir} = $tid;
+    } elsif (PSMT::File->CheckDocExist($cpid, $cldir) != -1) {
+        $didign{$cdir} = TRUE;
+        &AddUpfailed({'fullname' => $cdir}, 'path', 'path_db_doc');
     } else {
         $didlist{$cdir} = PSMT::File->RegNewPath($cpid, $cldir, '', undef, undef);
     }
@@ -103,8 +118,7 @@ foreach $cdir (@$dlist) {
 
 # entry files
 my ($cdid, $cname, $cext, $cfid);
-my (@upfailed, @uploaded);
-foreach (@$iflist) {push(@upfailed, $_); }
+foreach (@$iflist) {&AddUpfailed($thash, 'doc', 'invalid_encoding'); }
 foreach (@$flist) {
     $cext = 'dat';
     $cname = $_->{filename};
@@ -113,29 +127,39 @@ foreach (@$flist) {
         $cname = substr($cname, 0, rindex($cname, '.'));
     }
     # check directory valid
-    if (defined($didign{$_->{dirname}})) {push(@upfailed, $_); next; }
+    if (defined($didign{$_->{dirname}})) {
+        &AddUpfailed($_, 'doc', 'in_invalid_path');
+        next;
+    }
     # check filename valid
-    if (substr($_->{filename}, 0, 2) eq '._') {push(@upfailed, $_); next; }
+    if (substr($_->{filename}, 0, 2) eq '._') {
+        &AddUpfailed($_, 'doc', 'invalid_doc');
+        next;
+    }
     # check doc exist
     $cdid = PSMT::File->GetIdFromName($didlist{$_->{dirname}}, $cname);
     if ($cdid == 0) {
+        if (PSMT::File->CheckPathExist($didlist{$_->{dirname}}, $cname) > -1) {
+            &AddUpfailed($_, 'doc', 'path_db_doc');
+            next;
+        }
         $cdid = PSMT::File->RegNewDoc($didlist{$_->{dirname}}, $cname, "", FALSE);
         if ($cdid == 0) {
-            push(@upfailed, $_);
+            &AddUpfailed($_, 'doc', 'invalid_doc');
             next;
         } # what to do?
 #        if ($cdid == 0) {PSMT::Error->throw_error_user('doc_add_failed'); }
     }
     $cfid = PSMT::File->RegNewFileTime($cext, $cdid, '', FALSE, $_->{lastmodified}, undef);
     if (! defined($cfid)) {
-        push(@upfailed, $_);
+        &AddUpfailed($_, 'doc', 'fail_add_file');
         next;
     } # what to do?
 #    if (! defined($cfid)) {
 #        PSMT::Error->throw_error_user('file_register_failed');
 #    }
     if (PSMT::File->MoveNewFile($_->{stored}, $cfid) != TRUE) {
-        push(@upfailed, $_);
+        &AddUpfailed($_, 'doc', 'fail_store_file');
         next;
 #        PSMT::Error->throw_error_user('file_register_failed');
     }
@@ -157,6 +181,13 @@ $obj->template->process('zipadd', 'html');
 
 
 exit;
+
+sub AddUpfailed {
+    my ($hash, $mode, $err) = @_;
+    $hash->{mode} = $mode;
+    $hash->{error} = $err;
+    push(@upfailed, $hash);
+}
 
 # XXX: check on path/file names non-UTF8
 sub ExtractZip {
@@ -201,7 +232,7 @@ sub ExtractZip {
                 $extfile = Encode::decode($zip_enc, $extfile);
             }
             if (PSMT::Util->ValidateEncoding($extfile) > 0) {
-                push(@invfile, $extfile);
+                push(@invdir, $extfile);
                 next;
             }
             if (substr($extfile, length($extfile) - 1) eq '/') {

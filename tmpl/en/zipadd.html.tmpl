@@ -46,15 +46,26 @@
 <h4>List of failed files</h4>
 <table class="dirlist tablesorter">
 <tr>
-  <th>[% terms.document %] name in archive</th>
+  <th>[% terms.path %] or [% terms.document %]</th>
+  <th>Name in archive</th>
   <th>Last modified</th>
   <th>Size</th>
+  <th>Error</th>
 </tr>
 [% FOREACH item IN up_fail %]
 <tr>
-  <td>[% item.dirname %]/[% item.filename %]</td>
-  <td>[% item.lastmodified %]</td>
-  <td>[% SizeDisp(item.size) %]</td>
+  <td>[% IF item.mode == 'path' %][% terms.path %][% ELSE %][% terms.document %][% END %]</td>
+  <td>[% item.fullname %]</td>
+  <td>[% IF item.mode == 'doc' %][% item.lastmodified %][% END %]</td>
+  <td>[% IF item.mode == 'doc' %][% SizeDisp(item.size) %][% END %]</td>
+  <td>[% IF item.error == 'invalid_encoding' %]Name in invalid encoding[% 
+      ELSIF item.error == 'in_invalid_path' %]In invalid [% terms.path %] name[%
+      ELSIF item.error == 'invalid_path' %]Invalid [% terms.path %] name[%
+      ELSIF item.error == 'path_db_doc' %][% terms.path %] or [% terms.document %] in the same name already exist[%
+      ELSIF item.error == 'invalid_doc' %]Invalid [% terms.document %] name[%
+      ELSIF item.error == 'fail_add_file' %]Adding [% terms.file %] to [% terms.document %] failed[%
+      ELSIF item.error == 'fail_store_file' %]Failed on storing [% terms.file %][%
+      ELSE %][% item.error %][% END %]</td>
 </tr>
 [% END %]
 </table>
