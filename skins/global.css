@@ -279,4 +279,7 @@ table.tablesorter thead td.tdhead {
     text-align: center;
 }
 
+p.step {
+    margin-left: 2em;
+}
 

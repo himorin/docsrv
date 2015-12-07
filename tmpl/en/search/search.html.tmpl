@@ -9,7 +9,7 @@
 <p>
 To use each condition, check the box just before each title.
 Merge results as <select name="global_cond">
-<option value="AND" selected="selected">ALL</option>
+<option value="AND" selected="selected">AND</option>
 <option value="OR">OR</option></select>.
 <br />
 Note, [% terms.path %] matched in each section except for <em>restriction</em> 
@@ -18,19 +18,17 @@ part will be shown in separated and not taken in account for
 matched [% terms.path %]).
 </p>
 
-<div class="searchcond">
 <h3>Search conditions</h3>
+<div class="searchcond">
 
 <p><label>
 <input type="checkbox" name="searchcond" value="sc_full" checked="checked">
 Full text indexed search</label></p>
-<div class="searchcond">
-<p>Current suppoerted formats of full text index are:
+<p class="step">Current suppoerted formats of full text index are:
 [% constants.HE_FILE_FILTER.keys.sort.join(', ') %].
 Evey file in these formats will be queried, but any others will be just 
 ignored.</p>
-<p><input type="text" name="fullindex" value="" class="inputwide"></p>
-</div>
+<p class="step"><input type="text" name="fullindex" value="" class="inputwide"></p>
 
 <p><label><input type="checkbox" name="searchcond" value="sc_name">
 Search by name</label>:
@@ -41,8 +39,9 @@ Search by description</label>:
 <input type="text" name="cnd_desc" value="" size="60"></p>
 
 </div>
-<div class="searchcond">
+
 <h3>Restrictions</h3>
+<div class="searchcond">
 <p>To be implemented.</p>
 </div>
 

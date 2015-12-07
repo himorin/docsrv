@@ -9,7 +9,7 @@
 <p>
 それぞれの検索条件の項目の前のチェックボックスにチェックを入れてください。
 チェックが入った検索条件について、<select name="global_cond">
-<option value="AND" selected="selected">ALL</option>
+<option value="AND" selected="selected">AND</option>
 <option value="OR">OR</option></select>で評価されます。
 <br />
 なお、<em>検索結果の制限</em>の項目以外での指定に合致した [% terms.path %]
@@ -19,18 +19,16 @@
 を表示するようなことがないように設定された制約です。
 </p>
 
-<div class="searchcond">
 <h3>検索条件</h3>
+<div class="searchcond">
 
 <p><label>
 <input type="checkbox" name="searchcond" value="sc_full" checked="checked">
 全文検索</label></p>
-<div class="searchcond">
-<p>現在、以下のファイル形式について全文検索を行えます:
+<p class="step">現在、以下のファイル形式について全文検索を行えます:
 [% constants.HE_FILE_FILTER.keys.sort.join(', ') %].
 これら以外については単純に無視されます。</p>
-<p><input type="text" name="fullindex" value="" class="inputwide"></p>
-</div>
+<p class="step"><input type="text" name="fullindex" value="" class="inputwide"></p>
 
 <p><label><input type="checkbox" name="searchcond" value="sc_name">
 名前での検索</label>:
@@ -41,8 +39,9 @@
 <input type="text" name="cnd_desc" value="" size="60"></p>
 
 </div>
-<div class="searchcond">
+
 <h3>検索結果の制限</h3>
+<div class="searchcond">
 <p>将来的に実装予定。</p>
 </div>
 

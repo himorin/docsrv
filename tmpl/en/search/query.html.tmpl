@@ -31,7 +31,7 @@
     <a href="attribute.cgi?target=file&amp;method=get&amp;id=[% list_doc.$item.fid.0 %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
     <a href="fileget.cgi?fid=[% list_doc.$item.fid.0 %]">[% INCLUDE show_table_icon id = 'download' %]</a>
   </td>
-  <td rowspan="[% list_doc.$item.fid.size() %]">[% list_doc.$item.fullname FILTER html %]</td>
+  <td rowspan="[% list_doc.$item.fid.size() %]"><a href="docinfo.cgi?did=[% list_doc.$item.docid %]">[% list_doc.$item.fullname FILTER html %]</a></td>
   <td rowspan="[% list_doc.$item.fid.size() %]">[% list_doc.$item.short_description FILTER html %]</td>
   [% zeroid = list_doc.$item.fid.0 %]
   <td>[% list_file.$zeroid.uname FILTER html %]</td>
