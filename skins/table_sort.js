@@ -1,7 +1,7 @@
 $(document).ready(function() {
   $("table").tablesorter({
     sortList: [[1,0]],
-    headers: { 0: {sorter: false, }, 8: {sorter: false}, },
+    headers: { 0: {sorter: false, }, },
     widgets: ['zebra'],
     textExtraction: function(node) {
       var cx = node.getElementsByTagName('img');

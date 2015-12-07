@@ -8,7 +8,7 @@
     <th rowspan="2"></th>
     <th rowspan="2">名前</th>
     <th rowspan="2">説明</th>
-    <td colspan="4" class="tdhead">最新版</td>
+    <td colspan="3" class="tdhead">最新版</td>
     <th rowspan="2">グループ</th>
     <th rowspan="2">ラベル</th>
   </tr>
@@ -16,7 +16,6 @@
     <th>Uploader</th>
     <th>Date</th>
     <th>Size</th>
-    <th></th>
   </tr>
 [% IF upper_path.defined AND upper_path > -1 %]
   <tr class="upper_path row_even">
@@ -24,7 +23,7 @@
     <td class="path">[% INCLUDE show_table_icon id = 'dir_up' %]
       <a href="pathinfo.cgi?pid=[% upper_path %]">一つ上</a></td>
     <td></td>
-    <td colspan="4"></td>
+    <td colspan="3"></td>
     <td>---</td>
     <td>---</td>
   </tr>
@@ -47,6 +46,7 @@
       [% END %]
       <a href="attribute.cgi?target=path&method=get&id=[% item.pathid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
       <a onclick="download_path([% item.pathid %])">[% INCLUDE show_table_icon id = 'download' %]</a>
+      <a href="zipadd.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a>
       </td>
     <td class="path">[% INCLUDE show_table_icon 
         id = 'dir' html_id = "path_${item.pathid}"
@@ -60,7 +60,6 @@
       </td>
     <td class="pathdesc">[% item.short_description FILTER html %]</td>
     <td></td><td></td><td></td>
-    <td><a href="zipadd.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a></td>
     <td class="group">
       [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]制限なし[% END %]
       <a href="pathgroup.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
@@ -88,6 +87,7 @@
       [% END %]
       <a href="attribute.cgi?target=doc&method=get&id=[% item.docid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>
       <a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
+      <a href="docupdate.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a>
       </td>
     <td class="path">
       [%- INCLUDE show_mime_icon 
@@ -101,10 +101,8 @@
       <td>[% item.lastfile.uname %]</td>
       <td>[% item.lastfile.uptime %]</td>
       <td class="docsize">[% SizeDisp(item.lastfile.size) %]</td>
-      <td><a href="docupdate.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a></td>
     [% ELSE %]
       <td colspan="3" class="center">存在しません</td>
-      <td><a href="docupdate.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a></td>
     [% END %]
     <td class="group">
       [% IF item.gname.defined %]
