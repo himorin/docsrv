@@ -14,6 +14,8 @@ use PSMT::File;
 use PSMT::Access;
 use PSMT::Email;
 
+my $max_read = 65536;
+
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
 
@@ -30,6 +32,18 @@ if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 my $fileinfo = PSMT::File->GetFileInfo($fid);
 if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 
+my $q_range = $ENV{'HTTP_RANGE'};
+my $q_method = $ENV{'REQUEST_METHOD'};
+if (! defined($q_method)) {$q_method = 'GET'; }
+my ($qr_start, $qr_end);
+if (defined($q_range)) {
+    if ($q_range !~ /^bytes=([0-9]+)-([0-9]+)$/) {
+        PSMT::Error->throw_error_user('invalid_param');
+    }
+    $qr_start = $1;
+    $qr_end = $2;
+}
+
 # check permission
 PSMT::Access->CheckForFile($fid);
 
@@ -38,11 +52,21 @@ my $file = PSMT::File->GetFilePath($fid) . $fid;
 if (! -f $file) {PSMT::Error->throw_error_user('invalid_filepath'); }
 my $fname = PSMT::File->GetFileFullPath($fid);
 if (! defined($fname)) {$fname = $fid; }
-PSMT::File->RegUserAccess($fid);
+# if access with range, starting not from 0, not register
+if ((! (defined($q_range) && ($qr_start != 0))) && ($q_method ne 'HEAD')) {
+    PSMT::File->RegUserAccess($fid);
+}
 $fname =~ s/\//_/g;
 
 binmode STDOUT, ':bytes';
 my $ext = PSMT::File->GetFileExt($fid);
+if ($q_method eq 'HEAD') {
+    print "Content-Type: $ext\n";
+    print "Content-Length: " . PSMT::File->GetFileSize($fid) . "\n";
+    print "Accept-Ranges: bytes\n";
+    print "\n";
+    exit;
+}
 if (PSMT::Access->CheckSecureForFile($fid)) {
 #    by zip encrypted
     my $pass = PSMT::Util->GetHashString($fid);
@@ -64,7 +88,7 @@ if (PSMT::Access->CheckSecureForFile($fid)) {
     open(INDAT, $file);
     print <INDAT>;
     close(INDAT);
-} else {
+} elsif (! defined($q_range)) {
 #   just download
     # Quick hack for MSKB #436616
     if ($ENV{'HTTP_USER_AGENT'} =~ / MSIE /) {
@@ -76,12 +100,42 @@ if (PSMT::Access->CheckSecureForFile($fid)) {
             -type => "$ext; name=\"$fname\"",
             -content_disposition => "attachment; filename=\"$fname\"",
             -content_length => PSMT::File->GetFileSize($fid),
+            -accept_ranges => 'bytes',
         );
     binmode STDOUT, ':bytes';
     open(INDAT, $file);
     print <INDAT>;
     close(INDAT);
+} else {
+#   just download
+    # Quick hack for MSKB #436616
+    if ($ENV{'HTTP_USER_AGENT'} =~ / MSIE /) {
+        utf8::encode($fname);
+        $fname =~ s/([^\w ])/'%' . unpack('H2', $1)/eg;
+        $fname .= '.' . $fileinfo->{fileext};
+    }
+    print $obj_cgi->header(
+            -type => "$ext; name=\"$fname\"",
+            -content_disposition => "attachment; filename=\"$fname\"",
+            -content_length => ($qr_end - $qr_start + 1),
+            -content_range => "bytes $qr_start-$qr_end/" . PSMT::File->GetFileSize($fid),
+            -accept_ranges => 'bytes',
+        );
+    binmode STDOUT, ':bytes';
+    open(INDAT, $file);
+    seek(INDAT, 0, $qr_start);
+    my $cpos = $qr_start;
+    my $cbuf;
+    while (($cpos + $max_read) < $qr_end) {
+        read INDAT, $cbuf, $max_read;
+        print $cbuf;
+        $cpos += $max_read;
+    }
+    read INDAT, $cbuf, ($qr_end - $cpos + 1);
+    print $cbuf;
+    close(INDAT);
 }
+
 
 exit;
 

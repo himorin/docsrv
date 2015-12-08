@@ -120,7 +120,7 @@ use constant HE_FILE_FILTER => {
 
 use constant DEF_CONTENTTYPE => 'application/octet-stream';
 use constant IS_PREVIEW => (
-  'image/'
+  'image/', 'application/pdf', 
 );
 use constant SAFE_PROTOCOLS => (
   'ftp', 'http', 'https', 'irc', 'view-source',
