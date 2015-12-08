@@ -44,12 +44,7 @@ if ($type eq 'allpath') {
     $objattr = PSMT::Attribute->new();
     $objattr->SetTarget('doc');
     $hash->{attr} = $objattr->GetAttrForId($iid);
-    my $fmime = PSMT::Constants::contenttypes->{$hash->{lastfile}->{fileext}};
-    if (defined($fmime)) {
-        $hash->{lastfile}->{filemime} = $fmime;
-    } else {
-        $hash->{lastfile}->{filemime} = PSMT::Constants::contenttypes->{'default'};
-    }
+    $hash->{lastfile}->{filemime} = PSMT::Util->GetMimeType($hash->{lastfile}->{fileext});
 } else {PSMT::Error->throw_error_user('invalid_param'); }
 if (! defined($hash)) {PSMT::Error->throw_error_user('invalid_param'); }
 

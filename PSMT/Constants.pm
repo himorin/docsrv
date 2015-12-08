@@ -31,7 +31,8 @@ use Cwd;
   TRUE
   FALSE
 
-  contenttypes
+  DEF_CONTENTTYPE
+  IS_PREVIEW
   SAFE_PROTOCOLS
   DB_MODULE
 
@@ -65,6 +66,7 @@ use constant AVAIL_FORMATS => {
   'pathadd'            => ['html'],
   'pathgroup'          => ['html'],
   'pathinfo'           => ['html'],
+  'preview'            => ['html'],
   'recent'             => ['html'],
   'zipadd'             => ['html'],
 
@@ -104,24 +106,6 @@ use constant AVAIL_FORMATS => {
 
 use constant INVALID_NAME_CHAR => '[\\/\\?\\*\\\\]';
 
-use constant contenttypes =>
-  {
-    "html" => "text/html" ,
-    "txt"  => "text/plain" ,
-    "pdf"  => "application/pdf" ,
-    "rdf"  => "application/rdf+xml" ,
-    "atom" => "application/atom+xml" ,
-    "xml"  => "application/xml" ,
-    "js"   => "application/javascript" ,
-    "json" => "application/json" ,
-    "csv"  => "text/csv" ,
-    "jpg"  => "image/jpeg" ,
-    "gif"  => "image/gif" ,
-    "png"  => "image/png" ,
-    "ics"  => "text/calendar" ,
-    "default" => 'application/octet-stream',
-  };
-
 use constant HE_FILE_FILTER_INTERNAL => 'INTERNAL';
 use constant HE_FILE_FILTER => {
   'pdf'    => '/usr/bin/pdftotext -enc UTF-8',
@@ -134,6 +118,10 @@ use constant HE_FILE_FILTER => {
   'xlsx'   => HE_FILE_FILTER_INTERNAL,
 };
 
+use constant DEF_CONTENTTYPE => 'application/octet-stream';
+use constant IS_PREVIEW => (
+  'image/'
+);
 use constant SAFE_PROTOCOLS => (
   'ftp', 'http', 'https', 'irc', 'view-source',
 );

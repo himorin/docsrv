@@ -13,10 +13,13 @@ package PSMT::Util;
 
 use strict;
 
+use PSMT::Constants;
+
 use Template;
 use Encode;
 use Digest::MD5;
 use Text::Markdown;
+use MIME::Types;
 
 @PSMT::Util::EXPORT = qw(
     filter_none
@@ -41,6 +44,9 @@ use Text::Markdown;
     MergeArrayOr
     MergeHashAnd
     MergeHashOr
+
+    GetMimeType
+    IsPreview
 );
 
 sub StrToIpaddr {
@@ -247,6 +253,22 @@ sub MergeHashOr {
         if (! defined($hash{$_})) {$hash{$_} = $hash2->{$_}; }
     }
     return \%hash;
+}
+
+sub GetMimeType {
+    my ($self, $ext) = @_;
+    my $mime = MIME::Types->new();
+    my $fmime = $mime->mimeTypeOf($ext);
+    if (defined($fmime)) {return $fmime; }
+    return DEF_CONTENTTYPE;
+}
+
+sub IsPreview {
+    my ($self, $mime) = @_;
+    foreach (PSMT::Constants::IS_PREVIEW) {
+        if (index($mime, $_) == 0) {return $_; }
+    }
+    return FALSE;
 }
 
 1;

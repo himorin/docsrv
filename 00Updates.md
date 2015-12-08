@@ -1,3 +1,9 @@
+# 0.6
+
+* Replaced Search function
+* UI tweaks
+* Added new UI configuration parameter: table.preview, table.nopreview
+
 # 0.5.7
 
 * Replaced FullSearchHE to FullSearchMroonga

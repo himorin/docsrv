@@ -277,8 +277,7 @@ sub GetDocLastPostFileInfo {
     $sth->execute($docid);
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
-    $ref->{size} = $self->GetFileSize($ref->{fileid});
-    return $ref;
+    return $self->_attach_file_info($ref);
 }
 
 sub GetFullPathArray {
@@ -677,10 +676,7 @@ sub GetFileExt {
         my $ref = $sth->fetchrow_hashref();
         $ext = $ref->{'fileext'};
     }
-    if (defined(contenttypes->{$ext})) {
-        return contenttypes->{$ext};
-    }
-    return 'application/octet-stream';
+    return PSMT::Util->GetMimeType($ext);
 }
 
 # by default : For admin all, for non-admin enabled + self-uploaded
@@ -701,7 +697,7 @@ sub GetFileInfo {
         $sth->execute($fileid, $uname);
     }
     if ($sth->rows != 1) {return undef; }
-    return $sth->fetchrow_hashref();
+    return $self->_attach_file_info($sth->fetchrow_hashref());
 }
 
 sub GetFilesInfo {
@@ -1134,6 +1130,17 @@ sub GetHashString {
     $hash =~ s/\+/\_/g;
     $hash =~ s/\//-/g;
     return $hash;
+}
+
+sub _attach_file_info {
+    my ($self, $ref) = @_;
+    if ((! defined($ref)) || (! defined($ref->{fileid})) || (! defined($ref->{fileext}))) {
+        return undef;
+    }
+    $ref->{size} = $self->GetFileSize($ref->{fileid});
+    $ref->{filemime} = PSMT::Util->GetMimeType($ref->{fileext});
+    $ref->{preview} = PSMT::Util->IsPreview($ref->{filemime});
+    return $ref;
 }
 
 1;

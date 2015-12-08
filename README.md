@@ -7,6 +7,7 @@ You need the following softwares.
 * Perl
     * TemplateToolkit
     * Email::Send
+    * MIME::Types
     * Net::LDAP
     * Archive::Zip
     * XML::DOM
@@ -52,12 +53,16 @@ You need the following softwares.
 * email_lang : Default language for email
 * file_path : Files to be stored
 * hash_depth : Hash directory depth to store files
-* he_dir : Hyper Estraier data direrctory <NOT USED NOW>
 * ldap_basedn : LDAP base dn
 * ldap_uri : LDAP URI
 * view_mime : MIME type to be used for browser display ('image' by default)
 
 # UPGRADE NOTES
+
+## To 0.6 from 0.5.7
+
+* New perl module required: MIME::Types
+* Require Mroonga extension for MariaSQL server
 
 ## To 0.5.7 from 0.5.6
 

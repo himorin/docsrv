@@ -164,15 +164,7 @@ sub process {
     }
     $template .= '.' . $ext . '.tmpl';
     if (! defined($out)) {
-        if (defined(PSMT::Constants::contenttypes->{$ext})) {
-            print PSMT->cgi()->header(
-                -type => PSMT::Constants::contenttypes->{$ext}
-            );
-        } else {
-            print PSMT->cgi()->header(
-                -type => PSMT::Constants::contenttypes->{'default'}
-            );
-        }
+        print PSMT->cgi()->header( -type => PSMT::Util->GetMimeType($ext) );
     }
     $obj_template->process($template, PSMT->template->vars(), $out);
 }

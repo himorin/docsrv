@@ -1,0 +1,19 @@
+[% IF NOT fileinfo.preview %]
+[% PROCESS global/header.html.tmpl
+  current_page = "pewview"
+  page_title = "プレビューできません"
+%]
+<h3>"[% fileinfo.fileid %]"のプレビューは実装されていません</h3>
+<p>ファイルはユーザ "[% fileinfo.uname %]" により [% fileinfo.uptime %] に追加されました。</p>
+[% PROCESS global/footer.html.tmpl %]
+[% ELSE %]
+<!DOCTYPE html><html lang="en"><head>
+<title>Preview [% fileinfo.fileid %]</title>
+<body style="margin: 0; padding: 0;">
+[% IF fileinfo.preview == 'image/' %]
+<img src="fileget.cgi?fid=[% fileinfo.fileid %]" style="margin: 0; padding: 0; max-width: 100%; max-height: 100%" />
+[% ELSIF fileinfo.preview == 'application/pdf' %]
+<iframe src="skins/ViewerJS/#../../fileget.cgi?fid=[% fileinfo.fileid %]"></iframe>
+[% END %]
+</body>
+[% END %]
