@@ -111,6 +111,7 @@ sub _parse_format {
 # add to fulltext index data store, or update if exists
 sub _add_text {
     my ($self, $fid, $text) = @_;
+    if (! defined($text)) {return ; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('fullindex WRITE');
     my $sth = $dbh->prepare('SELECT fileid FROM fullindex WHERE fileid = ?');
