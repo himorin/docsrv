@@ -5,8 +5,6 @@ var popup_callback = function(messages) {
   }
 
   var pmes;
-  var preview = '';
-  var preview_name;
   if (messages.type == "docinfo") {
     pmes  = "ID: path = " + messages.data.pathid;
     pmes += ", document = " + messages.data.docid;
@@ -35,11 +33,6 @@ var popup_callback = function(messages) {
     pmes += "<br> - Type: " + messages.data.lastfile.fileext;
     pmes += "<br> - Size: " + messages.data.lastfile.size;
     pmes += "<br> - Date: " + messages.data.lastfile.uptime;
-    if (messages.data.lastfile.filemime.substring(0, 
-        messages.data.lastfile.filemime.indexOf('/')) == 'image') {
-      preview = 'image';
-      preview_name = messages.data.lastfile.fileid;
-    }
   } else if (messages.type == "pathinfo") {
     pmes  = "ID: path = " + messages.data.pathid;
     pmes += ", parent = " + messages.data.parent;
@@ -59,10 +52,6 @@ var popup_callback = function(messages) {
     pmes += "<tr><td>" + i + "</td><td>" + messages.data.attr[i] + "</td></tr>";
   }
   pmes += "</tbody></table>";
-  if (preview == 'image') {
-    pmes = "<image width=\"250px\" src=\"fileget.cgi?fid=" + preview_name
-        + "\" /><br>" + pmes;
-  }
   $("#popup_dialog").html(pmes);
 }
 
@@ -75,5 +64,4 @@ function popup_jsoncall (target) {
   $.ajax({type: 'GET', url: url, dataType: 'json'}).done(popup_callback
     ).fail(function(data, stat, errorTh){alert("Async call failed: " + stat);});
 }
-
 
