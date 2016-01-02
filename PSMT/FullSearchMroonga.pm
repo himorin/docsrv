@@ -39,7 +39,7 @@ sub ExecSearch {
     my ($self, $phrase) = @_;
     my @fids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fullindex docinfo READ');
+    $dbh->db_lock_tables('fullindex READ', 'docinfo READ');
     my $sth = $dbh->prepare('SELECT fullindex.fileid AS fileid FROM fullindex INNER JOIN docinfo ON fullindex.fileid = docinfo.fileid WHERE MATCH (fullindex.content) AGAINST (?) AND docinfo.enabled = 1');
     $sth->execute($phrase);
     my $ref;
