@@ -45,6 +45,11 @@ sub get_param_list {
             type     => 'text',
             default  => 'cp932',
         },
+        {
+            name     => 'cl_user',
+            type     => 'text',
+            default  => '',
+        },
     );
     return @param_list;
 }

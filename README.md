@@ -37,6 +37,7 @@ You need the following softwares.
 * admin_email ; Administrator email to be dispayed
 * admingroup ; LDAP Group who are marked site admin
 * base_uri : URI base of installation
+* cl_user: user name for command line (non authed CGI)
 * cookie_domain : cookie domain restriction if need to restrict
 * cookie_expires : default cookie expire period
 * cookie_path : cookie path if need to restrict

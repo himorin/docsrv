@@ -3,9 +3,10 @@
 use strict;
 
 use PSMT;
+use PSMT::Config;
 use PSMT::FullSearchMroonga;
 
-$ENV{'REMOTE_USER'} = 'shimono';
+$ENV{'REMOTE_USER'} = PSMT::Config->GetParam('cl_user');
 
 my $cond = $ARGV[0];
 if (! defined($cond)) {

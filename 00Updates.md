@@ -3,6 +3,7 @@
 * Replaced Search function
 * UI tweaks
 * Added new UI configuration parameter: table.preview, table.nopreview
+* Added new configuration parameter: cl_user
 
 # 0.5.7
 

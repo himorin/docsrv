@@ -3,10 +3,11 @@
 use strict;
 
 use PSMT;
+use PSMT::Config;
 use PSMT::Constants;
 use PSMT::FullSearchMroonga;
 
-$ENV{'REMOTE_USER'} = 'shimono';
+$ENV{'REMOTE_USER'} = PSMT::Config->GetParam('cl_user');
 
 if (! -d '/usr/share/poppler/cMap/Adobe-Japan1') {
     print "Warning, cannot found Adobe-Japan1 in your system.\n";
