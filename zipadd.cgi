@@ -47,6 +47,7 @@ if ($obj_cgi->request_method() ne 'POST') {
     $obj->template->set_vars('mode', 'upload');
     $obj->template->set_vars('pid', $pid);
     $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($pid));
+    $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
     $obj->template->process('zipadd', 'html');
     exit;
 }

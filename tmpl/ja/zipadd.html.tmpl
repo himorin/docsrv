@@ -8,12 +8,34 @@
 <h3>[% terms.path %] "/[% full_path %]" への一括アップロード</h3>
 <form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
 <input type="hidden" name="pid" value="[% pid %]"></li>
-<ul>
-<li><label><input type="radio" name="source" value="dav" />WebDAV にあるファイル</label> /
-    <label><input type="radio" name="source" value="upload" />ファイルアップロード</label></li>
-<li><label>WebDAV のファイル名 : <input type="text" name="dav_source" size="50"></label></li>
-<li><label>アップロードファイル : <input type="file" name="target_file" /></label></li>
-</ul>
+<p>
+  <label><input type="radio" name="source" value="upload" checked="checked" /> ローカルファイルをアップロード: </label>
+  <input type="file" name="target_file" size="80" />
+  <br />
+  10MB程度以上のファイルをアップロードしようとした場合、ブラウザやサーバの状況に
+  よってはタイムアウトする可能性があります。
+  [% IF Param.dav_uri != "" %]
+    その場合、下のチェックボックスを選択し、
+    <a href="[% Param.dav_uri %]">WebDAV</a>
+    に先にアップロードしたファイルから追加する機能を利用してください。
+    (<a href="http://www.google.co.jp/search?q=webdav">WebDAVとは</a>)
+  [% END %]
+</p>
+
+[% IF dav_file.defined && Param.dav_uri != "" %]
+  <p>
+    [% IF dav_file.keys.size == 0 %]
+      WebDAV領域にファイルはありません。
+    [% ELSE %]
+      <label><input type="radio" name="source" value="dav" /> WebDAVに置いたファイルを利用 :</label>
+      <select name="dav_source">
+        [% FOREACH item IN dav_file.keys %]
+          <option value="[% item %]">[% item %] ([% SizeDisp(dav_file.$item) %])</option>
+        [% END %]
+      </select>
+    [% END %]
+  </p>
+[% END %]
 <input type="submit" />
 </form>
 [% ELSIF mode == 'result' %]

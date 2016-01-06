@@ -8,12 +8,36 @@
 <h3>Upload files to [% terms.path %] "/[% full_path %]"</h3>
 <form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
 <input type="hidden" name="pid" value="[% pid %]"></li>
-<ul>
-<li><label><input type="radio" name="source" value="dav" />WebDAV</label> /
-    <label><input type="radio" name="source" value="upload" />Upload</label></li>
-<li><label>dav source : <input type="text" name="dav_source" size="50"></label></li>
-<li><label>File : <input type="file" name="target_file" /></label></li>
-</ul>
+<p>
+  <label><input type="radio" name="source" value="upload" checked="checked" /> Upload from local file: </label>
+  <input type="file" name="target_file" size="80" />
+  <br />
+  If you try to upload a large file like over than 10MB, system sometimes cause 
+  timeout depending on the conditions of network or server. 
+  [% IF Param.dav_uri != "" %]
+    If you get timeout, please try to upload into 
+    <a href="[% Param.dav_uri %]">WebDAV</a>
+    space first, and 
+    select the file from selection below with checking on the check box below.
+    (<a href="http://www.google.co.jp/search?q=webdav">About WebDAV</a>)
+  [% END %]
+</p>
+
+[% IF dav_file.defined && Param.dav_uri != "" %]
+  <p>
+    [% IF dav_file.keys.size == 0 %]
+      No file in the WebDAV space.
+    [% ELSE %]
+      <label><input type="radio" name="source" value="dav" /> Use file in the WebDAV space :</label>
+      <select name="dav_source">
+        [% FOREACH item IN dav_file.keys %]
+          <option value="[% item %]">[% item %] ([% SizeDisp(dav_file.$item) %])</option>
+        [% END %]
+      </select>
+    [% END %]
+  </p>
+[% END %]
+
 <input type="submit" />
 </form>
 [% ELSIF mode == 'result' %]
