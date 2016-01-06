@@ -221,7 +221,7 @@ sub ExtractZip {
                 push(@invfile, $hret);
                 next;
             }
-            ($out, $extfile) = tempfile( DIR => PSMT::Config->GetParam('dav_path'));
+            ($out, $extfile) = tempfile( DIR => PSMT::Config->GetParam('dav_path') . '/zipadd/');
             close $out;
             if ($obj_zip->extractMember($_->{fileName}, $extfile) == AZ_OK) {
                 $hret->{stored} = $extfile;
