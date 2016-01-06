@@ -18,6 +18,7 @@ use CGI qw(
     :unique_headers
     :private_tempfiles
 );
+$CGI::LIST_CONTEXT_WARN = 0;
 use base qw(CGI);
 
 use PSMT::Constants;
