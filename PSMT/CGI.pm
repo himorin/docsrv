@@ -18,7 +18,6 @@ use CGI qw(
     :unique_headers
     :private_tempfiles
 );
-$CGI::LIST_CONTEXT_WARN = 0;
 use base qw(CGI);
 
 use PSMT::Constants;
@@ -48,6 +47,7 @@ sub new {
 
 sub param {
     my ($self, @args) = @_;
+    local $CGI::LIST_CONTEXT_WARN = 0;
     if (scalar(@args) == 1) {
         # for parameter valur request, check utf8 flag
         my @result = $self->SUPER::param(@args);
