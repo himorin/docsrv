@@ -51,9 +51,7 @@ sub param {
     if (scalar(@args) == 1) {
         # for parameter valur request, check utf8 flag
         my @result = $self->SUPER::param(@args);
-        for (0 ... $#result) {
-            if (! utf8::is_utf8($result[$_])) {utf8::decode($result[$_]); }
-        }
+        $result = map { _fix_utf8($_) } @result;
         return wantarray ? @result : $result[0];
     }
     return $self->SUPER::param(@args);
@@ -114,6 +112,12 @@ sub is_windows {
 }
 
 ################################################################## PRIVATE
+
+sub _fix_utf8 {
+    my ($input) = @_;
+    utf8::decode($input) if defined($input) && !ref($input);
+    return $input;
+}
 
 1;
 
