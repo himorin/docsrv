@@ -51,7 +51,7 @@ sub param {
     if (scalar(@args) == 1) {
         # for parameter valur request, check utf8 flag
         my @result = $self->SUPER::param(@args);
-        $result = map { _fix_utf8($_) } @result;
+        @result = map { _fix_utf8($_) } @result;
         return wantarray ? @result : $result[0];
     }
     return $self->SUPER::param(@args);
