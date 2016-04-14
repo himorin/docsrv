@@ -30,6 +30,7 @@ CREATE TABLE docinfo (
   uname         text                 NOT NULL                            ,
   srcip         int         UNSIGNED NOT NULL                            ,
   description   text                     NULL                            ,
+  shahash       text                     NULL                            ,
   enabled       int                  NOT NULL DEFAULT 1                  
 ) DEFAULT CHARSET=utf8 ;
 
