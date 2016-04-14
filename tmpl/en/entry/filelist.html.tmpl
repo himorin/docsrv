@@ -57,6 +57,11 @@ function tweak_ToggleFileDisp (target) {
       [% ELSE %]
         [% INCLUDE show_table_icon id = 'hide_file' html_id = "fdisp_$item.fileid" %]
       [% END %]
+      [% IF item.preview %]
+        <a onclick="window.open('preview.cgi?fid=[% item.fileid %]','preview-[% item.fileid %]','width=300,height=300');">[% INCLUDE show_table_icon id = 'preview' %]</a>
+      [% ELSE %]
+        [% INCLUDE show_table_icon id = 'nopreview' %]
+      [% END %]
       </td>
     <td class="path">
       [%- INCLUDE show_mime_icon id = item.fileext -%]

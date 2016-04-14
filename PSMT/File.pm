@@ -217,8 +217,7 @@ sub ListFilesInDoc {
     }
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {
-        $ref->{size} = $self->GetFileSize($ref->{fileid});
-        push(@flist, $ref);
+        push(@flist, $self->_attach_file_info($ref));
     }
     return \@flist;
 }
