@@ -69,7 +69,6 @@ $obj->template->set_vars('doc_info', $docinfo);
 $obj->template->set_vars('doc_labels', PSMT::Label->ListLabelOnDoc($did));
 $obj->template->set_vars('file_list', $file_list);
 $obj->template->set_vars('file_uname', \@file_users);
-$obj->template->set_vars('activity', PSMT::File->ListUserLoadForDoc($did));
 $obj->template->set_vars('group_list', PSMT::Access->ListDocRestrict($did));
 $obj->template->set_vars('allpath', \%hash);
 

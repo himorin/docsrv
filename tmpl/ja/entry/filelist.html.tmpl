@@ -60,7 +60,7 @@ function tweak_ToggleFileDisp (target) {
       </td>
     <td class="path">
       [%- INCLUDE show_mime_icon id = item.fileext -%]
-      [% item.fileid FILTER html %]</td>
+      <a href="fileinfo.cgi?fid=[% item.fileid FILTER html %]">[% item.fileid FILTER html %]</a></td>
     <td>[% item.fileext %]</td>
     <td class="filedesc">[% item.description FILTER html %]</td>
     <td>[% item.uname %]</td>

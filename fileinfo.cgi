@@ -45,7 +45,6 @@ PSMT::Access->CheckForFile($fid);
 print $obj_cgi->header();
 
 # insert parameters
-$obj->template->set_vars('user_load', PSMT::File->ListUserLoad($fid));
 $obj->template->set_vars('file_info', PSMT::File->GetFileInfo($fid));
 $obj->template->set_vars('file_type', PSMT::File->GetFileExt($fid));
 
