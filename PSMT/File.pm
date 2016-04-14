@@ -41,6 +41,7 @@ use PSMT::FullSearchMroonga;
     ListNullPath
     ListFileNoHash
     AddFileHash
+    CheckFileHash
 
     SearchPath
     SearchDocFile
@@ -1140,6 +1141,18 @@ sub AddFileHash {
         return FALSE;
     }
     return TRUE;
+}
+
+sub CheckFileHash {
+    my ($self, $hash) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE shahash = ?');
+    $sth->execute($hash);
+    if ($sth->rows() == 0) {return undef; }
+    my ($ref, @ret);
+    while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{fileid}); }
+    return \@ret;
 }
 
 ################################################################## PRIVATE
