@@ -11,6 +11,7 @@ package PSMT::File;
 use strict;
 
 use Digest::MD5;
+use Digest::SHA;
 use File::Path;
 use File::Temp qw/ tempfile tempdir /;
 
@@ -39,6 +40,10 @@ use PSMT::FullSearchMroonga;
 
     ListAllPath
     ListNullPath
+    ListFileNoHash
+    AddFileHash
+    CheckFileHash
+    CheckDavHash
 
     SearchPath
     SearchDocFile
@@ -925,12 +930,38 @@ sub MoveNewFile {
 
 sub SaveToDav {
     my ($self, $fh) = @_;
+    my $objSHA = new Digest::SHA->new(HASH_SIZE);
     my ($out, $fname) = tempfile( DIR => PSMT::Config->GetParam('dav_path') );
     my $buf;
     binmode $out;
-    while (read($fh, $buf, 1024)) {print $out $buf; }
+    while (read($fh, $buf, 1024)) {
+        print $out $buf;
+        $objSHA->add($buf);
+    }
     close $out;
+    my $chash = $objSHA->b64digest;
+    my $cmatch;
+    if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
+        unlink $fname;
+        PSMT::Template->set_vars('matched', $cmatch);
+        PSMT::Error->throw_error_user('file_hash_match');
+    }
     return $fname;
+}
+
+sub CheckDavHash {
+    my ($self, $fname) = @_;
+    my $objSHA = new Digest::SHA->new(HASH_SIZE);
+    open(INDAT, $fname);
+    binmode INDAT;
+    my $buf;
+    while (read(INDAT, $buf, 1024)) {$objSHA->add($buf); }
+    my $chash = $objSHA->b64digest;
+    my $cmatch;
+    if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
+        PSMT::Template->set_vars('matched', $cmatch);
+        PSMT::Error->throw_error_user('file_hash_match');
+    }
 }
 
 sub ValidateNameInPath {
@@ -1117,6 +1148,39 @@ sub SearchDocFile {
     return \%ret;
 }
 
+sub ListFileNoHash {
+    my ($self) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    my $sth = $dbh->prepare("SELECT fileid FROM docinfo WHERE CHAR_LENGTH(shahash) <> ? OR shahash IS NULL");
+    $sth->execute(HASH_LEN);
+    my (@ret, $ref);
+    while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{fileid}); }
+    return \@ret;
+}
+
+sub AddFileHash {
+    my ($self, $fid, $hash) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo WRITE');
+    my $sth = $dbh->prepare("UPDATE docinfo SET shahash = ? WHERE fileid = ?");
+    if ($sth->execute($hash, $fid) == 0) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+sub CheckFileHash {
+    my ($self, $hash) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE shahash = ?');
+    $sth->execute($hash);
+    if ($sth->rows() == 0) {return undef; }
+    my ($ref, @ret);
+    while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{fileid}); }
+    return \@ret;
+}
 
 ################################################################## PRIVATE
 

@@ -1,0 +1,25 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "zipadd"
+  page_title = "ZIP形式のアップロード失敗"
+  javascript = "table_sort.js"
+%]
+
+<h3>以下のファイルが既に存在しているためアップロードは失敗</h3>
+
+<table class="dirlist tablesorter">
+<tr>
+  <th>ファイル名</th>
+  <th>アップロード済</th>
+</tr>
+[% FOREACH item IN hashmatch.keys %]
+<tr>
+  <td>[% item %]</td>
+  <td>[% FOREACH fid IN hashmatch.$item -%]
+        [%- IF ! loop.first %], [% END -%]
+        <a href="fileinfo.cgi?fid=[% fid %]">[% fid %]</a>
+      [% END %]</td>
+</tr>
+[% END %]
+</table>
+
+

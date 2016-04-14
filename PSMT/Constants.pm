@@ -37,6 +37,9 @@ use Cwd;
   DB_MODULE
 
   DB_UNLOCK_ABORT
+
+  HASH_SIZE
+  HASH_LEN
 );
 
 use constant TRUE         => 1;
@@ -69,6 +72,7 @@ use constant AVAIL_FORMATS => {
   'preview'            => ['html'],
   'recent'             => ['html'],
   'zipadd'             => ['html'],
+  'zipadd-fail'        => ['html'],
 
   'attribute/list'     => ['html', 'json'],
   'attribute/get'      => ['html', 'json'],
@@ -138,6 +142,10 @@ use constant DB_MODULE => {
 
 # DB
 use constant DB_UNLOCK_ABORT => 1;
+
+# SHA hash
+use constant HASH_SIZE => 512;
+use constant HASH_LEN  => 86;
 
 # installation locations
 # parent

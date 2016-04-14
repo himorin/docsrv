@@ -64,6 +64,12 @@
     [% END %]
   [% ELSIF error == 'unknown_icon_target' %]
     未定義のアイコンの分類を指定しました。オプションを確認してください。
+  [% ELSIF error == 'file_hash_match' %]
+    アップロードしたファイルは既に登録済みです: 
+    [% FOREACH item IN matched -%]
+      [%- IF ! loop.first %], [% END -%]
+      <a href="fileinfo.cgi?fid=[% item %]">[% item %]</a>
+    [% END %]
   [% ELSE %]
     このエラーコード [% error %] は未定義です。
   [% END %]

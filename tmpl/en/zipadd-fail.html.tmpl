@@ -1,0 +1,25 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "zipadd"
+  page_title = "Uploaded files via archive failed"
+  javascript = "table_sort.js"
+%]
+
+<h3>Upload failed, following files already exists</h3>
+
+<table class="dirlist tablesorter">
+<tr>
+  <th>File name</th>
+  <th>Matched files</th>
+</tr>
+[% FOREACH item IN hashmatch.keys %]
+<tr>
+  <td>[% item %]</td>
+  <td>[% FOREACH fid IN hashmatch.$item -%]
+        [%- IF ! loop.first %], [% END -%]
+        <a href="fileinfo.cgi?fid=[% fid %]">[% fid %]</a>
+      [% END %]</td>
+</tr>
+[% END %]
+</table>
+
+

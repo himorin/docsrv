@@ -12,6 +12,7 @@ You need the following softwares.
     * Archive::Zip
     * XML::DOM
     * Text::Markdown
+    * Digest::SHA
 * Apache (with LDAP auth)
 
 # Installation procedure
@@ -64,6 +65,7 @@ You need the following softwares.
 
 * New perl module required: MIME::Types
 * Require Mroonga extension for MariaSQL server
+* One table modified: docinfo
 
 ## To 0.5.7 from 0.5.6
 
