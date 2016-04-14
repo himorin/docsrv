@@ -3,6 +3,7 @@
 use strict;
 use Digest::SHA;
 
+use PSMT;
 use PSMT::Constants;
 use PSMT::File;
 

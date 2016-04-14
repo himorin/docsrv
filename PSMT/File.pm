@@ -1127,7 +1127,7 @@ sub ListFileNoHash {
     my $sth = $dbh->prepare("SELECT fileid FROM docinfo WHERE CHAR_LENGTH(shahash) <> ? OR shahash IS NULL");
     $sth->execute(HASH_LEN);
     my (@ret, $ref);
-    while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref); }
+    while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{fileid}); }
     return \@ret;
 }
 
