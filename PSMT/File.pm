@@ -940,7 +940,7 @@ sub SaveToDav {
         $objSHA->add($buf);
     }
     close $out;
-    $chash = $objSHA->b64digest;
+    my $chash = $objSHA->b64digest;
     my $cmatch;
     if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
         unlink $fname;
