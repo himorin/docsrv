@@ -11,6 +11,7 @@ package PSMT::File;
 use strict;
 
 use Digest::MD5;
+use Digest::SHA;
 use File::Path;
 use File::Temp qw/ tempfile tempdir /;
 
@@ -42,6 +43,7 @@ use PSMT::FullSearchMroonga;
     ListFileNoHash
     AddFileHash
     CheckFileHash
+    CheckDavHash
 
     SearchPath
     SearchDocFile
@@ -929,12 +931,38 @@ sub MoveNewFile {
 
 sub SaveToDav {
     my ($self, $fh) = @_;
+    my $objSHA = new Digest::SHA->new(HASH_SIZE);
     my ($out, $fname) = tempfile( DIR => PSMT::Config->GetParam('dav_path') );
     my $buf;
     binmode $out;
-    while (read($fh, $buf, 1024)) {print $out $buf; }
+    while (read($fh, $buf, 1024)) {
+        print $out $buf;
+        $objSHA->add($buf);
+    }
     close $out;
+    $chash = $objSHA->b64digest;
+    my $cmatch;
+    if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
+        unlink $fname;
+        PSMT::Template->set_vars('matched', $cmatch);
+        PSMT::Error->throw_error_user('file_hash_match');
+    }
     return $fname;
+}
+
+sub CheckDavHash {
+    my ($self, $fname) = @_;
+    my $objSHA = new Digest::SHA->new(HASH_SIZE);
+    open(INDAT, $fname);
+    binmode INDAT;
+    my $buf;
+    while (read(INDAT, $buf, 1024)) {$objSHA->add($buf); }
+    my $chash = $objSHA->b64digest;
+    my $cmatch;
+    if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
+        PSMT::Template->set_vars('matched', $cmatch);
+        PSMT::Error->throw_error_user('file_hash_match');
+    }
 }
 
 sub ValidateNameInPath {

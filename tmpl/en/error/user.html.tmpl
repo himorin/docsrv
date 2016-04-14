@@ -62,6 +62,12 @@ and what you did just before this error.
     [% END %]
   [% ELSIF error == 'unknown_icon_target' %]
     You have specified unknown icon target. Please check the option.
+  [% ELSIF error == 'file_hash_match' %]
+    Your file already exists: 
+    [% FOREACH item IN matched -%]
+      [%- IF ! loop.first %], [% END -%]
+      <a href="fileinfo.cgi?fid=[% item %]">[% item %]</a>
+    [% END %]
   [% ELSE %]
     This error code [% error %] is undefined.
   [% END %]

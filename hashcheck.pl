@@ -20,7 +20,7 @@ foreach (@$flist) {
     $chash = $objSHA->b64digest;
     if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
         print "$_ Matched with: \n";
-        print join(@$cmatch, "\n");
+        print join("\n", @$cmatch);
     }
     if (PSMT::File->AddFileHash($_, $chash) == FALSE) {
         print "Hash Add Failed: $_\n";

@@ -59,6 +59,7 @@ if ($obj_cgi->request_method() eq 'POST') {
         $src = $obj_cgi->param('dav_source');
         if (rindex($src, '.') != -1) {$ext = substr($src, rindex($src, '.') + 1); }
         $src = PSMT::Config->GetParam('dav_path') . '/' . $src;
+        PSMT::File->CheckDavHash($src);
     } elsif ($source eq 'upload') {
         my $fh = $obj_cgi->upload('target_file');
         my $fname = $obj_cgi->param('target_file');
