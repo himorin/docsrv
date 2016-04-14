@@ -94,6 +94,8 @@ use constant AVAIL_FORMATS => {
   'global/header'      => ['html'],
 
   'json/docinfo'       => ['html', 'json'],
+  'json/loaddoc'       => ['html', 'json'],
+  'json/loadfile'      => ['html', 'json'],
   'json/pathinfo'      => ['html', 'json'],
   'json/table'         => ['html', 'json'],
   'json/wrap'          => ['js'],

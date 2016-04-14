@@ -45,6 +45,9 @@ Please check descriptions of [% terms.file %] carefully.</p>
     [% ELSE %](undefined)[% END %]
     <a href="doclabel.cgi?did=[% doc_info.docid %]">[% INCLUDE show_table_icon id = 'label_add' %]</a>
     </li>
+  [% IF UpDoc(doc_info.docid) || Admin %]
+    <li><a onclick="window.open('json.cgi?type=loaddoc&amp;id=[% doc_info.docid %]&amp;format=html','log-[% doc_info.docid %]');">Access log</a></li>
+  [% END %]
 </ul>
 <p>Description of [% terms.file %] (in markdown format)</p>
     <div id="doc_desc_raw" class="markdown">[% doc_info.description FILTER markdown %]</div>
@@ -77,11 +80,5 @@ function doc_info_update () {
 }
 // -->
 </script>
-
-[% IF UpDoc(doc_info.docid) || Admin %]
-<h3>Access log</h3>
-
-[% INCLUDE entry/activity.html.tmpl   activity = activity %]
-[% END %]
 
 [% PROCESS global/footer.html.tmpl %]

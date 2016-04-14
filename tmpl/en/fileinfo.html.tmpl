@@ -16,6 +16,7 @@
   <li>Uploaded by: [% file_info.uname %]</li>
   <li>Uploaded at: [% file_info.uptime %]</li>
   <li>Uploaded from: [% file_info.srcip FILTER ipaddr %]</li>
+  <li><a onclick="window.open('json.cgi?type=loadfile&amp;id=[% file_info.fileid %]&amp;format=html','log-[% file_info.fileid %]');">Access log to this [% terms.file %]</a></li>
 </ul>
 <div id="file_update" class="ui_hidden">
   <input type="submit" value="Update">
@@ -38,10 +39,5 @@ function file_info_update () {
 or 
 <a href="docinfo.cgi?did=[% file_info.docid %]">show general information of [% terms.document %]</a>
 which this [% terms.file %] is registered in.</p>
-
-<h3>Access log to this [% terms.file %]</h3>
-
-[% INCLUDE entry/activity.html.tmpl   activity        = user_load
-                                       %]
 
 [% PROCESS global/footer.html.tmpl %]
