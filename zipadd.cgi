@@ -89,7 +89,7 @@ foreach (@$flist) {
         my $chash = $objSHA->b64digest;
         my $cmatch;
         if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
-            $hashmatch{$hret->{fullname}} = $cmatch;
+            $hashmatch{$_->{fullname}} = $cmatch;
         }
     }
 }
