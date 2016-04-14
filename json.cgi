@@ -45,6 +45,10 @@ if ($type eq 'allpath') {
     $objattr->SetTarget('doc');
     $hash->{attr} = $objattr->GetAttrForId($iid);
     $hash->{lastfile}->{filemime} = PSMT::Util->GetMimeType($hash->{lastfile}->{fileext});
+} elsif ($type eq 'loaddoc') {
+    $hash = PSMT::File->ListUserLoadForDoc($iid);
+} elsif ($type eq 'loadfile') {
+    $hash = PSMT::File->ListUserLoad($iid);
 } else {PSMT::Error->throw_error_user('invalid_param'); }
 if (! defined($hash)) {PSMT::Error->throw_error_user('invalid_param'); }
 

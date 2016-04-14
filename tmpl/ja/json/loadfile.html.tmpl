@@ -1,0 +1,24 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "ファイルアクセスログ"
+%]
+
+<h3>ファイル ID [% id %] へのアクセスログ</h3>
+
+<table border="1">
+<thead>
+  <th>
+    <td>[% terms.file %] ID</td><td>ユーザ名</td>
+    <td>日時e</td><td>アクセス元</td>
+  </th>
+</thead>
+<tbody>
+  [% FOREACH query = jsondata %]
+  <tr>
+    <td>[% query.fileid %]</td><td>[% query.uname %]</td>
+    <td>[% query.dltime %]</td><td>[% query.srcip FILTER ipaddr %]</td>
+  </tr>
+  [% END %]
+</tbody>
+</table>
+
+[% PROCESS global/footer.html.tmpl %]

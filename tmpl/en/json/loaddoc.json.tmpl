@@ -1,0 +1,5 @@
+[ [%- FOREACH query = jsondata %]
+    [% IF ! loop.first %], [% END %]
+    { "fileid":"[% query.fileid %]", "uname":"[% query.uname %]",
+      "dltime":"[% query.dltime %]", "srcip":"[% query.srcip FILTER ipaddr %]" }
+  [% END %] ]
