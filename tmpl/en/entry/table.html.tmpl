@@ -89,7 +89,7 @@
       <a href="fileget.cgi?fid=[% item.lastfile.fileid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
       <a href="docupdate.cgi?did=[% item.docid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a>
       [% IF item.lastfile.preview %]
-        <a onclick="window.open('preview.cgi?fid=[% item.lastfile.fileid %]','preview','width=300,height=300');">[% INCLUDE show_table_icon id = 'preview' %]</a>
+        <a onclick="window.open('preview.cgi?fid=[% item.lastfile.fileid %]','preview-[% item.lastfile.fileid %]','width=300,height=300');">[% INCLUDE show_table_icon id = 'preview' %]</a>
       [% ELSE %]
         [% INCLUDE show_table_icon id = 'nopreview' %]
       [% END %]
