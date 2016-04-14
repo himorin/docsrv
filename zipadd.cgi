@@ -5,6 +5,7 @@ use strict;
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use File::Temp qw/ tempfile tempdir /;                                          
 use Encode;
+use Digest::SHA;
 
 use PSMT;
 
@@ -73,6 +74,34 @@ my ($flist, $dlist, $iflist, $idlist) = &ExtractZip($src);
 if ((! defined($flist)) || ($#$flist < 0)) {
     PSMT::Error->throw_error_user('null_file_upload');
 }
+
+# check hash
+my %hashmatch;
+my $objSHA = new Digest::SHA->new(HASH_SIZE);
+foreach (@$flist) {
+    if ((substr($_->{fullname}, 0, 8) ne '__MACOSX') &&
+        (substr($_->{filename}, 0, 2) ne '._')) {
+        $objSHA->reset(HASH_SIZE);
+        open(INDAT, $_->{stored});
+        binmode INDAT;
+        my $buf;
+        while (read(INDAT, $buf, 1024)) {$objSHA->add($buf); }
+        my $chash = $objSHA->b64digest;
+        my $cmatch;
+        if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
+            $hashmatch{$hret->{fullname}} = $cmatch;
+        }
+    }
+}
+if (keys %hashmatch > 0) {
+    foreach (@$flist) {
+        unlink $_->{stored};
+    }
+    $obj->template->set_vars('hashmatch', \%hashmatch);
+    $obj->template->process('zipadd-fail', 'html');
+    exit;
+}
+
 unlink($src);
 
 # uploaded only contains hash for document

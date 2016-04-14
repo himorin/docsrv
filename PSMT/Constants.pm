@@ -72,6 +72,7 @@ use constant AVAIL_FORMATS => {
   'preview'            => ['html'],
   'recent'             => ['html'],
   'zipadd'             => ['html'],
+  'zipadd-fail'        => ['html'],
 
   'attribute/list'     => ['html', 'json'],
   'attribute/get'      => ['html', 'json'],
