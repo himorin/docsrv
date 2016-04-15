@@ -743,7 +743,7 @@ sub RegNewDoc {
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $hash, $daddrs) = @_;
     return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs);
 }
 
