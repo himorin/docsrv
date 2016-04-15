@@ -33,11 +33,11 @@ PSMT::Access->CheckForFile($fid);
 if (PSMT::Access->CheckSecureForFile($fid)) {
     PSMT::Error->throw_error_user('invalid_fileid');
 }
-if (($fileinfo->{preview} eq 'libreoffice') && 
+if ((IS_PREVIEW->{$fileinfo->{preview}} eq 'libreoffice') && 
     (! defined(OOXML_CONV_TO->{$fileinfo->{fileext}}))) {
     PSMT::Error->throw_error_user('libreoffice_converr');
 }
-if ($fileinfo->{preview} eq 'fits') {
+if (IS_PREVIEW->{$fileinfo->{preview}} eq 'fits') {
     if (PSMT::Config->GetParam('imagemagick') eq '') {
         PSMT::Error->throw_error_user('imagemagick_missing');
     }
