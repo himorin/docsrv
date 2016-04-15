@@ -47,10 +47,10 @@ if (defined(OOXML_CONV_TO->{$fileinfo->{fileext}})) {
             PSMT::Error->throw_error_user('libreoffice_converr');
         }
     }
-    $obj->template->ser_vars('conv', $OOXML_CONV_TO->{$fileinfo->{fileext}});
+    $obj->template->ser_vars('conv', OOXML_CONV_TO->{$fileinfo->{fileext}});
 }
 
-$obj->template->set_vars('previewmode', IS_PREVIEW->{$fileinfo->{filemime}});
+$obj->template->set_vars('previewmode', IS_PREVIEW->{PSMT::Util->IsPreview($fileinfo->{filemime})});
 $obj->template->set_vars('fileinfo', $fileinfo);
 $obj->template->process('preview', 'html');
 

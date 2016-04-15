@@ -53,7 +53,8 @@ if (defined($q_range)) {
 PSMT::Access->CheckForFile($fid);
 
 # download
-my $file = PSMT::File->GetFilePath($fid) . $fid . '.' . $conv;
+my $file = PSMT::File->GetFilePath($fid) . $fid;
+if (defined($conv)) {$file .= '.' . $conv; }
 if (! -f $file) {PSMT::Error->throw_error_user('invalid_filepath'); }
 my $fname = PSMT::File->GetFileFullPath($fid);
 if (! defined($fname)) {$fname = $fid; }
