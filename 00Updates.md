@@ -3,7 +3,7 @@
 * Replaced Search function
 * UI tweaks
 * Added new UI configuration parameter: table.preview, table.nopreview
-* Added new configuration parameter: cl_user
+* Added new configuration parameter: cl_user, libreoffice
 * Added hash check (SHA512) on upload
 
 # 0.5.7

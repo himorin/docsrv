@@ -14,6 +14,7 @@ You need the following softwares.
     * Text::Markdown
     * Digest::SHA
 * Apache (with LDAP auth)
+* LibreOffice (for ms-office and OOXML preview)
 
 # Installation procedure
 
@@ -57,6 +58,7 @@ You need the following softwares.
 * hash_depth : Hash directory depth to store files
 * ldap_basedn : LDAP base dn
 * ldap_uri : LDAP URI
+* libreoffice : (full) path to libreoffice binary
 * view_mime : MIME type to be used for browser display ('image' by default)
 
 # UPGRADE NOTES
@@ -66,6 +68,7 @@ You need the following softwares.
 * New perl module required: MIME::Types
 * Require Mroonga extension for MariaSQL server
 * One table modified: docinfo
+* One new parameter added: libreoffice
 
 ## To 0.5.7 from 0.5.6
 

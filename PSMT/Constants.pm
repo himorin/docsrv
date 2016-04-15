@@ -35,6 +35,8 @@ use Cwd;
   IS_PREVIEW
   SAFE_PROTOCOLS
   DB_MODULE
+  OOXML_OPT
+  OOXML_CONV_TO
 
   DB_UNLOCK_ABORT
 
@@ -126,10 +128,38 @@ use constant HE_FILE_FILTER => {
 };
 
 use constant DEF_CONTENTTYPE => 'application/octet-stream';
-use constant IS_PREVIEW => (
-  'image/', 'application/pdf', 
-  'application/vnd.oasis.opendocument.',
-);
+use constant IS_PREVIEW => { 
+  'image/'   => 'image',
+  'application/pdf' => 'viewerjs',
+  'application/vnd.oasis.opendocument.' => 'viewerjs',
+  'application/vnd.openxmlformats-officedocument.' => 'libreoffice',
+  'application/msword', 'application/vnd.ms-word.' => 'libreoffice',
+  'application/vnd.ms-excel.' => 'libreoffice',
+  'application/vnd.ms-powerpoint' => 'libreoffice',
+};
+use constant OOXML_OPT => '--headless --convert-to --outdir';
+use constant OOXML_CONV_TO => {
+  'pptx'   => 'odp',
+  'sldx'   => 'odp',
+  'ppsx'   => 'odp',
+  'potx'   => 'otp',
+  'xlsx'   => 'ods',
+  'xltx'   => 'ots',
+  'docx'   => 'odt',
+  'dotx'   => 'ott',
+  'doc'    => 'odt',
+  'dot'    => 'ott',
+  'docm'   => 'odt',
+  'dotm'   => 'ott',
+  'xls'    => 'ods',
+  'xlb'    => 'ods',
+  'xlt'    => 'ots',
+  'xlsb'   => 'ods',
+  'xlsm'   => 'ods',
+  'ppt'    => 'odp',
+  'pps'    => 'odp',
+  'pptm'   => 'odp',
+};
 use constant SAFE_PROTOCOLS => (
   'ftp', 'http', 'https', 'irc', 'view-source',
 );

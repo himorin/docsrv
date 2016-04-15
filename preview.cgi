@@ -31,7 +31,26 @@ PSMT::Access->CheckForFile($fid);
 if (PSMT::Access->CheckSecureForFile($fid)) {
     PSMT::Error->throw_error_user('invalid_fileid');
 }
+if (defined(OOXML_CONV_TO->{$fileinfo->{fileext}})) {
+    if (PSMT::Config->GetParam('libreoffice') == '') {
+        PSMT::Error->throw_error_user('libreoffice_missing');
+    }
+    my $forig = PSMT::File->GetFilePath($fid) . $fid;
+    my $fname = $forig . '.' . OOXML_CONV_TO->{$fileinfo->{fileext}};
+    if (! -f $fname) {
+        my $fdir = dirname($fname);
+        my $cmd = PSMT::Config->GetParam('libreoffice') . ' ' . 
+            OOXML_OPT . ' ' . $fdir . ' ' . $forig;
+        open(INPROC, "$cmd |");
+        close(INPROC);
+        if (! -f $fname) {
+            PSMT::Error->throw_error_user('libreoffice_converr');
+        }
+    }
+    $obj->template->ser_vars('conv', $OOXML_CONV_TO->{$fileinfo->{fileext}});
+}
 
+$obj->template->set_vars('previewmode', IS_PREVIEW->{$fileinfo->{filemime}});
 $obj->template->set_vars('fileinfo', $fileinfo);
 $obj->template->process('preview', 'html');
 
