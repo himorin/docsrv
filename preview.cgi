@@ -38,11 +38,14 @@ if (defined(OOXML_CONV_TO->{$fileinfo->{fileext}})) {
         PSMT::Error->throw_error_user('libreoffice_missing');
     }
     my $forig = PSMT::File->GetFilePath($fid) . $fid;
-    my $fname = $forig . '.' . OOXML_CONV_TO->{$fileinfo->{fileext}};
+    my $text = OOXML_CONV_TO->{$fileinfo->{fileext}};
+    my $fname = $forig . '.' . $text;
     if (! -f $fname) {
         my $fdir = dirname($fname);
-        my $cmd = PSMT::Config->GetParam('libreoffice') . ' ' . 
-            OOXML_OPT . ' ' . $fdir . ' ' . $forig;
+        my $cmd = OOXML_OPT;
+        $cmd =~ s/{ext}/$text/;
+        $cmd =~ s/{dir}/$fdir/;
+        $cmd = PSMT::Config->GetParam('libreoffice') . ' ' . $cmd . ' ' . $forig;
         open(INPROC, "$cmd |");
         close(INPROC);
         if (! -f $fname) {

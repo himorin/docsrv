@@ -137,7 +137,7 @@ use constant IS_PREVIEW => {
   'application/vnd.ms-excel.' => 'libreoffice',
   'application/vnd.ms-powerpoint' => 'libreoffice',
 };
-use constant OOXML_OPT => '--headless --convert-to --outdir';
+use constant OOXML_OPT => '--headless --convert-to {ext} --outdir {dir}';
 use constant OOXML_CONV_TO => {
   'pptx'   => 'odp',
   'sldx'   => 'odp',
