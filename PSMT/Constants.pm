@@ -128,6 +128,7 @@ use constant HE_FILE_FILTER => {
 use constant DEF_CONTENTTYPE => 'application/octet-stream';
 use constant IS_PREVIEW => (
   'image/', 'application/pdf', 
+  'application/vnd.oasis.opendocument.',
 );
 use constant SAFE_PROTOCOLS => (
   'ftp', 'http', 'https', 'irc', 'view-source',
