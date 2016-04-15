@@ -15,8 +15,9 @@
 </thead>
 <tbody>
   [% FOREACH item IN dups.keys %]
-  <tr>
-    <td rowspan="[% dups.$item.count %]">[% item FILTER html %]</td>
+  [% count = loop.count() %]
+  <tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">
+    <td rowspan="[% dups.$item.size %]">[% item FILTER html %]</td>
     [% FOREACH file IN dups.$item %]
     [% IF ! loop.first %]</tr><tr>[% END %]
     <td><a href="fileinfo.cgi?fid=[% file.fileid FILTER html %]">[% file.fileid FILTER html %]</a></td>
