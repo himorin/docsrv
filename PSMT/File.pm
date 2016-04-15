@@ -1186,7 +1186,7 @@ sub CheckFileHash {
 sub ListFileHashDup {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
+    $dbh->db_lock_tables('docinfo READ', 'docreg READ');
     my $sth = $dbh->prepare(
         qq{       SELECT docinfo.*, pathid, filename, secure
                     FROM docinfo
