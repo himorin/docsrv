@@ -129,6 +129,7 @@ use constant HE_FILE_FILTER => {
 
 use constant DEF_CONTENTTYPE => 'application/octet-stream';
 use constant IS_PREVIEW => { 
+  'image/fits' => 'fits',
   'image/'   => 'image',
   'application/pdf' => 'viewerjs',
   'application/vnd.oasis.opendocument.' => 'viewerjs',

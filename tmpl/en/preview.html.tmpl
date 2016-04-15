@@ -6,11 +6,11 @@
 <h3>No preview avail for "[% fileinfo.fileid %]"</h3>
 <p>File added by "[% fileinfo.uname %]" at [% fileinfo.uptime %]</p>
 [% PROCESS global/footer.html.tmpl %]
-[% ELSIF previewmode == 'image' %]
+[% ELSIF (previewmode == 'image') OR (previewmode == 'fits') %]
 <!DOCTYPE html><html lang="en"><head>
 <title>Preview [% fileinfo.fileid %]</title>
 <body style="margin: 0; padding: 0;">
-<img src="fileget.cgi?fid=[% fileinfo.fileid %]" style="margin: 0; padding: 0; max-width: 100%; max-height: 100%" />
+<img src="fileget.cgi?fid=[% fileinfo.fileid %][% IF previewmode == 'fits' %]&amp;conv=png[% END %]" style="margin: 0; padding: 0; max-width: 100%; max-height: 100%" />
 </body>
 [% ELSIF (previewmode == 'viewerjs') OR (previewmode == 'libreoffice') %]
 <!DOCTYPE html><html lang="en"><head>

@@ -42,6 +42,11 @@ sub get_param_list {
             type     => 'text',
             default  => '',
         },
+        {
+            name     => 'imagemagick',
+            type     => 'text',
+            default  => '',
+        },
     );
     return @param_list;
 }

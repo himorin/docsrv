@@ -33,6 +33,24 @@ PSMT::Access->CheckForFile($fid);
 if (PSMT::Access->CheckSecureForFile($fid)) {
     PSMT::Error->throw_error_user('invalid_fileid');
 }
+if (($fileinfo->{preview} eq 'libreoffice') && 
+    (! defined(OOXML_CONV_TO->{$fileinfo->{fileext}}))) {
+    PSMT::Error->throw_error_user('libreoffice_converr');
+}
+if ($fileinfo->{preview} eq 'fits') {
+    if (PSMT::Config->GetParam('imagemagick') eq '') {
+        PSMT::Error->throw_error_user('imagemagick_missing');
+    }
+    my $forig = PSMT::File->GetFilePath($fid) . $fid;
+    my $cmd = PSMT::Config->GetParam('imagemagick') . ' ' . $forig . ' ' . $forig . '.png';
+    if (! -f $forig . '.png') {
+        open(INPROC, "$cmd |");
+        close(INPROC);
+    }
+    if (! -f $forig . '.png') {
+        PSMT::Error->throw_error_user('imagemagick_converter');
+    }
+}
 if (defined(OOXML_CONV_TO->{$fileinfo->{fileext}})) {
     if (PSMT::Config->GetParam('libreoffice') eq '') {
         PSMT::Error->throw_error_user('libreoffice_missing');

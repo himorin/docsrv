@@ -15,6 +15,7 @@ You need the following softwares.
     * Digest::SHA
 * Apache (with LDAP auth)
 * LibreOffice (for ms-office and OOXML preview)
+* ImageMagick (for FITS to PNG)
 
 # Installation procedure
 
@@ -56,6 +57,7 @@ You need the following softwares.
 * email_lang : Default language for email
 * file_path : Files to be stored
 * hash_depth : Hash directory depth to store files
+* imagemagick : (full) path to convert (imagemagick) command
 * ldap_basedn : LDAP base dn
 * ldap_uri : LDAP URI
 * libreoffice : (full) path to libreoffice binary
@@ -68,7 +70,7 @@ You need the following softwares.
 * New perl module required: MIME::Types
 * Require Mroonga extension for MariaSQL server
 * One table modified: docinfo
-* One new parameter added: libreoffice
+* New parameters added: libreoffice, imagemagick
 
 ## To 0.5.7 from 0.5.6
 

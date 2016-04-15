@@ -33,7 +33,9 @@ if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 my $fileinfo = PSMT::File->GetFileInfo($fid);
 if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 if (defined($conv)) {
-    $conv = OOXML_CONV_TO->{$fileinfo->{fileext}};
+    if (defined(OOXML_CONV_TO->{$fileinfo->{fileext}})) {
+        $conv = OOXML_CONV_TO->{$fileinfo->{fileext}};
+    }
     if (! defined($conv)) {PSMT::Error->throw_error_user('invalid_param'); }
 }
 
