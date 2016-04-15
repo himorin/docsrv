@@ -1,0 +1,35 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "List of duplicate files"
+%]
+
+<h3>List of duplicate [% terms.file %]</h3>
+
+<table class="dirlist">
+<thead>
+  <tr>
+    <th>SHA [% constants.HASH_SIZE %] hash</th>
+    <th>File</th><th></th><th>Uploader</th><th>Date</th>
+    <th>Description</th>
+    <th>Path ID</th><th>[% terms.document %] name</th>
+  </tr>
+</thead>
+<tbody>
+  [% FOREACH item IN dups.keys %]
+  <tr>
+    <td rowspan="[% dups.$item.count %]">[% item FILTER html %]</td>
+    [% FOREACH file IN dups.$item %]
+    [% IF ! loop.first %]</tr><tr>[% END %]
+    <td><a href="fileinfo.cgi?fid=[% file.fileid FILTER html %]">[% file.fileid FILTER html %]</a></td>
+    <td>[% file.fileext %]</td>
+    <td>[% file.uname %]</td>
+    <td>[% file.uptime FILTER html %]</td>
+    <td>[% file.description FILTER html %]</td>
+    <td><a href="pathinfo.cgi?pid=[% file.pathid %]">[% file.pathid %]</a></td>
+    <td><a href="docinfo.cgi?did=[% file.docid %]">[% file.filename %]</a></td>
+    [% END %]
+  </tr>
+  [% END %]
+</tbody>
+</table>
+
+[% PROCESS global/footer.html.tmpl %]

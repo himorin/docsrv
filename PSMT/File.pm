@@ -44,6 +44,7 @@ use PSMT::FullSearchMroonga;
     AddFileHash
     CheckFileHash
     CheckDavHash
+    ListFileHashDup
 
     SearchPath
     SearchDocFile
@@ -1180,6 +1181,38 @@ sub CheckFileHash {
     my ($ref, @ret);
     while ($ref = $sth->fetchrow_hashref()) {push(@ret, $ref->{fileid}); }
     return \@ret;
+}
+
+sub ListFileHashDup {
+    my ($self) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    my $sth = $dbh->prepare(
+        qq{       SELECT docinfo.*, pathid, filename, secure
+                    FROM docinfo
+              INNER JOIN (
+                  SELECT shahash AS duphash
+                    FROM docinfo
+                GROUP BY shahash
+                  HAVING COUNT(fileid) > 1
+                       ) duphash
+                      ON duphash.duphash = docinfo.shahash
+               LEFT JOIN docreg
+                      ON docinfo.docid = docreg.docid
+        });
+    $sth->execute();
+    if ($sth->rows() == 0) {return undef; }
+    my ($ref, %ret);
+    while ($ref = $sth->fetchrow_hashref()) {
+        if (defined($ret{$ref->{shahash}})) {
+            push(@{$ret{$ref->{shahash}}}, $ref);
+        } else {
+            my $arr = ();
+            push(@$arr, $ref);
+            $ret{$ref->{shahash}} = $arr;
+        }
+    }
+    return \%ret;
 }
 
 ################################################################## PRIVATE
