@@ -3,6 +3,8 @@
 use strict;
 use PSMT;
 
+use File::Basename qw(dirname);
+
 use PSMT::Constants;
 use PSMT::Template;
 use PSMT::Config;
@@ -32,7 +34,7 @@ if (PSMT::Access->CheckSecureForFile($fid)) {
     PSMT::Error->throw_error_user('invalid_fileid');
 }
 if (defined(OOXML_CONV_TO->{$fileinfo->{fileext}})) {
-    if (PSMT::Config->GetParam('libreoffice') == '') {
+    if (PSMT::Config->GetParam('libreoffice') eq '') {
         PSMT::Error->throw_error_user('libreoffice_missing');
     }
     my $forig = PSMT::File->GetFilePath($fid) . $fid;
