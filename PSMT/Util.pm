@@ -265,7 +265,7 @@ sub GetMimeType {
 
 sub IsPreview {
     my ($self, $mime) = @_;
-    foreach (keys %{PSMT::Constants::IS_PREVIEW}) {
+    foreach (keys PSMT::Constants::IS_PREVIEW) {
         if (index($mime, $_) == 0) {
             if ((PSMT::Constants::IS_PREVIEW->{$_} eq 'libreoffice') &&
                 (PSMT::Config->GetParam('libreoffice') == '')) {
