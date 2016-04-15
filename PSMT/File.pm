@@ -1187,20 +1187,32 @@ sub ListFileHashDup {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ', 'docreg READ');
-    my $sth = $dbh->prepare(
-        qq{       SELECT docinfo.*, pathid, filename, secure
-                    FROM docinfo
-              INNER JOIN (
-                  SELECT shahash AS duphash
-                    FROM docinfo
-                GROUP BY shahash
-                  HAVING COUNT(fileid) > 1
-                       ) duphash
-                      ON duphash.duphash = docinfo.shahash
-               LEFT JOIN docreg
-                      ON docinfo.docid = docreg.docid
-        });
+# same issue, not locked for subquery
+#    my $sth = $dbh->prepare(
+#        qq{       SELECT docinfo.*, pathid, filename, secure
+#                    FROM docinfo
+#              INNER JOIN (
+#                  SELECT shahash AS duphash
+#                    FROM docinfo
+#                GROUP BY shahash
+#                  HAVING COUNT(fileid) > 1
+#                       ) duphash
+#                      ON duphash.duphash = docinfo.shahash
+#               LEFT JOIN docreg
+#                      ON docinfo.docid = docreg.docid
+#        });
+
+    # 1st, list dup hash
+    my $sth = $dbh->prepare('SELECT shahash FROM docinfo GROUP BY shahash HAVING COUNT(fileid) > 1');
     $sth->execute();
+    if ($sth->rows() == 0) {return undef; }
+    my $ref;
+    my @hash;
+    while ($ref = $sth->fetchrow_hashref()) {push(@hash, $ref->{shahash}); }
+
+    # 2nd build file list
+    my $sth = $dbh->prepare('SELECT docinfo.*, pathid, filename, secure FROM docinfo WHERE docinfo.shahash IN (' . ('?,' x $#hash) . '?) LEFT JOIN docreg ON docinfo.docid = docreg.docid');
+    $sth->execute(@hash);
     if ($sth->rows() == 0) {return undef; }
     my ($ref, %ret);
     while ($ref = $sth->fetchrow_hashref()) {
