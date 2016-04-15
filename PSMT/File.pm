@@ -1211,7 +1211,7 @@ sub ListFileHashDup {
     while ($ref = $sth->fetchrow_hashref()) {push(@hash, $ref->{shahash}); }
 
     # 2nd build file list
-    my $sth = $dbh->prepare('SELECT docinfo.*, pathid, filename, secure FROM docinfo WHERE docinfo.shahash IN (' . ('?,' x $#hash) . '?) LEFT JOIN docreg ON docinfo.docid = docreg.docid');
+    my $sth = $dbh->prepare('SELECT docinfo.*, pathid, filename, secure FROM docinfo LEFT JOIN docreg ON docinfo.docid = docreg.docid WHERE docinfo.shahash IN (' . ('?,' x $#hash) . '?)');
     $sth->execute(@hash);
     if ($sth->rows() == 0) {return undef; }
     my ($ref, %ret);
