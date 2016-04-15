@@ -743,12 +743,12 @@ sub RegNewDoc {
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add, $uptime, $daddrs) = @_;
-    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $daddrs);
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs) = @_;
+    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs);
 }
 
 sub RegNewFileTime {
-    my ($self, $ext, $docid, $desc, $is_add, $uptime, $daddrs) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
     my $fileid = undef;
     my $uname = PSMT->user()->get_uid();
@@ -769,11 +769,11 @@ sub RegNewFileTime {
     }
     $ext = lc($ext);
     if ($uptime < 0) {
-        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, NOW(), ?, ?, ?)');
-        $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc);
+        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)');
+        $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc, $hash);
     } else {
-        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description) VALUES (?, ?, ?, from_unixtime(?), ?, ?, ?)');
-        $sth->execute($fileid, $ext, $docid, $uptime, $uname, $srcip, $desc);
+        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash) VALUES (?, ?, ?, from_unixtime(?), ?, ?, ?, ?)');
+        $sth->execute($fileid, $ext, $docid, $uptime, $uname, $srcip, $desc, $hash);
     }
     $dbh->db_unlock_tables();
     if ($is_add == TRUE) {PSMT->email()->NewFileInDoc($docid, $fileid, $daddrs); }
@@ -929,19 +929,25 @@ sub MoveNewFile {
 }
 
 sub SaveToDav {
-    my ($self, $fh) = @_;
+    my ($self, $fh, $hash) = @_;
     my $objSHA = new Digest::SHA->new(HASH_SIZE);
     my ($out, $fname) = tempfile( DIR => PSMT::Config->GetParam('dav_path') );
     my $buf;
     binmode $out;
-    while (read($fh, $buf, 1024)) {
-        print $out $buf;
-        $objSHA->add($buf);
+    if (defined($hash)) {
+        while (read($fh, $buf, 1024)) {
+            print $out $buf;
+            $objSHA->add($buf);
+        }
+    } else {
+        while (read($fh, $buf, 1024)) {
+            print $out $buf;
+        }
     }
     close $out;
-    my $chash = $objSHA->b64digest;
+    if (defined($hash)) {$$hash = $objSHA->b64digest; }
     my $cmatch;
-    if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
+    if (defined($cmatch = PSMT::File->CheckFileHash($$hash))) {
         unlink $fname;
         PSMT::Template->set_vars('matched', $cmatch);
         PSMT::Error->throw_error_user('file_hash_match');
@@ -962,6 +968,7 @@ sub CheckDavHash {
         PSMT::Template->set_vars('matched', $cmatch);
         PSMT::Error->throw_error_user('file_hash_match');
     }
+    return $chash;
 }
 
 sub ValidateNameInPath {

@@ -87,6 +87,7 @@ foreach (@$flist) {
         my $buf;
         while (read(INDAT, $buf, 1024)) {$objSHA->add($buf); }
         my $chash = $objSHA->b64digest;
+        $_->{shahash} = $chash;
         my $cmatch;
         if (defined($cmatch = PSMT::File->CheckFileHash($chash))) {
             $hashmatch{$_->{fullname}} = $cmatch;
@@ -180,7 +181,7 @@ foreach (@$flist) {
         } # what to do?
 #        if ($cdid == 0) {PSMT::Error->throw_error_user('doc_add_failed'); }
     }
-    $cfid = PSMT::File->RegNewFileTime($cext, $cdid, '', FALSE, $_->{lastmodified}, undef);
+    $cfid = PSMT::File->RegNewFileTime($cext, $cdid, '', FALSE, $_->{lastmodified}, $_->{shahash}, undef);
     if (! defined($cfid)) {
         &AddUpfailed($_, 'doc', 'fail_add_file');
         next;
