@@ -41,7 +41,7 @@
     [% IF ! title.defined %]title="[% IcoTable.$id.tiphelp %]"[% END %]
   [%- ELSE -%]
     src="skins/images/[% terms.icon_def %]" alt="アイコンが未定義です"
-    [% IF ! title.defined %]="アイコンが未定義です"[% END %]
+    [% IF ! title.defined %]title="アイコンが未定義です"[% END %]
   [%- END %]
   [% IF html_id.defined %]id="[% html_id FILTER html %]"[% END -%]
   [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
@@ -51,10 +51,10 @@
 [%- BLOCK show_mime_icon %]<img 
   [%- IF IcoMime.$id.defined -%]
     src="skins/images/[% IcoMime.$id.value %]" alt="[% IcoMime.$id.tiphelp %]"
-    [% IF ! title.defined %]alt="[% IcoMime.$id.tiphelp %]"[% END %]
+    [% IF ! title.defined %]title="[% IcoMime.$id.tiphelp %]"[% END %]
   [%- ELSE -%]
     src="skins/images/[% terms.icon_def %]" alt="アイコンが未定義です"
-    [% IF ! title.defined %]alt="アイコンが未定義です"[% END %]
+    [% IF ! title.defined %]title="アイコンが未定義です"[% END %]
   [%- END %]
   [% IF html_id.defined %]id="[% html_id FILTER html %]"[% END -%]
   [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
