@@ -1,0 +1,36 @@
+[% PROCESS global/header.html.tmpl
+  page_title = "重複ファイルリスト"
+%]
+
+<h3>重複 [% terms.file %] リスト</h3>
+
+<table class="dirlist">
+<thead>
+  <tr>
+    <th>SHA [% constants.HASH_SIZE %] ハッシュ</th>
+    <th>ファイル</th><th></th><th>ユーザ</th><th>日時</th>
+    <th>説明</th>
+    <th>Path ID</th><th>[% terms.document %] 名</th>
+  </tr>
+</thead>
+<tbody>
+  [% FOREACH item IN dups.keys %]
+  [% count = loop.count() %]
+  <tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">
+    <td rowspan="[% dups.$item.size %]">[% item FILTER html %]</td>
+    [% FOREACH file IN dups.$item %]
+    [% IF ! loop.first %]</tr><tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">[% END %]
+    <td><a href="fileinfo.cgi?fid=[% file.fileid FILTER html %]">[% file.fileid FILTER html %]</a></td>
+    <td>[% file.fileext %]</td>
+    <td>[% file.uname %]</td>
+    <td>[% file.uptime FILTER html %]</td>
+    <td>[% file.description FILTER html %]</td>
+    <td><a href="pathinfo.cgi?pid=[% file.pathid %]">[% file.pathid %]</a></td>
+    <td><a href="docinfo.cgi?did=[% file.docid %]">[% file.filename %]</a></td>
+    [% END %]
+  </tr>
+  [% END %]
+</tbody>
+</table>
+
+[% PROCESS global/footer.html.tmpl %]

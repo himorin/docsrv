@@ -63,6 +63,7 @@ use constant AVAIL_FORMATS => {
   'docupdate'          => ['html'],
   'favlist'            => ['html'],
   'fileinfo'           => ['html', 'json'],
+  'hashcheck'          => ['html'],
   'index'              => ['html'],
   'labeledit'          => ['html'],
   'labellist'          => ['html'],
