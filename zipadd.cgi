@@ -80,6 +80,7 @@ my %hashmatch;
 my $objSHA = new Digest::SHA->new(HASH_SIZE);
 foreach (@$flist) {
     if ((substr($_->{fullname}, 0, 8) ne '__MACOSX') &&
+        ($_->{filename} ne '.DS_Store') &&
         (substr($_->{filename}, 0, 2) ne '._')) {
         $objSHA->reset(HASH_SIZE);
         open(INDAT, $_->{stored});
@@ -156,6 +157,7 @@ foreach (@$flist) {
     if (rindex($cname, '.') != -1) {
         $cext = substr($cname, rindex($cname, '.') + 1);
         $cname = substr($cname, 0, rindex($cname, '.'));
+        if ($cname eq '') {$cname = $_->{filename}; }
     }
     # check directory valid
     if (defined($didign{$_->{dirname}})) {
