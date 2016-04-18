@@ -6,13 +6,14 @@
 <h3>"[% fileinfo.fileid %]"のプレビューは実装されていません</h3>
 <p>ファイルはユーザ "[% fileinfo.uname %]" により [% fileinfo.uptime %] に追加されました。</p>
 [% PROCESS global/footer.html.tmpl %]
-[% ELSIF fileinfo.preview == 'image/' %]
-<!DOCTYPE html><html lang="en"><head>
+[% ELSIF (previewmode == 'image') OR (previewmode == 'fits') %]
+<!DOCTYPE html><html lang="ja"><head>
 <title>[% fileinfo.fileid %] プレビュー</title>
 <body style="margin: 0; padding: 0;">
-<img src="fileget.cgi?fid=[% fileinfo.fileid %]" style="margin: 0; padding: 0; max-width: 100%; max-height: 100%" />
+<img src="fileget.cgi?fid=[% fileinfo.fileid %][% IF previewmode == 'fits' %]&amp;conv=png[% END %]" style="margin: 0; padding: 0; max-width: 100%; max-height: 100%" />
 </body>
-[% ELSIF fileinfo.preview == 'application/pdf' %]
+[% ELSIF (previewmode == 'viewerjs') OR (previewmode == 'libreoffice') %]
 <!DOCTYPE html><html lang="en"><head>
-<meta http-equiv="refresh" content="0; URL=skins/ViewerJS/#../../fileget.cgi?fid=[% fileinfo.fileid %]">
+<meta http-equiv="refresh" content="0; URL=skins/ViewerJS/#../../fileget.cgi?fid=[% fileinfo.fileid %][% IF conv.defined %]&amp;conv=[% conv %][% END %]">
 [% END %]
+

@@ -37,6 +37,16 @@ sub get_param_list {
             type     => 'number',
             default  => 2,
         },
+        {
+            name     => 'libreoffice',
+            type     => 'text',
+            default  => '',
+        },
+        {
+            name     => 'imagemagick',
+            type     => 'text',
+            default  => '',
+        },
     );
     return @param_list;
 }

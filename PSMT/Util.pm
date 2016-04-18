@@ -14,6 +14,7 @@ package PSMT::Util;
 use strict;
 
 use PSMT::Constants;
+use PSMT::Config;
 
 use Template;
 use Encode;
@@ -265,8 +266,15 @@ sub GetMimeType {
 
 sub IsPreview {
     my ($self, $mime) = @_;
-    foreach (PSMT::Constants::IS_PREVIEW) {
-        if (index($mime, $_) == 0) {return $_; }
+    my $tmp = IS_PREVIEW;
+    foreach (keys %$tmp) {
+        if (index($mime, $_) == 0) {
+            if ((PSMT::Constants::IS_PREVIEW->{$_} eq 'libreoffice') &&
+                (PSMT::Config->GetParam('libreoffice') eq '')) {
+                next;
+            }
+            return $_;
+        }
     }
     return FALSE;
 }

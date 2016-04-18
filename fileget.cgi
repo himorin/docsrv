@@ -26,11 +26,18 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 my $fid = undef;
 my $did = $obj_cgi->param('did');
 my $ext = $obj_cgi->param('ext');
+my $conv = $obj_cgi->param('conv');
 if (defined($did)) {$fid = PSMT::File->GetDocLastPostFileId($did, $ext); }
 if (! defined($fid)) {$fid = $obj_cgi->param('fid'); }
 if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 my $fileinfo = PSMT::File->GetFileInfo($fid);
 if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
+if (defined($conv)) {
+    if (defined(OOXML_CONV_TO->{$fileinfo->{fileext}})) {
+        $conv = OOXML_CONV_TO->{$fileinfo->{fileext}};
+    }
+    if (! defined($conv)) {PSMT::Error->throw_error_user('invalid_param'); }
+}
 
 my $q_range = $ENV{'HTTP_RANGE'};
 my $q_method = $ENV{'REQUEST_METHOD'};
@@ -49,6 +56,7 @@ PSMT::Access->CheckForFile($fid);
 
 # download
 my $file = PSMT::File->GetFilePath($fid) . $fid;
+if (defined($conv)) {$file .= '.' . $conv; }
 if (! -f $file) {PSMT::Error->throw_error_user('invalid_filepath'); }
 my $fname = PSMT::File->GetFileFullPath($fid);
 if (! defined($fname)) {$fname = $fid; }
@@ -59,10 +67,13 @@ if ((! (defined($q_range) && ($qr_start != 0))) && ($q_method ne 'HEAD')) {
 $fname =~ s/\//_/g;
 
 binmode STDOUT, ':bytes';
-my $ext = PSMT::File->GetFileExt($fid);
+my $ext;
+if (defined($conv)) {$ext = PSMT::Util->GetMimeType($conv); }
+else {$ext = PSMT::Util->GetMimeType($fileinfo->{fileext}); }
+my $fsize = (-s $file);
 if ($q_method eq 'HEAD') {
     print "Content-Type: $ext\n";
-    print "Content-Length: " . PSMT::File->GetFileSize($fid) . "\n";
+    print "Content-Length: " . $fsize . "\n";
     print "Accept-Ranges: bytes\n";
     print "\n";
     exit;
@@ -82,7 +93,7 @@ if (PSMT::Access->CheckSecureForFile($fid)) {
 } elsif (PSMT::File->CheckMimeIsView($ext)) {
     print $obj_cgi->header(
             -type => "$ext",
-            -content_length => PSMT::File->GetFileSize($fid),
+            -content_length => $fsize,
         );
     binmode STDOUT, ':bytes';
     open(INDAT, $file);
@@ -99,7 +110,7 @@ if (PSMT::Access->CheckSecureForFile($fid)) {
     print $obj_cgi->header(
             -type => "$ext; name=\"$fname\"",
             -content_disposition => "attachment; filename=\"$fname\"",
-            -content_length => PSMT::File->GetFileSize($fid),
+            -content_length => $fsize,
             -accept_ranges => 'bytes',
         );
     binmode STDOUT, ':bytes';
@@ -118,7 +129,7 @@ if (PSMT::Access->CheckSecureForFile($fid)) {
             -type => "$ext; name=\"$fname\"",
             -content_disposition => "attachment; filename=\"$fname\"",
             -content_length => ($qr_end - $qr_start + 1),
-            -content_range => "bytes $qr_start-$qr_end/" . PSMT::File->GetFileSize($fid),
+            -content_range => "bytes $qr_start-$qr_end/" . $fsize,
             -accept_ranges => 'bytes',
         );
     binmode STDOUT, ':bytes';
