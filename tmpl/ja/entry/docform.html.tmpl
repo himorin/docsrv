@@ -10,7 +10,7 @@
                 <option value="[% hid %]">[% hp FILTER html %]</option>
               [%- END -%]
             [% ELSE %]
-              <option value="[% allpathrev.$hp %]">[% hp FILTER html %]</option>
+              <option value="[% allpathrev.$hp.0 %]">[% hp FILTER html %]</option>
             [% END -%]
           [%- END %]
         </select>/
