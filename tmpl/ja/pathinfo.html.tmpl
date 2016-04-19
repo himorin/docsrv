@@ -24,7 +24,7 @@
   <ul>
     <li id="path_name_edit" class="ui_hidden">移動先ディレクトリ名: 
       <select name="new_parent" onChange="AllPathChange();">
-      [% INCLUDE tmpl/ja/entry/pathlist.html.tmpl  pidsel = path_info.parent %]
+      [% INCLUDE entry/pathlist.html.tmpl  pidsel = path_info.parent %]
       </select>/<input type="text" name="new_name" size="50" value="[% path_info.pathname FILTER html %]"></li>
     <li>この [% terms.path %] について: [% path_info.show_description FILTER html %]
       [% IF Admin %]

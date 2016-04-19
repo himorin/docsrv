@@ -3,7 +3,7 @@
     <li>新しい[% terms.document %]の名前: <tt>
       [%- IF pid == -1 %]
         <select name="pid" onChange="AllPathChange();">
-        [% INCLUDE tmpl/ja/entry/pathlist.html.tmpl %]
+        [% INCLUDE entry/pathlist.html.tmpl %]
         </select>/
       [%- ELSE %]
         <input type="hidden" name="pid" value="[% pid %]">

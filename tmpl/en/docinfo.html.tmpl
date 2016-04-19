@@ -19,7 +19,7 @@ Please check descriptions of [% terms.file %] carefully.</p>
       <tt>[% doc_info.filename %]</tt></span>
     <span id="doc_name_edit" class="ui_hidden">
       <select name="new_pathid" onChange="AllPathChange();">
-      [% INCLUDE tmpl/en/entry/pathlist.html.tmpl  pidsel = doc_info.pathid %]
+      [% INCLUDE entry/pathlist.html.tmpl  pidsel = doc_info.pathid %]
       </select>/<input type="text" size="50" name="new_name" value="[% doc_info.filename %]"></span>
     [% IF InList(file_uname, User.uid) || Admin %]
       <span id="update_link"><a href="javascript: doc_info_update();">Update</a></span>
