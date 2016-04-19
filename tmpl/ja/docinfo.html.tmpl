@@ -18,8 +18,14 @@
     <span id="doc_name_edit" class="ui_hidden">
       <select name="new_pathid" onChange="AllPathChange();">
         <option value="0" [% IF doc_info.pathid == -1 %]selected="selected"[% END %]>/</option>
-        [% FOREACH hid IN allpath.keys.nsort %]
-          <option value="[% hid %]" [% IF hid == doc_info.pathid %]selected="selected" [% END %]>[% allpath.$hid.fullpath %]</option>
+        [% FOREACH hp IN allpathrev.keys.sort %]
+          [% IF allpathrev.$hp.size > 1 %]
+            [%- FOREACH hid IN allpathrev.$hp %]
+              <option value="[% hid %]" [% IF hid == doc_info.pathid %]selected="selected"[% END %]>[% hp FILTER html %]</option>
+            [%- END -%]
+          [% ELSE %]
+            <option value="[% allpathrev.$hp.0 %]" [% IF allpathrev.$hp.0 == doc_info.pathid %]selected="selected"[% END %]>[% hp FILTER html %]</option>
+          [% END -%]
         [%- END %]
       </select>/<input type="text" size="50" name="new_name" value="[% doc_info.filename %]"></span>
     [% IF InList(file_uname, User.uid) || Admin %]
