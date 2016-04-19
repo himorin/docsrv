@@ -134,7 +134,8 @@ use constant IS_PREVIEW => {
   'application/pdf' => 'viewerjs',
   'application/vnd.oasis.opendocument.' => 'viewerjs',
   'application/vnd.openxmlformats-officedocument.' => 'libreoffice',
-  'application/msword', 'application/vnd.ms-word.' => 'libreoffice',
+  'application/msword' => 'libreoffice',
+  'application/vnd.ms-word.' => 'libreoffice',
   'application/vnd.ms-excel.' => 'libreoffice',
   'application/vnd.ms-powerpoint' => 'libreoffice',
 };
