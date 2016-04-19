@@ -6,12 +6,12 @@
           <option value="0">/</option>
           [% FOREACH hp IN allpathrev.keys.sort %]
             [% IF allpathrev.$hp.size > 1 %]
-              [% FOREACH hid IN allpathrev.$hp %]
+              [%- FOREACH hid IN allpathrev.$hp %]
                 <option value="[% hid %]">[% hp FILTER html %]</option>
-              [% END %]
+              [%- END -%]
             [% ELSE %]
-              <option value="[% allpathrev.$hp %]">[% hp FILTER html %]</option>
-            [% END %]
+              <option value="[% allpathrev.$hp.0 %]">[% hp FILTER html %]</option>
+            [% END -%]
           [%- END %]
         </select>/
       [%- ELSE %]
