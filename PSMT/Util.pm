@@ -41,6 +41,7 @@ use MIME::Types;
     GetLastFileId
 
     MakeReverseHash
+    MakeReverseHashByKey
     MergeArrayAnd
     MergeArrayOr
     MergeHashAnd
@@ -211,6 +212,21 @@ sub MakeReverseHash {
         } else {
             my @arr = ($_);
             $hash{$ref->{$_}} = \@arr;
+        }
+    }
+    return \%hash;
+}
+
+# build reversed hash by $ref->{$key}, $hash->{$key} = $orig-key;
+sub MakeReverseHashByKey {
+    my ($self, $ref, $key) = @_;
+    my %hash;
+    foreach (keys(%$ref)) {
+        if (defined($hash{$ref->{$_}->{$key}})) {
+            push(@{$hash{$ref->{$_}->{$key}}}, $_);
+        } else {
+            my @arr = ($_);
+            $hash{$ref->{$_}->{$key}} = \@arr;
         }
     }
     return \%hash;

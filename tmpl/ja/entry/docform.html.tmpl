@@ -4,8 +4,14 @@
       [%- IF pid == -1 %]
         <select name="pid" onChange="AllPathChange();">
           <option value="0">/</option>
-          [% FOREACH hid IN allpath.keys.nsort -%]
-            <option value="[% hid %]">[% allpath.$hid.fullpath %]</option>
+          [% FOREACH hp IN allpathrev.keys.sort %]
+            [% IF allpathrev.$hp.size > 1 %]
+              [% FOREACH hid IN allpathrev.$hp %]
+                <option value="[% hid %]">[% hp FILTER html %]</option>
+              [% END %]
+            [% ELSE %]
+              <option value="[% allpathrev.$hp %]">[% hp FILTER html %]</option>
+            [% END %]
           [%- END %]
         </select>/
       [%- ELSE %]
