@@ -99,6 +99,7 @@ $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
 $obj->template->set_vars('path_list', PSMT::File->ListPathInPath($pid));
 $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
 $obj->template->set_vars('allpath', \%allpath);
+$obj->template->set_vars('allpathrev', PSMT::Util->MakeReverseHashByKey(\%allpath, "fullpath"));
 
 $obj->template->process('docadd', 'html');
 

@@ -3,10 +3,7 @@
     <li>新しい[% terms.document %]の名前: <tt>
       [%- IF pid == -1 %]
         <select name="pid" onChange="AllPathChange();">
-          <option value="0">/</option>
-          [% FOREACH hid IN allpath.keys.nsort -%]
-            <option value="[% hid %]">[% allpath.$hid.fullpath %]</option>
-          [%- END %]
+        [% INCLUDE entry/pathlist.html.tmpl %]
         </select>/
       [%- ELSE %]
         <input type="hidden" name="pid" value="[% pid %]">
