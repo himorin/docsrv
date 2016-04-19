@@ -135,8 +135,8 @@ use constant IS_PREVIEW => {
   'application/vnd.oasis.opendocument.' => 'viewerjs',
   'application/vnd.openxmlformats-officedocument.' => 'libreoffice',
   'application/msword' => 'libreoffice',
-  'application/vnd.ms-word.' => 'libreoffice',
-  'application/vnd.ms-excel.' => 'libreoffice',
+  'application/vnd.ms-word' => 'libreoffice',
+  'application/vnd.ms-excel' => 'libreoffice',
   'application/vnd.ms-powerpoint' => 'libreoffice',
 };
 use constant OOXML_OPT => '--headless --convert-to {ext} --outdir {dir}';
