@@ -3,16 +3,7 @@
     <li>新しい[% terms.document %]の名前: <tt>
       [%- IF pid == -1 %]
         <select name="pid" onChange="AllPathChange();">
-          <option value="0">/</option>
-          [% FOREACH hp IN allpathrev.keys.sort %]
-            [% IF allpathrev.$hp.size > 1 %]
-              [%- FOREACH hid IN allpathrev.$hp %]
-                <option value="[% hid %]">[% hp FILTER html %]</option>
-              [%- END -%]
-            [% ELSE %]
-              <option value="[% allpathrev.$hp.0 %]">[% hp FILTER html %]</option>
-            [% END -%]
-          [%- END %]
+        [% INCLUDE tmpl/ja/entry/pathlist.html.tmpl %]
         </select>/
       [%- ELSE %]
         <input type="hidden" name="pid" value="[% pid %]">
