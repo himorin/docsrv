@@ -241,7 +241,7 @@ sub ExtractZip {
             } elsif ($obj_cgi->is_mac()) {
                 # UTF-8 of Mac (HFS+) do not NFD in defined region, 
                 # but no need to think about on NFC from HFS+
-                $hret->{fullname} = Unicode::Normalize::NFC(Encode::decode('utf-8', $hret->{fullname}));
+                $hret->{fullname} = Unicode::Normalize::NFC($hret->{fullname});
             }
             $hret->{lastmodified} = $_->lastModTime();
             $hret->{size} = $_->{uncompressedSize};
@@ -271,7 +271,7 @@ sub ExtractZip {
             } elsif ($obj_cgi->is_mac()) {
                 # UTF-8 of Mac (HFS+) do not NFD in defined region, 
                 # but no need to think about on NFC from HFS+
-                $hret->{fullname} = Unicode::Normalize::NFC(Encode::decode('utf-8', $hret->{fullname}));
+                $extfile = Unicode::Normalize::NFC($extfile);
             }
             if (PSMT::Util->ValidateEncoding($extfile) > 0) {
                 push(@invdir, $extfile);

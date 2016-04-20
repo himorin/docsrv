@@ -2,7 +2,6 @@
 
 use strict;
 use Unicode::Normalize;
-use Encode;
 
 use PSMT;
 use PSMT::Constants;
@@ -22,7 +21,7 @@ $sql = 'SELECT docid, filename FROM docreg WHERE filename LIKE ' .
 $sth = $dbh->prepare($sql);
 $sth->execute();
 while ($ref = $sth->fetchrow_hashref()) {
-    $list{$ref->{docid}} = Unicode::Normalize::NFC(Encode::decode('utf-8', $ref->{filename}));
+    $list{$ref->{docid}} = Unicode::Normalize::NFC($ref->{filename});
 }
 
 $dbh->db_lock_tables('docreg WRITE');
@@ -42,7 +41,7 @@ $sql = 'SELECT pathid, pathname FROM path WHERE pathname LIKE ' .
 $sth = $dbh->prepare($sql);
 $sth->execute();
 while ($ref = $sth->fetchrow_hashref()) {
-    $list{$ref->{pathid}} = Unicode::Normalize::NFC(Encode::decode('utf-8', $ref->{pathname}));
+    $list{$ref->{pathid}} = Unicode::Normalize::NFC($ref->{pathname});
 }
 
 $dbh->db_lock_tables('path WRITE');
