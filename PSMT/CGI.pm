@@ -111,6 +111,12 @@ sub is_windows {
     return FALSE;
 }
 
+sub is_mac {
+    my $self = shift;
+    if ($self->user_agent() =~ /Mac OS/) {return TRUE; }
+    return FALSE;
+}
+
 ################################################################## PRIVATE
 
 sub _fix_utf8 {

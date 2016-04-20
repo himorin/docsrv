@@ -6,6 +6,7 @@ use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use File::Temp qw/ tempfile tempdir /;                                          
 use Encode;
 use Digest::SHA;
+use Unicode::Normalize;
 
 use PSMT;
 
@@ -237,6 +238,10 @@ sub ExtractZip {
             $hret->{fullname} = $_->{fileName};
             if ($obj_cgi->is_windows()) {
                 $hret->{fullname} = Encode::decode($zip_enc, $hret->{fullname});
+            } elsif ($obj_cgi->is_mac()) {
+                # UTF-8 of Mac (HFS+) do not NFD in defined region, 
+                # but no need to think about on NFC from HFS+
+                $hret->{fullname} = Unicode::Normalize::NFC(Encode::decode('utf-8', $hret->{fullname}));
             }
             $hret->{lastmodified} = $_->lastModTime();
             $hret->{size} = $_->{uncompressedSize};
@@ -263,6 +268,10 @@ sub ExtractZip {
             $extfile = $_->{fileName};
             if ($obj_cgi->is_windows()) {
                 $extfile = Encode::decode($zip_enc, $extfile);
+            } elsif ($obj_cgi->is_mac()) {
+                # UTF-8 of Mac (HFS+) do not NFD in defined region, 
+                # but no need to think about on NFC from HFS+
+                $hret->{fullname} = Unicode::Normalize::NFC(Encode::decode('utf-8', $hret->{fullname}));
             }
             if (PSMT::Util->ValidateEncoding($extfile) > 0) {
                 push(@invdir, $extfile);
