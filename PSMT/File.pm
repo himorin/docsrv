@@ -14,6 +14,7 @@ use Digest::MD5;
 use Digest::SHA;
 use File::Path;
 use File::Temp qw/ tempfile tempdir /;
+use Cwd;
 
 use base qw(Exporter);
 
@@ -1032,11 +1033,14 @@ sub MakeEncZipFile {
     my $dir = tempdir(TEMPLATE => 'XXXXXXXX', DIR => $tdir);
     my $tfname = $self->GetFileFullPath($fid);
     $tfname =~ s/\//\_/g;
-    $tfname = $dir . '/' . $tfname;
-    symlink($self->GetFilePath($fid) . '/' . $fid, $tfname) or return undef;
+#    $tfname = $dir . '/' . $tfname;
+    symlink($self->GetFilePath($fid) . '/' . $fid, $dir . '/' . $tfname) or return undef;
     my $fh;
+    my $cwd = getcwd();
+    chdir $dir;
     $tfname =~ s/'/\\'/g;
     open($fh, "$bin_zip -P \"$pass\" - '$tfname' |") or return undef;
+    chdir $cwd;
     return $fh;
 }
 
