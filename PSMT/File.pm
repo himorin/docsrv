@@ -100,7 +100,7 @@ use PSMT::FullSearchMroonga;
     ValidateNameInPath
     MoveNewFile
     SaveToDav
-    MakeEncZipFile
+    PrintEncZipFile
     CheckMimeIsView
 );
 
@@ -1026,22 +1026,29 @@ sub GetPathIdForDoc {
     return $sth->fetchrow_hashref()->{pathid};
 }
 
-sub MakeEncZipFile {
+sub PrintEncZipFile {
     my ($self, $fid, $pass) = @_;
     my $tdir = PSMT::Constants::LOCATIONS()->{'rel_zipcache'};
     if (! -d PSMT::Constants::LOCATIONS()->{'rel_zipcache'}) {mkdir($tdir); }
     my $dir = tempdir(TEMPLATE => 'XXXXXXXX', DIR => $tdir);
     my $tfname = $self->GetFileFullPath($fid);
     $tfname =~ s/\//\_/g;
-#    $tfname = $dir . '/' . $tfname;
-    symlink($self->GetFilePath($fid) . '/' . $fid, $dir . '/' . $tfname) or return undef;
+    if (! symlink($self->GetFilePath($fid) . '/' . $fid, $dir . '/' . $tfname)) {
+        File::Path::rmtree($dir);
+        return;
+    }
     my $fh;
     my $cwd = getcwd();
     chdir $dir;
     $tfname =~ s/'/\\'/g;
-    open($fh, "$bin_zip -P \"$pass\" - '$tfname' |") or return undef;
+    if (! open($fh, "$bin_zip -P \"$pass\" - '$tfname' |")) {
+        File::Path::rmtree($dir);
+        PSMT::Error->throw_error_code('crypt_zip');
+    }
+    print <$fh>;
+    close($fh);
     chdir $cwd;
-    return $fh;
+    File::Path::rmtree($dir);
 }
 
 sub CheckPathIdInParent {
