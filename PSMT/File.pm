@@ -13,6 +13,7 @@ use strict;
 use Digest::MD5;
 use Digest::SHA;
 use File::Path;
+use File::Basename;
 use File::Temp qw/ tempfile tempdir /;
 use Cwd;
 
@@ -1032,7 +1033,7 @@ sub PrintEncZipFile {
     if (! -d PSMT::Constants::LOCATIONS()->{'rel_zipcache'}) {mkdir($tdir); }
     my $dir = tempdir(TEMPLATE => 'XXXXXXXX', DIR => $tdir);
     my $tfname = $self->GetFileFullPath($fid);
-    $tfname =~ s/\//\_/g;
+    File::Path::make_path(dirname($dir . '/' . $tfname));
     if (! symlink($self->GetFilePath($fid) . '/' . $fid, $dir . '/' . $tfname)) {
         File::Path::rmtree($dir);
         return;
@@ -1041,7 +1042,7 @@ sub PrintEncZipFile {
     my $cwd = getcwd();
     chdir $dir;
     $tfname =~ s/'/\\'/g;
-    if (! open($fh, "$bin_zip -P \"$pass\" - '$tfname' |")) {
+    if (! open($fh, "$bin_zip -P \"$pass\" -r - . |")) {
         File::Path::rmtree($dir);
         PSMT::Error->throw_error_code('crypt_zip');
     }
