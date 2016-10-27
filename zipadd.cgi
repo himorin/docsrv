@@ -120,7 +120,7 @@ foreach $cdir (@$idlist) {
     &AddUpfailed({'fullname' => $cdir}, 'path', 'invalid_encoding');
     $didign{$cdir} = TRUE;
 }
-foreach $cdir (@$dlist) {
+while ($cdir = shift(@$dlist)) {
     if (index($cdir, '/') != -1) {
         $cpdir = substr($cdir, 0, rindex($cdir, '/'));
         $cldir = substr($cdir, rindex($cdir, '/') + 1);
@@ -160,7 +160,8 @@ foreach (@$flist) {
         if ($cname eq '') {$cname = $_->{filename}; }
     }
     # check directory valid
-    if (defined($didign{$_->{dirname}})) {
+    if (defined($didign{$_->{dirname}}) ||
+        (! defined($didlist{$_->{dirname}}))) {
         &AddUpfailed($_, 'doc', 'in_invalid_path');
         next;
     }
@@ -274,6 +275,15 @@ sub ExtractZip {
             push(@rdir, $extfile);
         }
     }
+    # tweak for Windows zip
+    my (%hrdir, $cdir);
+    foreach (@rdir) {$hrdir{$_} = 1; }
+    foreach (@rfile) {
+        if ($_->{dirname} ne '') {
+            if (! defined($hrdir{$_->{dirname}})) {$hrdir{$_->{dirname}} = 1; }
+        }
+    }
+    @rdir = keys(%hrdir);
     return (\@rfile, \@rdir, \@invfile, \@invdir);
 }
 
