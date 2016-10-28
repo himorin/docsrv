@@ -21,9 +21,9 @@ any [% terms.document %] in this [% terms.path %].</p>
 [% INCLUDE global/formopt.html.tmpl %]
 <ul>
 [% FOREACH item = all_groups.keys %]
-  <li><input type="checkbox" name="newgroup" value="[% item %]"
+  <li><label><input type="checkbox" name="newgroup" value="[% item %]"
     [% IF all_groups.$item == 1 %]checked="checked"[% END %]
-    >[% item %]</input></li>
+    >[% item %]</label></li>
 [% END %]
 </ul>
 <input type="hidden" name="pid" value="[% path_info.pathid %]" />

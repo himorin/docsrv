@@ -34,7 +34,7 @@ function tweak_default_change (item) {
         config_[% item %]
         [%+ count % 2 == 1 ? "row_odd" : "row_even" %]
        ">
-      <td>[% item FILTER html %]</td>
+      <td><label for="[% item %]_input">[% item FILTER html %]</label></td>
       <td>[% user_config_help.$item FILTER html %]</td>
       <td>
         [% IF config_user.$item.enabled == 1 %]
@@ -47,7 +47,7 @@ function tweak_default_change (item) {
                 <option value="[% conf_opt %]"
                   [% IF conf_opt == config_user.$item.value %]selected="selected"[% END %]
                   >
-              [% END %]
+              [%- END %]
             </select>
           [% ELSIF config_user.$item.class == 'bool' %]
             <input type="checkbox" name="[% item %]_input" id="[% item %]_input"
@@ -74,11 +74,12 @@ function tweak_default_change (item) {
         [% END %]
         </td>
       <td>
+        <label>
         <input type="checkbox" name="[% item %]_default" id="[% item %]_default"
           [% IF config_user.$item.is_default == 1 %]checked="checked"[% END %]
           onchange="javascript: tweak_default_change('[% item %]')"
           >
-        (Default: [% config_user.$item.default_value FILTER html %])
+        (Default: [% config_user.$item.default_value FILTER html %])</label>
         </td>
     </tr>
   [% END %]

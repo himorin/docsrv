@@ -22,7 +22,7 @@
     [% IF InList(file_uname, User.uid) || Admin %]
       <span id="update_link"><a href="javascript: doc_info_update();">更新</a></span>
     [% END %]</li>
-  <li>セキュリティーフラグ (ダウンロード時に暗号化): 
+  <li><label for="new_secure">セキュリティーフラグ (ダウンロード時に暗号化): </label>
     <span id="doc_sec_raw">[% IF doc_info.secure == 1 %]設定[% ELSE %]未設定[% END %]</span>
     <span id="doc_sec_edit" class="ui_hidden"><input type="checkbox" name="new_secure" [% IF doc_info.secure == 1 %]checked="checked"[% END %] /></span>
     </li>
@@ -44,7 +44,7 @@
     <li><a onclick="window.open('json.cgi?type=loaddoc&amp;id=[% doc_info.docid %]&amp;format=html','log-[% doc_info.docid %]');">ファイルアクセスログ</a></li>
   [% END %]
 </ul>
-<p>[% terms.file %] の説明 (markdown書式が利用可能)</p>
+<p><label for="new_description">[% terms.file %] の説明 (markdown書式が利用可能)</label></p>
     <div id="doc_desc_raw" class="markdown">[% doc_info.description FILTER markdown %]</div>
     <div id="doc_desc_edit" class="ui_hidden"><textarea rows="10" cols="100" name="new_description">[% doc_info.description FILTER html %]</textarea></div>
 <div id="doc_update" class="ui_hidden">

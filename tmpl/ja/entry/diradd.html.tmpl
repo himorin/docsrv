@@ -9,8 +9,8 @@
 
 <div class="path_add">
 
-<p>新しい [% terms.path %] 名: <input type="text" name="newpath" value="" size="50"></p>
-<p>次のメールアドレスに通知を送信する: <input type="text" name="demail" value="" size="50"> (カンマ区切りのメールアドレス)</p>
+<p><label>新しい [% terms.path %] 名: <input type="text" name="newpath" value="" size="50"></label></p>
+<p><label>次のメールアドレスに通知を送信する: <input type="text" name="demail" value="" size="50"> (カンマ区切りのメールアドレス)</label></p>
 <p>説明 (markdown書式が利用可能)</p>
 <div><textarea name="newdesc" value="" cols="150" rows="10"></textarea></div>
 
@@ -19,8 +19,8 @@
 
 <ul>
 [% FOREACH item = Group %]
-  <li><input type="checkbox" name="newgroup" value="[% item %]">[% item %]</input></li>
-[% END %]
+  <li><label><input type="checkbox" name="newgroup" value="[% item %]">[% item %]</label></li>
+[%- END %]
 </ul>
 
 <input type="hidden" name="cur_pid" value="[% cur_pid %]">

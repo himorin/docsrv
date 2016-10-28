@@ -24,7 +24,7 @@ Please check descriptions of [% terms.file %] carefully.</p>
     [% IF InList(file_uname, User.uid) || Admin %]
       <span id="update_link"><a href="javascript: doc_info_update();">Update</a></span>
     [% END %]</li>
-  <li>Security flag (encrypt for download): 
+  <li><label for="new_secure">Security flag (encrypt for download): </label>
     <span id="doc_sec_raw">[% IF doc_info.secure == 1 %]Set[% ELSE %]Unset[% END %]</span>
     <span id="doc_sec_edit" class="ui_hidden"><input type="checkbox" name="new_secure" [% IF doc_info.secure == 1 %]checked="checked"[% END %] /></span>
     </li>
@@ -46,7 +46,7 @@ Please check descriptions of [% terms.file %] carefully.</p>
     <li><a onclick="window.open('json.cgi?type=loaddoc&amp;id=[% doc_info.docid %]&amp;format=html','log-[% doc_info.docid %]');">Access log</a></li>
   [% END %]
 </ul>
-<p>Description of [% terms.file %] (in markdown format)</p>
+<p><label for="new_description">Description of [% terms.file %] (in markdown format)</label></p>
     <div id="doc_desc_raw" class="markdown">[% doc_info.description FILTER markdown %]</div>
     <div id="doc_desc_edit" class="ui_hidden"><textarea rows="10" cols="100" name="new_description">[% doc_info.description FILTER html %]</textarea></div>
 <div id="doc_update" class="ui_hidden">

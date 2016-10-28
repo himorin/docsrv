@@ -1,6 +1,6 @@
 [% IF ! did.defined %]
   <ul>
-    <li>Name for new [% terms.document %]: <tt>
+    <li><label for="filename">Name for new [% terms.document %]:</label> <tt>
       [%- IF pid == -1 %]
         <select name="pid" onChange="AllPathChange();">
         [% INCLUDE entry/pathlist.html.tmpl %]
@@ -10,9 +10,9 @@
         /[% full_path FILTER html %]
       [%- END -%]
     </tt><input type="text" name="filename" value="" size="50"></li>
-    <li>Set security flag (encrypt for download): <input type="checkbox" name="secure" /></li>
+    <li><label>Set security flag (encrypt for download): <input type="checkbox" name="secure" /></label></li>
   </ul>
-  <p>Description for new [% terms.document %] (in markdown format)<p>
+  <p><label for="docdesc">Description for new [% terms.document %] (in markdown format)</label></p>
   <div><textarea name="docdesc" rows="10" class="inputwide"></textarea></div>
   <h4>Labels for new [% terms.document %]</h4>
   <ul>
@@ -29,7 +29,8 @@
 <h4>Select file to add into this [% terms.document %]</h4>
 
 <p>
-  <input type="radio" name="source" value="upload" checked="checked" /> Upload from local file: 
+  <label>
+  <input type="radio" name="source" value="upload" checked="checked" /> Upload from local file:</label>
   <input type="file" name="target_file" size="80" />
   <br />
   If you try to upload a large file like over than 10MB, system sometimes cause 
@@ -48,7 +49,8 @@
     [% IF dav_file.keys.size == 0 %]
       No file in the WebDAV space.
     [% ELSE %]
-      <input type="radio" name="source" value="dav" /> Use file in the WebDAV space :
+      <label>
+      <input type="radio" name="source" value="dav" /> Use file in the WebDAV space :</label>
       <select name="dav_source">
         [% FOREACH item IN dav_file.keys %]
           <option value="[% item %]">[% item %] ([% SizeDisp(dav_file.$item) %])</option>
@@ -58,11 +60,11 @@
   </p>
 [% END %]
 
-<p>Comment to this [% terms.file %]: <input type="text" name="comment" value="" size="80"></p>
+<p><label>Comment to this [% terms.file %]: <input type="text" name="comment" value="" size="80"></label></p>
 
 <h4>Notification</h4>
 
-<p>Send notification to following email addresses:
+<p><label>Send notification to following email addresses:
 <input type="text" name="demail" value="" size="50"><br />
-Type multiple email addresses with comma (<b>,</b>) separated.</p>
+Type multiple email addresses with comma (<b>,</b>) separated.</label></p>
 

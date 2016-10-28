@@ -7,8 +7,8 @@
 
 <ul>
   [% IF lid != 0 %]<li>ID : [% linfo.labelid %]</li>[% END %]
-  <li>名前 : <input type="text" name="lname" value="[% linfo.name %]"></input></li>
-  <li>説明 : <input type="text" name="ldesc" value="[% linfo.description %]"></input></li>
+  <li><label>名前 : <input type="text" name="lname" value="[% linfo.name %]"></label></li>
+  <li><label>説明 : <input type="text" name="ldesc" value="[% linfo.description %]"></label></li>
 </ul>
 
 <input type="hidden" name="lid" value="[% lid %]" />

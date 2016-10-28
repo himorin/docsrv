@@ -9,9 +9,9 @@
 
 <div class="path_add">
 
-<p>New [% terms.path %] name: <input type="text" name="newpath" value="" size="50"></p>
-<p>Send notification to following email addresses:
-<input type="text" name="demail" value="" size="50"> (comma separated email address)</p>
+<p><label>New [% terms.path %] name: <input type="text" name="newpath" value="" size="50"></label></p>
+<p><label>Send notification to following email addresses:
+<input type="text" name="demail" value="" size="50"> (comma separated email address)</label></p>
 <p>Description (in markdown format)</p>
 <div><textarea name="newdesc" value="" cols="150" rows="10"></textarea></div>
 
@@ -21,8 +21,8 @@ Without any, every user can view the [% terms.path %]. </p>
 
 <ul>
 [% FOREACH item = Group %]
-  <li><input type="checkbox" name="newgroup" value="[% item %]">[% item %]</input></li>
-[% END %]
+  <li><label><input type="checkbox" name="newgroup" value="[% item %]">[% item %]</label></li>
+[%- END %]
 </ul>
 
 <input type="hidden" name="cur_pid" value="[% cur_pid %]">
