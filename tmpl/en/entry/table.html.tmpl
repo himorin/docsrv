@@ -19,7 +19,12 @@
   </tr>
 [% IF upper_path.defined AND upper_path > -1 %]
   <tr class="upper_path row_even">
-    <td class="docmanage"></td>
+    <td class="docmanage">
+      [% IF cur_pid.defined %]
+      <a onclick="download_path([% cur_pid %])">[% INCLUDE show_table_icon id = 'download' %]</a>
+      <a href="zipadd.cgi?pid=[% cur_pid %]">[% INCLUDE show_table_icon id = 'fileup' %]</a>
+      [% END %]
+    </td>
     <td class="path">[% INCLUDE show_table_icon id = 'dir_up' %]
       <a href="pathinfo.cgi?pid=[% upper_path %]">Upper [% terms.path %]</a></td>
     <td></td>
