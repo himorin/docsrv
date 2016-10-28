@@ -71,8 +71,9 @@ if ($source eq 'dav') {
     PSMT::Error->throw_error_user('invalid_file_source');
 }
 my ($flist, $dlist, $iflist, $idlist) = &ExtractZip($src);
+unlink($src);
 if ((! defined($flist)) || ($#$flist < 0)) {
-    &EraseFiles($flist, $dlist, $iflist, $idlist);
+    &EraseFiles($flist, $iflist);
     PSMT::Error->throw_error_user('null_file_upload');
 }
 
@@ -97,13 +98,11 @@ foreach (@$flist) {
     }
 }
 if (keys %hashmatch > 0) {
-    &EraseFiles($flist, $dlist, $iflist, $idlist);
+    &EraseFiles($flist, $iflist);
     $obj->template->set_vars('hashmatch', \%hashmatch);
     $obj->template->process('zipadd-fail', 'html');
     exit;
 }
-
-unlink($src);
 
 # uploaded only contains hash for document
 # upfailed both path and document, also 'error' value
