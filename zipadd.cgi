@@ -72,6 +72,7 @@ if ($source eq 'dav') {
 }
 my ($flist, $dlist, $iflist, $idlist) = &ExtractZip($src);
 if ((! defined($flist)) || ($#$flist < 0)) {
+    &EraseFiles($flist, $dlist, $iflist, $idlist);
     PSMT::Error->throw_error_user('null_file_upload');
 }
 
@@ -96,9 +97,7 @@ foreach (@$flist) {
     }
 }
 if (keys %hashmatch > 0) {
-    foreach (@$flist) {
-        unlink $_->{stored};
-    }
+    &EraseFiles($flist, $dlist, $iflist, $idlist);
     $obj->template->set_vars('hashmatch', \%hashmatch);
     $obj->template->process('zipadd-fail', 'html');
     exit;
@@ -221,6 +220,7 @@ sub AddUpfailed {
     $hash->{mode} = $mode;
     $hash->{error} = $err;
     push(@upfailed, $hash);
+    if (defined($hash->{stored}) {unlink $hash->{stored}; }
 }
 
 # XXX: check on path/file names non-UTF8
@@ -285,5 +285,10 @@ sub ExtractZip {
     }
     @rdir = keys(%hrdir);
     return (\@rfile, \@rdir, \@invfile, \@invdir);
+}
+
+sub EraseFiles {
+    my $clist;
+    foreach $clist (@_) {foreach (@$clist) {unlink $_->{stored}; } }
 }
 
