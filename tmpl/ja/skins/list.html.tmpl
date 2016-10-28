@@ -26,7 +26,7 @@ function select_icon (target) {
   <ul>
     <li>名前: [% target FILTER html %]</li>
     <li>アイコン: <img src="skins/images/[% icon_info.value %]" id="current_icon" /></li>
-    <li>ツールチップ: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
+    <li><label>ツールチップ: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></label></li>
     <li>状態: <select name="enabled">
       <option value="1" [% IF icon_info.enabled == '1' %]selected="selected"[% END %]>有効</option>
       <option value="0" [% IF icon_info.enabled == '0' %]selected="selected"[% END %]>無効</option>

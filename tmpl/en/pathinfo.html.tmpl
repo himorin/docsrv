@@ -26,7 +26,7 @@
       <select name="new_parent" onChange="AllPathChange();">
       [% INCLUDE entry/pathlist.html.tmpl  pidsel = path_info.parent %]
       </select>/<input type="text" name="new_name" size="50" value="[% path_info.pathname FILTER html %]"></li>
-    <li>[% terms.path %] information: [% path_info.show_description FILTER html %]
+    <li><label for="new_description">[% terms.path %] information:</label> [% path_info.short_description FILTER html %]
       [% IF Admin %]
         <span id="update_link"><a href="javascript: doc_info_update();">Update or Move</a></span>
       [% END %]</li>

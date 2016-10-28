@@ -23,9 +23,9 @@ function select_icon (target) {
   <input type="hidden" name="icon" value="[% terms.icon_def %]" id="current_target">
 
   <ul>
-    <li>対象拡張子: <input type="text" name="target"> (pdf, exe, doc など)</li>
+    <li><label>対象拡張子: <input type="text" name="target"> (pdf, exe, doc など)</label></li>
     <li>アイコン: <img src="skins/images/[% terms.icon_def %]" id="current_icon" /></li>
-    <li>ツールチップ: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
+    <li><label>ツールチップ: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></label></li>
     <li>状態: <select name="enabled">
       <option value="1" selected="selected">有効</option>
       <option value="0">無効</option>

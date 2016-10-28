@@ -17,9 +17,9 @@
 [% INCLUDE global/formopt.html.tmpl %]
 <ul>
 [% FOREACH item = Label.keys %]
-  <li><input type="checkbox" name="newlabel" value="[% Label.$item.labelid %]"
+  <li><label><input type="checkbox" name="newlabel" value="[% Label.$item.labelid %]"
     [% IF InList(label_list, Label.$item.labelid) %]checked="checked"[% END %]
-    >[% Label.$item.name %]</input></li>
+    >[% Label.$item.name %]</label></li>
 [% END %]
 </ul>
 <input type="hidden" name="did" value="[% doc_info.docid %]" />

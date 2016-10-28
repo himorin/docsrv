@@ -26,7 +26,7 @@ Click icon itself to select.</p>
   <ul>
     <li>Name: [% target FILTER html %]</li>
     <li>Icon: <img src="skins/images/[% icon_info.value %]" id="current_icon" /></li>
-    <li>Tool tip: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
+    <li><label>Tool tip: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></label></li>
     <li>Status: <select name="enabled">
       <option value="1" [% IF icon_info.enabled == '1' %]selected="selected"[% END %]>Used</option>
       <option value="0" [% IF icon_info.enabled == '0' %]selected="selected"[% END %]>Not used</option>

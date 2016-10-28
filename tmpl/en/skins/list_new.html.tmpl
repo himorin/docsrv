@@ -23,9 +23,9 @@ Click icon itself to select.</p>
   <input type="hidden" name="icon" value="[% terms.icon_def %]" id="current_target">
 
   <ul>
-    <li>Target extension: <input type="text" name="target"> (Like pdf, exe, doc)</li>
+    <li><label>Target extension: <input type="text" name="target"> (Like pdf, exe, doc)</label></li>
     <li>Icon: <img src="skins/images/[% terms.icon_def %]" id="current_icon" /></li>
-    <li>Tool tip: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></li>
+    <li><label>Tool tip: <input type="text" name="tiphelp" size="150" value="[% icon_info.tiphelp FILTER html %]" /></label></li>
     <li>Status: <select name="enabled">
       <option value="1" selected="selected">Using</option>
       <option value="0">Not used</option>
