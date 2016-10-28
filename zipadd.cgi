@@ -220,7 +220,7 @@ sub AddUpfailed {
     $hash->{mode} = $mode;
     $hash->{error} = $err;
     push(@upfailed, $hash);
-    if (defined($hash->{stored}) {unlink $hash->{stored}; }
+    if (defined($hash->{stored})) {unlink $hash->{stored}; }
 }
 
 # XXX: check on path/file names non-UTF8
