@@ -80,16 +80,15 @@ if ($q_method eq 'HEAD') {
 }
 if (PSMT::Access->CheckSecureForFile($fid)) {
 #    by zip encrypted
-    my $pass = PSMT::Util->GetHashString($fid);
-    my $fh = PSMT::File->MakeEncZipFile($fid, $pass);
-    if (! defined($fh)) {PSMT::Error->throw_error_code('crypt_zip'); }
-    print $obj_cgi->header(
+    my $head = $obj_cgi->header(
             -type => PSMT::File->GetFileExt("zip") . "; name=\"$fname.zip\"",
             -content_disposition => "attachment; filename=\"$fname.zip\"",
         );
-    print <$fh>;
-    close($fh);
-    PSMT::Email->SendPassword($fid, PSMT->user->get_uid(), $pass);
+    my %fhash;
+    $fhash{PSMT::File->GetFilePath($fid) . '/' . $fid} =
+        PSMT::File->GetFileFullPath($fid);
+    PSMT::File->MakeEncZipFile(\%fhash, $head, $fname);
+    exit;
 } elsif (PSMT::File->CheckMimeIsView($ext)) {
     print $obj_cgi->header(
             -type => "$ext",

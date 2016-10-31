@@ -86,10 +86,10 @@ sub NewFileInDoc {
 }
 
 sub SendPassword {
-    my ($self, $fid, $uid, $pass) = @_;
+    my ($self, $dname, $uid, $pass) = @_;
     my $obj = new PSMT::Template;
     $obj->set_vars('uid', $uid);
-    $obj->set_vars('fname', PSMT::File->GetFullPathFromId($fid));
+    $obj->set_vars('fname', $dname);
     $obj->set_vars('pass', $pass);
     $self->_send_email($obj, $uid, 'pass');
 }
