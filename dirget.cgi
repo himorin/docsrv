@@ -49,9 +49,8 @@ if (($pext eq 'NEW') && ($pmode eq 'all')) {
 
 my @lpid;
 push(@lpid, $pid);
-
-# start zip object
-my $obj_zip = Archive::Zip->new();
+my (@zip_path, $zip_sec, %zip_files);
+$zip_sec = FALSE;
 
 # seek @lpid, add found child to end of @lpid
 my ($cpid, $cpo, $cdo, $clid, $cfid, $ch, $cext, @acext, $chid);
@@ -64,7 +63,7 @@ while ($#lpid > -1) {
         $cpo = PSMT::File->GetPathInfo($cpid);
         if (! defined($cpo)) {next; }
         if (! PSMT::Access->CheckForPath($cpid, FALSE)) {next; }
-        &AddDirToZip($obj_zip, PSMT::File->GetFullPathFromId($cpid));
+        push(@zip_path, PSMT::File->GetFullPathFromId($cpid));
     }
     $ch = PSMT::File->ListPathIdInPath($cpid);
     push(@lpid, @$ch);
@@ -78,13 +77,13 @@ while ($#lpid > -1) {
             if ($pext eq 'ALL') {
                 foreach (@{PSMT::File->ListExtInDoc($chid->{docid})}) {
                     $clid = PSMT::File->GetDocLastPostFileId($chid->{docid}, $_);
-                    &AddToZip($obj_zip, $clid);
+                    if (&AddFileToZipEntry(\%zip_files, $clid)) {$zip_sec = TRUE; }
                 }
             } elsif ($pext eq 'NEW') {
-                &AddToZip($obj_zip, $chid->{lastfile}->{fileid});
+                if (&AddFileToZipEntry(\%zip_files, $chid->{lastfile}->{fileid})) {$zip_sec = TRUE; }
             } else {
                 $clid = PSMT::File->GetDocLastPostFileId($chid->{docid}, $pext);
-                &AddToZip($obj_zip, $clid);
+                if (&AddFileToZipEntry(\%zip_files, $clid)) {$zip_sec = TRUE; }
             }
             next;
         }
@@ -107,7 +106,7 @@ while ($#lpid > -1) {
             } else {
                 $zip_fadd = &DateStrMod($_->{uptime}) . '-' . $_->{fileid};
             }
-            &AddToZip($obj_zip, $_->{fileid}, $zip_fadd);
+            if (&AddFileToZipEntry(\%zip_files, $_->{fileid}, $zip_fadd)) {$zip_sec = TRUE; }
         }
     }
 }
@@ -116,12 +115,34 @@ my $dname = PSMT::File->GetFullPathFromId($pid);
 if ($dname eq '') {$dname = 'topdir'; }
 $dname =~ s/\/$//g;
 $dname =~ s/\//_/g;
-# output to client, just name $pid.zip
-binmode STDOUT, ':bytes';
-print $obj_cgi->header(
+my $head = $obj_cgi->header(
     -type => PSMT::File->GetFileExt("zip") . "; name=\"$dname.zip\"",
     -content_disposition => "attachment; filename=\"$dname.zip\"",
 );
+binmode STDOUT, ':bytes';
+if ($zip_sec) {
+    PSMT::File->MakeEncZipFile(\%zip_files, $head, $dname);
+    exit;
+}
+
+# output to client, just name $pid.zip
+print $head;
+
+# start zip object
+my $obj_zip = Archive::Zip->new();
+my $tname;
+my $is_win = $obj_cgi->is_windows();
+foreach $tname (@zip_path) {
+    if ($is_win) {$tname = Encode::encode($zip_enc, $tname); }
+    else {$tname = Encode::encode('utf8', $tname); }
+    $obj_zip->addDirectory($tname);
+}
+foreach (keys %zip_files) {
+    $tname = $zip_files{$_};
+    if ($is_win) {$tname = Encode::encode($zip_enc, $tname); }
+    else {$tname = Encode::encode('utf8', $tname); }
+    $obj_zip->addFile($_, $tname);
+}
 $obj_zip->writeToFileHandle(*STDOUT);
 
 exit;
@@ -132,33 +153,27 @@ sub DateStrMod {
     return $source;
 }
 
-sub AddDirToZip {
-    my ($obj_zip, $dname) = @_;
-    Encode::decode_utf8($dname);
-    if ($obj_cgi->is_windows()) {$dname = Encode::encode($zip_enc, $dname); }
-    else {$dname = Encode::encode('utf8', $dname); }
-    $obj_zip->addDirectory($dname);
-}
-
-sub AddToZip {
-    my ($obj_zip, $cfid, $postfix) = @_;
-    my ($cname, $zname);
-    if (! defined($obj_zip)) {return; }
-    if (! defined($cfid)) {return; }
-    if (! PSMT::Access->CheckForFile($cfid, FALSE)) {return; }
-    if (PSMT::Access->CheckSecureForFile($cfid)) {return; }
+# retrun values:
+#   undef: processing error, file was not added to entry
+#   TRUE: only if specified file is secure file
+#   FALSE: normally finished
+sub AddFileToZipEntry {
+    my ($hash, $cfid, $postfix) = @_;
+    my ($cname, $zname, $ret);
+    $ret = FALSE;
+    if (! defined($cfid)) {return undef; }
+    if (! PSMT::Access->CheckForFile($cfid, FALSE)) {return undef; }
+    if (PSMT::Access->CheckSecureForFile($cfid)) {$ret = TRUE; }
     my $cname = PSMT::File->GetFilePath($cfid) . $cfid;
-    if (! -f $cname) {return; }
-
+    if (! -f $cname) {return undef; }
     $zname = PSMT::File->GetFileFullPath($cfid);
-    PSMT::File->RegUserAccess($cfid);
     if (defined($postfix)) {
         my $extidx = rindex($zname, '.');
         $zname = substr($zname, 0, $extidx) . '_' . $postfix . substr($zname, $extidx);
     }
-    Encode::decode_utf8($zname);
-    if ($obj_cgi->is_windows()) {$zname = Encode::encode($zip_enc, $zname); }
-    else {$zname = Encode::encode('utf8', $zname); }
-    $obj_zip->addFile($cname, $zname);
+    if (defined($hash->{$cname})) {return undef; }
+    PSMT::File->RegUserAccess($cfid);
+    $hash->{$cname} = $zname;
+    return $ret;
 }
 
