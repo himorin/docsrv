@@ -104,7 +104,7 @@ use PSMT::FullSearchMroonga;
 );
 
 my $hash_each = 2;
-my $bin_zip = '/usr/bin/zip -0 ';
+my $bin_zip = '/usr/bin/zip';
 
 sub new {
     my ($self) = @_;
@@ -1025,18 +1025,38 @@ sub GetPathIdForDoc {
     return $sth->fetchrow_hashref()->{pathid};
 }
 
+# fid = reference to hash of files
+#   key: full path to stored file = GetFilePath($fid)/$fid
+#   value: target file path/name in zip
+# head = HTTP header to be printed
+# fname = download filename for password reminder (without .zip)
 sub MakeEncZipFile {
-    my ($self, $fid, $pass) = @_;
+    my ($self, $fid, $head, $fname) = @_;
     my $tdir = PSMT::Constants::LOCATIONS()->{'rel_zipcache'};
     if (! -d PSMT::Constants::LOCATIONS()->{'rel_zipcache'}) {mkdir($tdir); }
     my $dir = tempdir(TEMPLATE => 'XXXXXXXX', DIR => $tdir);
-    my $tfname = $self->GetFileFullPath($fid);
-    $tfname =~ s/\//\_/g;
-    $tfname = $dir . '/' . $tfname;
-    symlink($self->GetFilePath($fid) . '/' . $fid, $tfname) or return undef;
+    my ($cfid, %dirs_made, $dir_tomake, @dirs_tmp);
+    foreach $cfid (keys %$fid) {
+        if (rindex($fid->{$cfid}, '/') > -1) {
+            $dir_tomake = substr($fid->{$cfid}, 0, rindex($fid->{$cfid}, '/'));
+            if (! defined($dirs_made{$dir_tomake})) {
+                @dirs_tmp = File::Path::mkpath($dir . '/' . $dir_tomake);
+                foreach (@dirs_tmp) {$dirs_made{$_} = 1; }
+            }
+        }
+        symlink($cfid, $dir . '/' . $fid->{$cfid}); # XXX do nothing for failed files....
+    }
+    my $pass = PSMT::Util->GetHashString($fname);
     my $fh;
-    $tfname =~ s/'/\\'/g;
-    open($fh, "$bin_zip -P \"$pass\" - '$tfname' |") or return undef;
+    chdir $dir;
+    open($fh, "$bin_zip -0 -P \"$pass\" -q -r -UN=Ignore - '.' |");
+    chdir '../../..';
+    if (! defined($fh)) {PSMT::Error->throw_error_code('crypt_zip'); }
+    print $head;
+    print <$fh>;
+    close($fh);
+    PSMT::Email->SendPassword("$fname.zip", PSMT->user->get_uid(), $pass);
+    File::Path::rmtree([ $dir ]);
     return $fh;
 }
 
