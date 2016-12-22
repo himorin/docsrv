@@ -209,6 +209,7 @@ sub LOCATIONS {
         'rel_zipcache' => './data/dwez',
     };
 }
+use constant PATH_SP_ZIPADD => 'zipadd/';
 
 
 1;

@@ -231,6 +231,10 @@ sub ExtractZip {
     }
     my @fmem = $obj_zip->members();
     my (@rfile, @rdir, @invfile, @invdir, $dtdos, $extfile, $out);
+    # create directory for temporary files in zipupload
+    # no to expose files in uploaded zip into normal file from webdav operation
+    my $tmp_dir = PSMT::Config->GetParam('dav_path') . '/' . PATH_SP_ZIPADD;
+    mkdir $tmp_dir;
     foreach (@fmem) {
         my $hret = {};
         if (ref $_ eq 'Archive::Zip::ZipFileMember') {
@@ -253,7 +257,7 @@ sub ExtractZip {
                 push(@invfile, $hret);
                 next;
             }
-            ($out, $extfile) = tempfile( DIR => PSMT::Config->GetParam('dav_path') . '/zipadd/');
+            ($out, $extfile) = tempfile( DIR => $tmp_dir );
             close $out;
             if ($obj_zip->extractMember($_->{fileName}, $extfile) == AZ_OK) {
                 $hret->{stored} = $extfile;
