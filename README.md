@@ -18,6 +18,12 @@ You need the following softwares.
 * LibreOffice (for ms-office and OOXML preview)
 * ImageMagick (for FITS to PNG)
 
+# Link to memo
+
+* [Security model memo](00Security.md)
+* [ToDos](00Todo.md)
+* [Updates per versions](00Updates.md)
+
 # Installation procedure
 
 1. run config_test.pl : Will create data/params
