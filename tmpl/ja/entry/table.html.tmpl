@@ -8,14 +8,15 @@
     <th rowspan="2"></th>
     <th rowspan="2">名前</th>
     <th rowspan="2">説明</th>
-    <td colspan="3" class="tdhead">最新版</td>
+    <td colspan="4" class="tdhead">最新版</td>
     <th rowspan="2">グループ</th>
     <th rowspan="2">ラベル</th>
   </tr>
   <tr>
-    <th>Uploader</th>
-    <th>Date</th>
-    <th>Size</th>
+    <th>投稿者</th>
+    <th>日付</th>
+    <th>サイズ</th>
+    <th>バージョン</th>
   </tr>
 [% IF upper_path.defined AND upper_path > -1 %]
   <tr class="upper_path row_even">
@@ -28,7 +29,7 @@
     <td class="path">[% INCLUDE show_table_icon id = 'dir_up' %]
       <a href="pathinfo.cgi?pid=[% upper_path %]">一つ上</a></td>
     <td></td>
-    <td colspan="3"></td>
+    <td colspan="4"></td>
     <td>---</td>
     <td>---</td>
   </tr>
@@ -64,7 +65,7 @@
       [% END -%]
       </td>
     <td class="pathdesc">[% item.short_description FILTER html %]</td>
-    <td></td><td></td><td></td>
+    <td></td><td></td><td></td><td></td>
     <td class="group">
       [% IF item.gname.defined %][% item.gname.join(',') FILTER html %][% ELSE %]制限なし[% END %]
       <a href="pathgroup.cgi?pid=[% item.pathid %]">[% INCLUDE show_table_icon id = 'group_add' %]</a>
@@ -111,8 +112,9 @@
       <td>[% item.lastfile.uname %]</td>
       <td>[% item.lastfile.uptime %]</td>
       <td class="docsize">[% SizeDisp(item.lastfile.size) %]</td>
+      <td>[% item.lastfile.version %]</td>
     [% ELSE %]
-      <td colspan="3" class="center">存在しません</td>
+      <td colspan="4" class="center">存在しません</td>
     [% END %]
     <td class="group">
       [% IF item.gname.defined %]

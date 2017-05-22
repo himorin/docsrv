@@ -8,7 +8,7 @@
 <thead>
   <tr>
     <th>SHA [% constants.HASH_SIZE %] ハッシュ</th>
-    <th>ファイル</th><th></th><th>ユーザ</th><th>日時</th>
+    <th>ファイル</th><th></th><th>ユーザ</th><th>日時</th><th>バージョン</th>
     <th>説明</th>
     <th>Path ID</th><th>[% terms.document %] 名</th>
   </tr>
@@ -24,6 +24,7 @@
     <td>[% file.fileext %]</td>
     <td>[% file.uname %]</td>
     <td>[% file.uptime FILTER html %]</td>
+    <td>[% file.version %]</td>                                                 
     <td>[% file.description FILTER html %]</td>
     <td><a href="pathinfo.cgi?pid=[% file.pathid %]">[% file.pathid %]</a></td>
     <td><a href="docinfo.cgi?did=[% file.docid %]">[% file.filename %]</a></td>
