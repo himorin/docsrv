@@ -14,6 +14,7 @@ use Digest::MD5;
 use Digest::SHA;
 use File::Path;
 use File::Temp qw/ tempfile tempdir /;
+use POSIX qw(:math_h);
 
 use base qw(Exporter);
 
@@ -101,6 +102,8 @@ use PSMT::FullSearchMroonga;
     SaveToDav
     MakeEncZipFile
     CheckMimeIsView
+
+    GetNextVersionForDoc
 );
 
 my $hash_each = 2;
@@ -1253,6 +1256,14 @@ sub ListFileHashDup {
         }
     }
     return \%ret;
+}
+
+sub GetNextVersionForDoc {
+    my ($self, $did) = @_;
+    my $finfo = $self->GetDocLastPostFileInfo($did);
+    if (! defined($finfo)) {return 1.0; }
+    if (! defined($finfo->{'version'})) {return 1.0; }
+    return floor($finfo->{'version'} + 1.0);
 }
 
 ################################################################## PRIVATE

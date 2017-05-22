@@ -65,6 +65,7 @@ if ($obj_cgi->request_method() eq 'POST') {
 }
 
 # insert parameters
+$docinfo->{'next_version'} = PSMT::File->GetNextVersionForDoc($did);
 $obj->template->set_vars('dav_file', PSMT::File->ListDavFile());
 $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($docinfo->{pathid}));
 $obj->template->set_vars('doc_info', $docinfo);

@@ -16,6 +16,10 @@
   <li>ユーザ: [% file_info.uname %]</li>
   <li>登録日時: [% file_info.uptime %]</li>
   <li>登録元: [% file_info.srcip FILTER ipaddr %]</li>
+  <li>バージョン: 
+    <span id="file_version_raw">[% file_info.version %]</span>
+    <span id="file_version_edit" class="ui_hidden"><input type="text" size="10" name="version" value="[% file_info.version %]"></span>
+    </li>
   <li><a onclick="window.open('json.cgi?type=loadfile&amp;id=[% file_info.fileid %]&amp;format=html','log-[% file_info.fileid %]');">このファイルへのアクセスログ</a></li>
 </ul>
 <div id="file_update" class="ui_hidden">
@@ -29,6 +33,8 @@
 function file_info_update () {
   \$("#file_desc_raw").addClass("ui_hidden");
   \$("#file_desc_edit").removeClass("ui_hidden");
+  \$("#file_version_raw").addClass("ui_hidden");
+  \$("#file_version_edit").removeClass("ui_hidden");
   \$("#file_update").removeClass("ui_hidden");
   \$("#update_link").addClass("ui_hidden");
 }

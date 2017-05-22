@@ -59,6 +59,12 @@
 [% END %]
 
 <p><label>このファイルへのコメント: <input type="text" name="comment" value="" size="80"></label></p>
+<p>この[% terms.file %]の情報
+<ul>
+  <li>作成者: <tt>[% User.uid FILTER html %]</tt></li>
+  <li>作成日: (アップロード日時)</li>
+  <li>バージョン: [% IF ! did.defined %]1.0[% ELSE %]<input type="text" size="10" name="version" value="[% doc_info.next_version %]" />[% END %]</li>
+</ul></p>
 
 <h4>通知</h4>
 
