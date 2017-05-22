@@ -215,10 +215,10 @@ sub ListFilesInDoc {
     my $uname = PSMT->user->get_uid();
     if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
     if ($is_all) {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY version DESC, uptime DESC');
         $sth->execute($docid);
     } else {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND (enabled = 1 OR uname = ?) ORDER BY uptime DESC');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND (enabled = 1 OR uname = ?) ORDER BY version DESC, uptime DESC');
         $sth->execute($docid, $uname);
     }
     my $ref;
@@ -241,10 +241,10 @@ sub ListFilesInDocByExt {
     my $uname = PSMT->user->get_uid();
     if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
     if ($is_all) {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND fileext = ? ORDER BY uptime DESC');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND fileext = ? ORDER BY version DESC, uptime DESC');
         $sth->execute($docid, $ext);
     } else {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND fileext = ? AND (enabled = 1 OR uname = ?) ORDER BY uptime DESC');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND fileext = ? AND (enabled = 1 OR uname = ?) ORDER BY version DESC, uptime DESC');
         $sth->execute($docid, $ext, $uname);
     }
     my $ref;
@@ -262,10 +262,10 @@ sub GetDocLastPostFileId {
     $dbh->db_lock_tables('docinfo READ');
     my $sth;
     if (defined($ext)) {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 AND fileext = ? ORDER BY uptime DESC LIMIT 1');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 AND fileext = ? ORDER BY version DESC, uptime DESC LIMIT 1');
         $sth->execute($docid, $ext);
     } else {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY uptime DESC LIMIT 1');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY version DESC, uptime DESC LIMIT 1');
         $sth->execute($docid);
     }
     if ($sth->rows() != 1) {return undef; }
@@ -278,7 +278,7 @@ sub GetDocLastPostFileInfo {
     my ($self ,$docid) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY uptime DESC LIMIT 1');
+    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY version DESC, uptime DESC LIMIT 1');
     $sth->execute($docid);
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
@@ -439,11 +439,12 @@ sub GetFileInfoInDocs {
     # XXX "ORDER BY docinfo.uptime DESC" is for later listing, remove if no need
     if ($is_all) {
         $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid IN ' . $stmp . 
-               ' ORDER BY docinfo.uptime DESC');
+               ' ORDER BY docinfo.version DESC, docinfo.uptime DESC');
         $sth->execute(@$docid);
     } else {
         $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid IN ' . $stmp . 
-               ' AND (enabled = 1 OR uname = ?) ORDER BY docinfo.uptime DESC');
+               ' AND (enabled = 1 OR uname = ?)'. 
+               ' ORDER BY docinfo.version DESC, docinfo.uptime DESC');
         $sth->execute(@$docid, $uname);
     }
 
