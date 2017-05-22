@@ -63,7 +63,7 @@
 <ul>
   <li>作成者: <tt>[% User.uid FILTER html %]</tt></li>
   <li>作成日: (アップロード日時)</li>
-  <li>バージョン: [% IF ! did.defined %]1.0[% ELSE %]<input type="text" size="10" name="version" value="[% doc_info.next_version %]" />[% END %]</li>
+  <li>バージョン: [% IF ! did.defined %]1.0<input type="hidden" name="version" value="1.0" />[% ELSE %]<input type="text" size="10" name="version" value="[% doc_info.next_version %]" />[% END %]</li>
 </ul></p>
 
 <h4>通知</h4>

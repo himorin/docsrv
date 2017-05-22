@@ -34,6 +34,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     my $source = $obj_cgi->param('source');
     my $desc = $obj_cgi->param('comment');
     my $demail = $obj_cgi->param('demail');
+    my $version = $obj_cgi->param('version');
 
     my $ext = 'dat';
     my $src = undef;
@@ -53,7 +54,7 @@ if ($obj_cgi->request_method() eq 'POST') {
         PSMT::Error->throw_error_user('invalid_file_source');
     }
 
-    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, TRUE, $chash, $demail);
+    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, TRUE, $chash, $demail, $version);
     if (! defined($fid)) {
         PSMT::Error->throw_error_user('file_register_failed');
     }

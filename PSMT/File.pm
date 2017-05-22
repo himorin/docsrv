@@ -749,13 +749,16 @@ sub RegNewDoc {
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add, $hash, $daddrs) = @_;
-    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs);
+    my ($self, $ext, $docid, $desc, $is_add, $hash, $daddrs, $ver) = @_;
+    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs, $ver);
 }
 
 sub RegNewFileTime {
-    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs, $ver) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
+    if ((! defined($ver)) || ($ver <= 0.0)) {
+        PSMT::Error->throw_error_user('version_not_numeric');
+    }
     my $fileid = undef;
     my $uname = PSMT->user()->get_uid();
     my $srcip = PSMT::Util->IpAddr();
@@ -775,11 +778,11 @@ sub RegNewFileTime {
     }
     $ext = lc($ext);
     if ($uptime < 0) {
-        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)');
-        $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc, $hash);
+        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash, version) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?)');
+        $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc, $hash, $ver);
     } else {
-        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash) VALUES (?, ?, ?, from_unixtime(?), ?, ?, ?, ?)');
-        $sth->execute($fileid, $ext, $docid, $uptime, $uname, $srcip, $desc, $hash);
+        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash, version) VALUES (?, ?, ?, from_unixtime(?), ?, ?, ?, ?, ?)');
+        $sth->execute($fileid, $ext, $docid, $uptime, $uname, $srcip, $desc, $hash, $ver);
     }
     $dbh->db_unlock_tables();
     if ($is_add == TRUE) {PSMT->email()->NewFileInDoc($docid, $fileid, $daddrs); }

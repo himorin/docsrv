@@ -65,7 +65,7 @@
 <ul>
   <li>Created by: <tt>[% User.uid FILTER html %]</tt></li>
   <li>DateTime: (DateTime of uploaded)</li>
-  <li>Version: [% IF ! did.defined %]1.0[% ELSE %]<input type="text" size="10" name="version" value="[% doc_info.next_version %]" />[% END %]</li>
+  <li>Version: [% IF ! did.defined %]1.0<input type="hidden" name="version" value="1.0" />[% ELSE %]<input type="text" size="10" name="version" value="[% doc_info.next_version %]" />[% END %]</li>
 </ul></p>
 
 <h4>Notification</h4>

@@ -51,6 +51,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     my @labels = $obj_cgi->param('label');
     my $secure = defined($obj_cgi->param('secure')) ? 1 : 0;
     my $demail = $obj_cgi->param('demail');
+    my $version = $obj_cgi->param('version');
 
     # Add new file from source
     my $ext = 'dat';
@@ -70,6 +71,9 @@ if ($obj_cgi->request_method() eq 'POST') {
     } else {
         PSMT::Error->throw_error_user('invalid_file_source');
     }
+    if ((! defined($version)) || ($version <= 0.0)) {
+        PSMT::Error->throw_error_user('version_not_numeric');
+    }
 
     # Fiest register new document to path
     my $did = PSMT::File->RegNewDoc($pid, $filename, $docdesc, $secure);
@@ -78,7 +82,7 @@ if ($obj_cgi->request_method() eq 'POST') {
     }
 
     # second register new file to doc
-    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, FALSE, $chash, $demail);
+    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, FALSE, $chash, $demail, $version);
     if (! defined($fid)) {
         PSMT::Error->throw_error_user('file_register_failed');
     }
