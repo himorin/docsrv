@@ -24,9 +24,11 @@ my $fid = $obj_cgi->param('fid');
 if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 
 my $desc = $obj_cgi->param('description');
+my $version = $obj_cgi->param('version');
 my $method = $obj_cgi->param('method');
 if ($obj_cgi->request_method() eq 'POST') {
-    if (defined($desc)) {PSMT::File->UpdateFileInfo($fid, $desc); }
+    if (defined($desc)) {PSMT::File->UpdateFileDesc($fid, $desc); }
+    if (defined($version)) {PSMT::File->UpdateFileVersion($fid, $version); }
 } elsif (defined($method)) {
     # user who can disable file, can access file even if disabled
     if ($method eq 'disable') {

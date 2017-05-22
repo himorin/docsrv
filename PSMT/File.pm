@@ -94,7 +94,8 @@ use PSMT::FullSearchMroonga;
     RegNewFileTime
     UpdatePathInfo
     UpdateDocInfo
-    UpdateFileInfo
+    UpdateFileDesc
+    UpdateFileVersion
     EditFileAccess
 
     ValidateNameInPath
@@ -882,7 +883,7 @@ sub UpdateDocInfo {
     $dbh->db_unlock_tables();
 }
 
-sub UpdateFileInfo {
+sub UpdateFileDesc {
     my ($self, $fid, $desc) = @_;
     my $finfo = $self->GetFileInfo($fid);
     if (! defined($finfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
@@ -893,6 +894,22 @@ sub UpdateFileInfo {
     $dbh->db_lock_tables('docinfo WRITE');
     my $sth = $dbh->prepare('UPDATE docinfo SET description = ? WHERE fileid = ?');
     if ($sth->execute($desc, $fid) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    $dbh->db_unlock_tables();
+}
+
+sub UpdateFileVersion {
+    my ($self, $fid, $ver) = @_;
+    my $finfo = $self->GetFileInfo($fid);
+    if (! defined($finfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
+    if ((! PSMT->user->is_inadmin()) && ($finfo->{uname} ne PSMT->user->get_uid())) {
+        PSMT::Error->throw_error_user('update_permission');
+    }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo WRITE');
+    my $sth = $dbh->prepare('UPDATE docinfo SET version = ? WHERE fileid = ?');
+    if ($sth->execute($ver, $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
     $dbh->db_unlock_tables();
