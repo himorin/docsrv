@@ -1,15 +1,17 @@
 [% PROCESS global/header.html.tmpl %]
 
-<h3>About this [% terms.file %]</h3>
+<h3>About this [% terms.file %]
+[% IF User.uid == file_info.uname || Admin %]
+  <span id="update_link">[<a href="javascript: file_info_update();">Update</a>]</span>
+[% END %]
+</h3>
 
 <form method="POST" action="fileinfo.cgi">
 <ul>
   <li>General information of [% terms.file %]:
     <span id="file_desc_raw">[% file_info.description %]</span>
     <span id="file_desc_edit" class="ui_hidden"><input type="text" size="100" name="description" value="[% file_info.description %]"></span>
-    [% IF User.uid == file_info.uname %]
-      <span id="update_link"><a href="javascript: file_info_update();">Update</a></span>
-    [% END %]</li>
+    </li>
   <li>File type:
        [%- INCLUDE show_mime_icon id = file_info.fileext -%]
        [% file_info.fileext %] / [% file_type %]</li>
