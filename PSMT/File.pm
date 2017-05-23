@@ -756,9 +756,7 @@ sub RegNewFile {
 sub RegNewFileTime {
     my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs, $ver) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
-    if ((! defined($ver)) || ($ver <= 0.0)) {
-        PSMT::Error->throw_error_user('version_not_numeric');
-    }
+    if (! $self->_check_version_value($ver)) {return undef; }
     my $fileid = undef;
     my $uname = PSMT->user()->get_uid();
     my $srcip = PSMT::Util->IpAddr();
@@ -890,9 +888,7 @@ sub UpdateFileDesc {
     my ($self, $fid, $desc) = @_;
     my $finfo = $self->GetFileInfo($fid);
     if (! defined($finfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
-    if ((! PSMT->user->is_inadmin()) && ($finfo->{uname} ne PSMT->user->get_uid())) {
-        PSMT::Error->throw_error_user('update_permission');
-    }
+    PSMT::Access->CheckEditForFile($fid, TRUE);
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo WRITE');
     my $sth = $dbh->prepare('UPDATE docinfo SET description = ? WHERE fileid = ?');
@@ -906,8 +902,9 @@ sub UpdateFileVersion {
     my ($self, $fid, $ver) = @_;
     my $finfo = $self->GetFileInfo($fid);
     if (! defined($finfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
-    if ((! PSMT->user->is_inadmin()) && ($finfo->{uname} ne PSMT->user->get_uid())) {
-        PSMT::Error->throw_error_user('update_permission');
+    PSMT::Access->CheckEditForFile($fid, TRUE);
+    if (! $self->_check_version_value($ver)) {
+        PSMT::Error->throw_error_user('invalid_version_number');
     }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo WRITE');
@@ -1308,6 +1305,12 @@ sub _attach_file_info {
     $ref->{filemime} = PSMT::Util->GetMimeType($ref->{fileext});
     $ref->{preview} = PSMT::Util->IsPreview($ref->{filemime});
     return $ref;
+}
+
+sub _check_version_value {
+    my ($self, $ver) = @_;
+    if (defined($ver) && ($ver > 0.0)) {return TRUE; }
+    return FALSE;
 }
 
 1;
