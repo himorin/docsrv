@@ -93,7 +93,7 @@ sub CheckEditForFile {
         if (defined($is_throw)) {PSMT::Error->throw_error_user('invalid_fileid'); }
         else {return FALSE; }
     }
-    if (($obj->user()->is_inadmin() != TRUE) && 
+    if ((! PSMT->user->is_inadmin()) && 
         ($fileinfo->{uname} ne PSMT->user->get_uid())) {
         if (defined($is_throw)) {PSMT::Error->throw_error_user('permission_error'); }
         else {return FALSE; }
