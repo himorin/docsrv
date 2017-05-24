@@ -79,6 +79,7 @@ use PSMT::FullSearchMroonga;
     ListFilesInDocByExt
     GetDocLastPostFileId
     GetDocLastPostFileInfo
+    GetAllDocCount
 
     GetFileInfo
     GetFilesInfo
@@ -190,6 +191,17 @@ sub GetDocsInfo {
             . $ret{$_}->{filename};
     }
     return \%ret;
+}
+
+sub GetAllDocCount {
+    my ($self) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg READ');
+    my $sth = $dbh->prepare('SELECT MAX(docid) AS docid_count FROM docreg');
+    $sth->execute();
+    if ($sth->rows != 1) {return 0; }
+    my $ret = $sth->fetchrow_hashref();
+    return $ret->{'docid_count'};
 }
 
 sub HashFileToDoc {
