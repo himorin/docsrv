@@ -9,7 +9,7 @@
 
     "icon_def"       => "crystal_project-16/mimetypes/unknown.png",
  }
-%]
+-%]
 [%- header_links_def = {
     "index"    => { "name" => "Home", "url" => "$UConf.home.value" },
     "dir"      => { "name" => "/", "url" => "pathinfo.cgi?pid=0" },
@@ -21,18 +21,16 @@
     "admin"    => { "name" => "Administrate", "url" => "admin.cgi", group => Param.admingroup },
     "config"   => { "name" => "Config", "url" => "config.cgi" },
  }
-%]
-[% BLOCK site_announce %]
+-%]
+[%- BLOCK site_announce %]
 [% END %]
-
 [%- user_config_help = {
     "history"    => "Max dates for RecentChanges list",
     "email"      => "Send e-mail when $terms.document in $terms.favorite is updated",
     "home"       => "Your personal Home page, set address after the last '/' (such as \"index.cgi\")",
  }
 %]
-
-[%# HTML definitions for icon
+[%-# HTML definitions for icon
   #   id : icon ID
   #%]
 [%- BLOCK show_table_icon %]<img 
@@ -47,7 +45,6 @@
   [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
   [% IF title.defined %]title="[% title FILTER html %]"[% END -%]
 />[% END -%]
-
 [%- BLOCK show_mime_icon %]<img 
   [%- IF IcoMime.$id.defined -%]
     src="skins/images/[% IcoMime.$id.value %]" alt="[% IcoMime.$id.tiphelp %]"
