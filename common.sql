@@ -31,7 +31,8 @@ CREATE TABLE docinfo (
   srcip         int         UNSIGNED NOT NULL                            ,
   description   text                     NULL                            ,
   shahash       text                     NULL                            ,
-  enabled       int                  NOT NULL DEFAULT 1                  
+  enabled       int                  NOT NULL DEFAULT 1                  ,
+  version       float                NOT NULL DEFAULT 0.0                
 ) DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE path (

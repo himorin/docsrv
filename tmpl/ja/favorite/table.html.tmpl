@@ -5,7 +5,7 @@
     <th>ドキュメント名</th>
     <th>説明</th>
     <th>解除</th>
-    <th colspan="3">最新版</th>
+    <th colspan="4">最新版</th>
   </tr>
 
 [% FOREACH item IN favpath.keys %]
@@ -21,7 +21,7 @@
     <td class="docpath"><a href="pathinfo.cgi?pid=[% item %]"><tt>[% favpath.$item.full_path %]</tt></a></td>
     <td class="docfav">[% favpath.$item.short_description %]</td>
     <td class="docfav_rm"><a href="docfav.cgi?pid=[% item %]&amp;op=remove">解除</a></td>
-    <td colspan="3" class="center"></td>
+    <td colspan="4" class="center"></td>
   </tr>
 [% END %]
 
@@ -46,8 +46,9 @@
       <td>[% favlist.$item.fid.uname %]</td>
       <td>[% favlist.$item.fid.uptime %]</td>
       <td class="docsize">[% SizeDisp(favlist.$item.fid.size) %]</td>
+      <td>[% favlist.$item.fid.version %]</td>
     [% ELSE %]
-      <td colspan="3" class="center">存在しません</td>
+      <td colspan="4" class="center">存在しません</td>
     [% END %]
   </tr>
 [% END %]

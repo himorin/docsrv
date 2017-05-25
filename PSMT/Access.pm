@@ -27,6 +27,8 @@ use PSMT::File;
     CheckForFile
     CheckSecureForFile
 
+    CheckEditForFile
+
     ListFullPathRestrict
     ListPathRestrict
     ListFullDocRestrict
@@ -83,6 +85,22 @@ sub CheckForFile {
     }
     return $self->CheckForDoc($finfo->{docid});
 }
+
+sub CheckEditForFile {
+    my ($self, $fid, $is_throw) = @_;
+    my $fileinfo = PSMT::File->GetFileInfo($fid);
+    if (! defined($fileinfo)) {
+        if (defined($is_throw)) {PSMT::Error->throw_error_user('invalid_fileid'); }
+        else {return FALSE; }
+    }
+    if ((! PSMT->user->is_inadmin()) && 
+        ($fileinfo->{uname} ne PSMT->user->get_uid())) {
+        if (defined($is_throw)) {PSMT::Error->throw_error_user('permission_error'); }
+        else {return FALSE; }
+    }
+    return TRUE;
+}
+
 
 sub ListFullPathRestrict {
     my ($self, $pathid) = @_;

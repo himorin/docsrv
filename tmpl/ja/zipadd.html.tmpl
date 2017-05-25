@@ -49,6 +49,7 @@
   <th>[% terms.document %] ID</th>
   <th>[% terms.file %] ID</th>
   <th>最終更新</th>
+  <th>バージョン</th>
   <th>サイズ</th>
 </tr>
 [% FOREACH item IN up_succ %]
@@ -58,6 +59,7 @@
   <td>[% item.did %]</td>
   <td>[% item.fid %]</td>
   <td>[% item.lastmodified %]</td>
+  <td>[% item.version %]</td>
   <td>[% SizeDisp(item.size) %]</td>
 </tr>
 [% END %]

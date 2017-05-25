@@ -14,6 +14,7 @@ use Digest::MD5;
 use Digest::SHA;
 use File::Path;
 use File::Temp qw/ tempfile tempdir /;
+use POSIX qw(:math_h);
 
 use base qw(Exporter);
 
@@ -78,6 +79,7 @@ use PSMT::FullSearchMroonga;
     ListFilesInDocByExt
     GetDocLastPostFileId
     GetDocLastPostFileInfo
+    GetAllDocCount
 
     GetFileInfo
     GetFilesInfo
@@ -93,7 +95,8 @@ use PSMT::FullSearchMroonga;
     RegNewFileTime
     UpdatePathInfo
     UpdateDocInfo
-    UpdateFileInfo
+    UpdateFileDesc
+    UpdateFileVersion
     EditFileAccess
 
     ValidateNameInPath
@@ -101,6 +104,8 @@ use PSMT::FullSearchMroonga;
     SaveToDav
     MakeEncZipFile
     CheckMimeIsView
+
+    GetNextVersionForDoc
 );
 
 my $hash_each = 2;
@@ -188,6 +193,17 @@ sub GetDocsInfo {
     return \%ret;
 }
 
+sub GetAllDocCount {
+    my ($self) = @_;
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg READ');
+    my $sth = $dbh->prepare('SELECT MAX(docid) AS docid_count FROM docreg');
+    $sth->execute();
+    if ($sth->rows != 1) {return 0; }
+    my $ret = $sth->fetchrow_hashref();
+    return $ret->{'docid_count'};
+}
+
 sub HashFileToDoc {
     my ($self, $fid) = @_;
     my $dbh = PSMT->dbh;
@@ -215,10 +231,10 @@ sub ListFilesInDoc {
     my $uname = PSMT->user->get_uid();
     if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
     if ($is_all) {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY uptime DESC');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? ORDER BY version DESC, uptime DESC');
         $sth->execute($docid);
     } else {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND (enabled = 1 OR uname = ?) ORDER BY uptime DESC');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND (enabled = 1 OR uname = ?) ORDER BY version DESC, uptime DESC');
         $sth->execute($docid, $uname);
     }
     my $ref;
@@ -241,10 +257,10 @@ sub ListFilesInDocByExt {
     my $uname = PSMT->user->get_uid();
     if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
     if ($is_all) {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND fileext = ? ORDER BY uptime DESC');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND fileext = ? ORDER BY version DESC, uptime DESC');
         $sth->execute($docid, $ext);
     } else {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND fileext = ? AND (enabled = 1 OR uname = ?) ORDER BY uptime DESC');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND fileext = ? AND (enabled = 1 OR uname = ?) ORDER BY version DESC, uptime DESC');
         $sth->execute($docid, $ext, $uname);
     }
     my $ref;
@@ -262,10 +278,10 @@ sub GetDocLastPostFileId {
     $dbh->db_lock_tables('docinfo READ');
     my $sth;
     if (defined($ext)) {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 AND fileext = ? ORDER BY uptime DESC LIMIT 1');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 AND fileext = ? ORDER BY version DESC, uptime DESC LIMIT 1');
         $sth->execute($docid, $ext);
     } else {
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY uptime DESC LIMIT 1');
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY version DESC, uptime DESC LIMIT 1');
         $sth->execute($docid);
     }
     if ($sth->rows() != 1) {return undef; }
@@ -278,7 +294,7 @@ sub GetDocLastPostFileInfo {
     my ($self ,$docid) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY uptime DESC LIMIT 1');
+    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY version DESC, uptime DESC LIMIT 1');
     $sth->execute($docid);
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
@@ -439,11 +455,12 @@ sub GetFileInfoInDocs {
     # XXX "ORDER BY docinfo.uptime DESC" is for later listing, remove if no need
     if ($is_all) {
         $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid IN ' . $stmp . 
-               ' ORDER BY docinfo.uptime DESC');
+               ' ORDER BY docinfo.version DESC, docinfo.uptime DESC');
         $sth->execute(@$docid);
     } else {
         $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid IN ' . $stmp . 
-               ' AND (enabled = 1 OR uname = ?) ORDER BY docinfo.uptime DESC');
+               ' AND (enabled = 1 OR uname = ?)'. 
+               ' ORDER BY docinfo.version DESC, docinfo.uptime DESC');
         $sth->execute(@$docid, $uname);
     }
 
@@ -744,13 +761,14 @@ sub RegNewDoc {
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add, $hash, $daddrs) = @_;
-    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs);
+    my ($self, $ext, $docid, $desc, $is_add, $hash, $daddrs, $ver) = @_;
+    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs, $ver);
 }
 
 sub RegNewFileTime {
-    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs, $ver) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
+    if (! $self->_check_version_value($ver)) {return undef; }
     my $fileid = undef;
     my $uname = PSMT->user()->get_uid();
     my $srcip = PSMT::Util->IpAddr();
@@ -770,11 +788,11 @@ sub RegNewFileTime {
     }
     $ext = lc($ext);
     if ($uptime < 0) {
-        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)');
-        $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc, $hash);
+        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash, version) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?)');
+        $sth->execute($fileid, $ext, $docid, $uname, $srcip, $desc, $hash, $ver);
     } else {
-        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash) VALUES (?, ?, ?, from_unixtime(?), ?, ?, ?, ?)');
-        $sth->execute($fileid, $ext, $docid, $uptime, $uname, $srcip, $desc, $hash);
+        $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash, version) VALUES (?, ?, ?, from_unixtime(?), ?, ?, ?, ?, ?)');
+        $sth->execute($fileid, $ext, $docid, $uptime, $uname, $srcip, $desc, $hash, $ver);
     }
     $dbh->db_unlock_tables();
     if ($is_add == TRUE) {PSMT->email()->NewFileInDoc($docid, $fileid, $daddrs); }
@@ -878,17 +896,32 @@ sub UpdateDocInfo {
     $dbh->db_unlock_tables();
 }
 
-sub UpdateFileInfo {
+sub UpdateFileDesc {
     my ($self, $fid, $desc) = @_;
     my $finfo = $self->GetFileInfo($fid);
     if (! defined($finfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
-    if ((! PSMT->user->is_inadmin()) && ($finfo->{uname} ne PSMT->user->get_uid())) {
-        PSMT::Error->throw_error_user('update_permission');
-    }
+    PSMT::Access->CheckEditForFile($fid, TRUE);
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo WRITE');
     my $sth = $dbh->prepare('UPDATE docinfo SET description = ? WHERE fileid = ?');
     if ($sth->execute($desc, $fid) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    $dbh->db_unlock_tables();
+}
+
+sub UpdateFileVersion {
+    my ($self, $fid, $ver) = @_;
+    my $finfo = $self->GetFileInfo($fid);
+    if (! defined($finfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
+    PSMT::Access->CheckEditForFile($fid, TRUE);
+    if (! $self->_check_version_value($ver)) {
+        PSMT::Error->throw_error_user('invalid_version_number');
+    }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo WRITE');
+    my $sth = $dbh->prepare('UPDATE docinfo SET version = ? WHERE fileid = ?');
+    if ($sth->execute($ver, $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
     $dbh->db_unlock_tables();
@@ -1254,6 +1287,14 @@ sub ListFileHashDup {
     return \%ret;
 }
 
+sub GetNextVersionForDoc {
+    my ($self, $did) = @_;
+    my $finfo = $self->GetDocLastPostFileInfo($did);
+    if (! defined($finfo)) {return 1.0; }
+    if (! defined($finfo->{'version'})) {return 1.0; }
+    return floor($finfo->{'version'} + 1.0);
+}
+
 ################################################################## PRIVATE
 
 sub GetHashString {
@@ -1276,6 +1317,12 @@ sub _attach_file_info {
     $ref->{filemime} = PSMT::Util->GetMimeType($ref->{fileext});
     $ref->{preview} = PSMT::Util->IsPreview($ref->{filemime});
     return $ref;
+}
+
+sub _check_version_value {
+    my ($self, $ver) = @_;
+    if (defined($ver) && ($ver > 0.0)) {return TRUE; }
+    return FALSE;
 }
 
 1;

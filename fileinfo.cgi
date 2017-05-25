@@ -22,22 +22,25 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 
 my $fid = $obj_cgi->param('fid');
 if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
+my $fileinfo = PSMT::File->GetFileInfo($fid);
+if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 
-my $desc = $obj_cgi->param('description');
 my $method = $obj_cgi->param('method');
 if ($obj_cgi->request_method() eq 'POST') {
-    if (defined($desc)) {PSMT::File->UpdateFileInfo($fid, $desc); }
+    my $desc = $obj_cgi->param('description');
+    my $version = $obj_cgi->param('version');
+    PSMT::Access->CheckEditForFile($fid, TRUE);
+    if (defined($desc)) {PSMT::File->UpdateFileDesc($fid, $desc); }
+    if (defined($version)) {PSMT::File->UpdateFileVersion($fid, $version); }
 } elsif (defined($method)) {
     # user who can disable file, can access file even if disabled
+    PSMT::Access->CheckEditForFile($fid, TRUE);
     if ($method eq 'disable') {
         PSMT::File->EditFileAccess($fid, FALSE);
     } elsif ($method eq 'enable') {
         PSMT::File->EditFileAccess($fid, TRUE);
     }
 }
-
-my $fileinfo = PSMT::File->GetFileInfo($fid);
-if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 
 # check permission
 PSMT::Access->CheckForFile($fid);

@@ -1,3 +1,9 @@
+# pre-0.7
+
+## 0.6.1
+
+* Added version field to file
+
 # 0.6
 
 * Replaced Search function

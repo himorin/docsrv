@@ -147,6 +147,8 @@ while ($cdir = shift(@$dlist)) {
 }
 
 # entry files
+# keep did->version
+my %dver;
 my ($cdid, $cname, $cext, $cfid);
 foreach (@$iflist) {&AddUpfailed($_, 'doc', 'invalid_encoding'); }
 foreach (@$flist) {
@@ -182,7 +184,12 @@ foreach (@$flist) {
         } # what to do?
 #        if ($cdid == 0) {PSMT::Error->throw_error_user('doc_add_failed'); }
     }
-    $cfid = PSMT::File->RegNewFileTime($cext, $cdid, '', FALSE, $_->{lastmodified}, $_->{shahash}, undef);
+    if (defined($dver{$cdid})) {
+        $dver{$cdid} = $dver{$cdid} + 0.1;
+    } else {
+        $dver{$cdid} = PSMT::File->GetNextVersionForDoc($cdid);
+    }
+    $cfid = PSMT::File->RegNewFileTime($cext, $cdid, '', FALSE, $_->{lastmodified}, $_->{shahash}, undef, $dver{$cdid});
     if (! defined($cfid)) {
         &AddUpfailed($_, 'doc', 'fail_add_file');
         next;
@@ -199,6 +206,7 @@ foreach (@$flist) {
     $_->{fid} = $cfid;
     $_->{storename} = $_->{dirname} . '/' . $cname;
     $_->{ext} = $cext;
+    $_->{version} = $dver{$cdid};
     push(@uploaded, $_);
 }
 
