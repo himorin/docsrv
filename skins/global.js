@@ -98,4 +98,17 @@ function set_admin(target) {
     location.reload();
 }
 
+// helper function for GET query
+function GetData(url) {
+  var httpReq = new XMLHttpRequest();
+  var json_data;
+  httpReq.open('GET', url, false);
+  httpReq.send();
+  if (httpReq.status === 200) {
+    json_data = JSON.parse(httpReq.responseText);
+  } else {
+      return undefined;
+  } 
+  return json_data;
+}
 
