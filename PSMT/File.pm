@@ -57,6 +57,7 @@ use PSMT::FullSearchMroonga;
     CheckPathExist
     CheckDocExist
     DeleteEmptyPath
+    DeleteEmptyDoc
 
     ListUserUpForDoc
     IsUserUpForDoc
@@ -1147,6 +1148,20 @@ sub DeleteEmptyPath {
     $dbh->db_lock_tables('path WRITE');
     my $sth = $dbh->prepare('DELETE FROM path WHERE pathid = ?');
     if ($sth->execute($pid) == 0) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+sub DeleteEmptyDoc {
+    my ($self, $did) = @_;
+    my $dnum;
+    $dnum = $self->ListFilesInDoc($did, TRUE);
+    if ($#$dnum > -1) {return FALSE; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg WRITE');
+    my $sth = $dbh->prepare('DELETE FROM docreg WHERE docid = ?');
+    if ($sth->execute($did) == 0) {
         return FALSE;
     }
     return TRUE;
