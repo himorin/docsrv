@@ -69,8 +69,11 @@ $obj->template->set_vars('id', $iid);
 $obj->template->set_vars('jsondata', $hash);
 
 if (! defined(PSMT->cgi()->param('format'))) {
-    $obj_cgi->header( -type => "application/json" );
-    $obj->template->process('json/' . $outtm, 'json');
+    print $obj_cgi->header( -type => "application/json" );
+    print "\n";
+    my $json;
+    $obj->template->process('json/' . $outtm, 'json', undef, \$json);
+    print $json;
 } else {
     if (PSMT->cgi()->param('format') eq 'js') {
         $obj->template->process('json/wrap', 'js');

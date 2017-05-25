@@ -165,6 +165,7 @@ sub process {
     $template .= '.' . $ext . '.tmpl';
     if (! defined($out)) {
         print PSMT->cgi()->header( -type => PSMT::Util->GetMimeType($ext) );
+        print "\n";
     }
     $obj_template->process($template, PSMT->template->vars(), $out);
 }
