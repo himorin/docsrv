@@ -38,6 +38,7 @@ if ($type eq 'allpath') {
         my $chash = {};
         $chash->{docid} = $_->{docid};
         $chash->{filename} = $_->{filename};
+        $chash->{description} = $_->{description};
         $chash->{secure} = $_->{secure};
         $hash->{$_->{docid}} = $chash;
     }
