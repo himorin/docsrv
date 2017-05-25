@@ -72,6 +72,11 @@ You need the following softwares.
 
 # UPGRADE NOTES
 
+## To 0.6.1 from 0.6
+
+* New column added to 'docinfo' table: 'version'
+  * Add by SQL, and run 'cl_version.pl' to assign numbers for existing files
+
 ## To 0.6 from 0.5.7
 
 * New perl module required: MIME::Types
