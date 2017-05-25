@@ -31,6 +31,16 @@ my $objattr;
 if ($type eq 'allpath') {
     PSMT::File->ListAllPath($hash);
     $outtm = 'table';
+} elsif ($type eq 'docsinpath') {
+    my $tarr = PSMT::File->ListDocsInPath($iid);
+    $outtm = 'table';
+    foreach (@$tarr) {
+        my $chash = {};
+        $chash->{docid} = $_->{docid};
+        $chash->{filename} = $_->{filename};
+        $chash->{secure} = $_->{secure};
+        $hash->{$_->{docid}} = $chash;
+    }
 } elsif ($type eq 'pathinfo') {
     $hash = PSMT::File->GetPathInfo($iid);
     $hash->{parr} = PSMT::File->GetFullPathArray($iid);
