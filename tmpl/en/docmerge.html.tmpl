@@ -91,7 +91,6 @@ var list_file = [ [% FOREACH item IN file_list %]"[% item.fileid %]", [% END %] 
 
 <p>Target [% terms.document %] to be merged into: 
   <select name="doc_path" id="doc_path">
-    [% INCLUDE entry/pathlist.html.tmpl pidsel = doc_info.pathid %]
   </select>/<select name="doc_document" id="doc_document"></select>
   <input type="text" name="filename" value="" size="50" id="doc_newdoc_name" class="ui_hidden">
 </p>
@@ -142,6 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('doc_document').onchange = function () {
     set_newdocdisp();
   }
+  SetPathSelect('doc_path', [% doc_info.pathid %]);
   set_doclist([% doc_info.pathid %]);
 });
 -->

@@ -130,11 +130,6 @@ $obj->template->set_vars('full_path', PSMT::File->GetFullPathFromId($dinfo->{pat
 $obj->template->set_vars('doc_labels', PSMT::Label->ListLabelOnDoc($did));
 $obj->template->set_vars('file_list', PSMT::File->ListFilesInDoc($did, TRUE));
 
-my %allpath;
-PSMT::File->ListAllPath(\%allpath);
-$obj->template->set_vars('allpath', \%allpath);
-$obj->template->set_vars('allpathrev', PSMT::Util->MakeReverseHashByKey(\%allpath, 'fullpath'));
-
 $obj->template->process('docmerge', 'html');
 
 exit;
