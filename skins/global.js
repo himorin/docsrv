@@ -132,7 +132,7 @@ function AcquireAllpath() {
   return json_allpath;
 }
 
-function SetPathSelect(sel_id) {
+function SetPathSelect(sel_id, cur_id) {
   if (sel_id == '') {return ; }
   AcquireAllpath();
   var sel = document.getElementById(sel_id);
@@ -145,6 +145,7 @@ function SetPathSelect(sel_id) {
     co = document.createElement('option');
     co.text = json_allpath_order[i];
     co.value = json_allpath_rev[co.text].pathid;
+    if (co.value == cur_id) {co.selected = true; }
     sel.options.add(co);
   }
 }

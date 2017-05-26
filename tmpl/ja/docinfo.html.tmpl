@@ -74,7 +74,7 @@ function doc_info_update () {
   \$("#doc_desc_edit").removeClass("ui_hidden");
   \$("#doc_update").removeClass("ui_hidden");
   \$("#update_link").addClass("ui_hidden");
-  SetPathSelect('new_pathid');
+  SetPathSelect('new_pathid', [% doc_info.docid %]);
 }
 // -->
 </script>
