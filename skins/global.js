@@ -58,23 +58,6 @@ function tweak_ToggleFavPath (target) {
     ).fail(function(data, stat, errorTh){alert("Async call failed: " + stat);});
 }
 
-function AllPathChange() {
-/*
-  var selid = document.docadd_set.pid.selectedIndex;
-  var hid = document.docadd_set.pid.options[selid].value;
-  if (hid == 0) {
-    document.getElementById("hid").innerHTML = 0;
-    document.getElementById("fullpath").innerHTML = "";
-    document.getElementById("desc").innerHTML = "Top Directory";
-  } else {
-    document.getElementById("hid").innerHTML = hid;
-    document.getElementById("fullpath").innerHTML = conf_data_allpath.data[hid].fullpath;
-    document.getElementById("desc").innerHTML = conf_data_allpath.data[hid].description;
-  }
-*/
-}
-
-
 // InfoTip will use id 'gbit' element
 
 var def_gbit_id = 'gbit';

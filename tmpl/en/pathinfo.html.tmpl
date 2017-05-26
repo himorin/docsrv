@@ -24,7 +24,7 @@
   [% PROCESS global/formopt.html.tmpl %]
   <ul>
     <li id="path_name_edit" class="ui_hidden">Move/Change this [% terms.path %] to: 
-      <select name="new_parent" onChange="AllPathChange();" id="new_parent">
+      <select name="new_parent" id="new_parent">
       </select>/<input type="text" name="new_name" size="50" value="[% path_info.pathname FILTER html %]"></li>
     <li><label for="new_description">[% terms.path %] information:</label> [% path_info.short_description FILTER html %]
       [% IF Admin %]
@@ -45,6 +45,7 @@
   <input type="hidden" name="old_description" value="[% path_info.description FILTER html %]">
   </form>
 
+<!--
   <ul id="path_desc_json" class="ui_hidden">
     <li>Target [% terms.path %] information: 
       <a id="hidurl" href="pathinfo.cgi?pid=[% path_info.pathid FILTER html %]"><span id="fullpath">[% full_path FILTER html %]</span> (<span id="hid">[% path_info.pathid FILTER html %]</span>)</a> - <span id="desc">[% path_info.short_description FILTER html %]</span></li>
@@ -52,9 +53,7 @@
       [% IF group_list.size > 0 %][% group_list.join(', ') %]
       [% ELSE %](undefined)[% END %]</li>
   </ul>
-  <script type="text/javascript"><!--
-    AllPathChange();
-  --></script>
+-->
 
   <script type="text/javascript">
   <!--
