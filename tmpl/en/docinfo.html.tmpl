@@ -20,8 +20,7 @@ Please check descriptions of [% terms.file %] carefully.</p>
       <tt><a href="pathinfo.cgi?path=[% full_path %]">/[% full_path %]</a></tt>
       <tt>[% doc_info.filename %]</tt></span>
     <span id="doc_name_edit" class="ui_hidden">
-      <select name="new_pathid" onChange="AllPathChange();">
-      [% INCLUDE entry/pathlist.html.tmpl  pidsel = doc_info.pathid %]
+      <select name="new_pathid" onChange="AllPathChange();" id="new_pathid">
       </select>/<input type="text" size="50" name="new_name" value="[% doc_info.filename %]"></span>
     [% IF InList(file_uname, User.uid) || Admin %]
       <span id="update_link"><a href="javascript: doc_info_update();">Update</a></span>
@@ -61,7 +60,6 @@ Please check descriptions of [% terms.file %] carefully.</p>
 <input type="hidden" name="old_secure" value="[% doc_info.secure %]">
 </form>
 
-<script type="text/javascript" src="json.cgi?format=js&amp;type=allpath"></script>
 <script type="text/javascript"><!--
   AllPathChange();
 --></script>
@@ -76,6 +74,7 @@ function doc_info_update () {
   \$("#doc_desc_edit").removeClass("ui_hidden");
   \$("#doc_update").removeClass("ui_hidden");
   \$("#update_link").addClass("ui_hidden");
+  SetPathSelect('new_pathid');
 }
 // -->
 </script>
