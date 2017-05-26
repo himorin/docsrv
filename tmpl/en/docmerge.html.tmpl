@@ -1,0 +1,168 @@
+[% PROCESS global/header.html.tmpl %]
+
+[% IF merged.defined %]
+<h3>Merged [% terms.document %] into <tt>[% full_path FILTER html %][% doc_info.filename FILTER html %]</tt></h3>
+[% ELSE %]
+<h3>Merge [% terms.document %] <tt>[% full_path FILTER html %][% doc_info.filename FILTER html %]</tt> to another</h3>
+[% END %]
+
+<p>Select [% terms.file %] in the source document (table below) to be merged 
+into another [% terms.document %], and specify a target [% terms.document %] 
+or enter information of a new [% terms.document %].
+<br />
+If there is no group in both of ones for the source [% terms.document %] 
+and the target [% terms.document %], the administrator group will be set. 
+</p>
+
+<form method="POST" action="docmerge.cgi">
+
+<h4>List of [% terms.file %] in a [% terms.document %] to merge</h4>
+<input type="hidden" name="src_document" value="[% did %]" />
+
+<table class="dirlist">
+  <tr>
+    <th rowspan="2">Select</th>
+    <th rowspan="2">ID</th>
+    <th rowspan="2"></th>
+    <th rowspan="2" class="description">Comment</th>
+    <th colspan="4">DateTime uploaded</th>
+  </tr>
+  <tr>
+    <th>Uploader</th>
+    <th>DateTime</th>
+    <th>Size</th>
+    <th>Version</th>
+  </tr>
+
+[% FOREACH item IN file_list %]
+  [% count = loop.count() %]
+  <tr 
+    class="
+      doc_[% item.fileid %]
+      [% count % 2 == 1 ? "row_odd" : "row_even" %]
+     ">
+    <td class="filelist">
+      <input type="checkbox"
+        name="files" value="[% item.fileid %]" id="file_[% item.fileid %]"
+        checked="checked"
+        />
+      </td>
+    <td class="path">
+      [%- INCLUDE show_mime_icon id = item.fileext -%]
+      <a href="fileinfo.cgi?fid=[% item.fileid FILTER html %]">[% item.fileid FILTER html %]</a></td>
+    <td>[% item.fileext %]</td>
+    <td class="filedesc">[% item.description FILTER html %]</td>
+    <td>[% item.uname %]</td>
+    <td>[% item.uptime %]</td>
+    <td class="docsize">[% SizeDisp(item.size) %]</td>
+    <td>[% item.version %]</td>
+  </tr>
+[% END %]
+
+</table>
+<p>
+  <span id="file_all_uncheck">Deselect all [% terms.file %]</span>
+  <span id="file_all_check" class="ui_hidden">Select all [% terms.file %]</span>
+</p>
+<script type="text/javascript">
+<!--
+function file_check(stat) {
+  for (var i = 0; i < list_file.length; i++) {
+    document.getElementById('file_' + list_file[i]).checked = stat;
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('file_all_uncheck').onclick = function() {
+    file_check(false);
+    \$("#file_all_uncheck").addClass("ui_hidden");
+    \$("#file_all_check").removeClass("ui_hidden");
+  }
+  document.getElementById('file_all_check').onclick = function() {
+    file_check(true);
+    \$("#file_all_check").addClass("ui_hidden");
+    \$("#file_all_uncheck").removeClass("ui_hidden");
+  }
+}, false);
+var list_file = [ [% FOREACH item IN file_list %]"[% item.fileid %]", [% END %] ];
+-->
+</script>
+
+<h4>Target [% terms.document %] to be merged into</h4>
+
+<p>Target [% terms.document %] to be merged into: 
+  <select name="doc_path" id="doc_path">
+    [% INCLUDE entry/pathlist.html.tmpl pidsel = doc_info.pathid %]
+  </select>/<select name="doc_document" id="doc_document"></select>
+  <input type="text" name="filename" value="" size="50" id="doc_newdoc_name" class="ui_hidden">
+</p>
+<div>
+<p><label for="docdesc">Description for <span id="doc_newdoc_desc" class="ui_hidden">new </span>[% terms.document %] (in markdown format)</label></p>
+<textarea name="docdesc" rows="10" class="inputwide" id="doc_newdoc_text" disabled="disabled"></textarea>
+</div>
+<script type="text/javascript">
+<!--
+var doclist;
+function set_doclist(pid) {
+  var sel = document.getElementById('doc_document');
+  while (sel.options.length > 0) {sel.options.remove(0); }
+  var co = document.createElement('option');
+  co.text = "<ADD NEW>";
+  co.value = 0;
+  sel.options.add(co);
+  doclist = GetData('json.cgi?type=docsinpath&id=' + pid);
+  if (doclist != undefined) {
+    for (var i in doclist.data) {
+      co = document.createElement('option');
+      co.text = doclist.data[i]['filename'];
+      co.value = doclist.data[i]['docid'];
+      sel.options.add(co);
+    }
+  }
+  sel.value = 0;
+  set_newdocdisp();
+}
+function set_newdocdisp() {
+  var cdocid = document.getElementById('doc_document').value;
+  if (cdocid == 0) {
+    \$("#doc_newdoc_name").removeClass("ui_hidden");
+    \$("#doc_newdoc_desc").removeClass("ui_hidden");
+    document.getElementById('doc_newdoc_text').disabled = false;
+    document.getElementById('doc_newdoc_text').value = '';
+  } else {
+    \$("#doc_newdoc_name").addClass("ui_hidden");
+    \$("#doc_newdoc_desc").addClass("ui_hidden");
+    document.getElementById('doc_newdoc_text').disabled = true;
+    document.getElementById('doc_newdoc_text').value = doclist.data[cdocid]['description'];
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('doc_path').onchange = function() {
+    set_doclist(document.getElementById('doc_path').value);
+  }
+  document.getElementById('doc_document').onchange = function () {
+    set_newdocdisp();
+  }
+  set_doclist([% doc_info.pathid %]);
+});
+-->
+</script>
+
+<h4>Specify merge options</h4>
+
+<ul>
+  <li><label><input type="checkbox" name="opt_delete" checked="checked">Delete old [% terms.document %] if empty after merge operation</label></li>
+  <li>Handling for version of [% terms.file %]:
+    <ul>
+      <li><label><input type="radio" name="opt_version" value="keep" checked="checked">Keep current version number after merged</label></li>
+      <li><label><input type="radio" name="opt_version" value="renumber">Renumber version over all [% terms.file %] in a merged [% terms.document %] by order of datetime uploaded</label></li>
+    </ul></li>
+</ul>
+
+<p><input type="submit"> <input type="reset"></p>
+
+[% PROCESS global/formopt.html.tmpl %]
+</form>
+
+[% PROCESS global/footer.html.tmpl %]
+
+

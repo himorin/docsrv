@@ -36,6 +36,7 @@ use PSMT::File;
 
     SetPathAccessGroup
     SetDocAccessGroup
+    ApplyDocAccessGroup
 );
 
 sub new {
@@ -154,6 +155,17 @@ sub SetDocAccessGroup {
     return $self->_SetAccessGroup('doc', $id, $group);
 }
 
+sub ApplyDocAccessGroup {
+    my ($self, $id, $group, $is_and) = @_;
+    if (! defined($is_and)) {$is_and = TRUE; }
+    my $cgroup = $self->ListDocRestrict($id);
+    if ($is_and) {
+        my @newgroup = $self->_AndGroupList($group, $cgroup);
+        return $self->SetDocAccessGroup($id, \@newgroup);
+    }
+    push(@$cgroup, @$group);
+    return $self->SetDocAccessGroup($id, $cgroup);
+}
 
 ################################################################## PRIVATE
 

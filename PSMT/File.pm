@@ -57,6 +57,7 @@ use PSMT::FullSearchMroonga;
     CheckPathExist
     CheckDocExist
     DeleteEmptyPath
+    DeleteEmptyDoc
 
     ListUserUpForDoc
     IsUserUpForDoc
@@ -97,6 +98,7 @@ use PSMT::FullSearchMroonga;
     UpdateDocInfo
     UpdateFileDesc
     UpdateFileVersion
+    UpdateFileDocid
     EditFileAccess
 
     ValidateNameInPath
@@ -927,6 +929,25 @@ sub UpdateFileVersion {
     $dbh->db_unlock_tables();
 }
 
+sub UpdateFileDocid {
+    my ($self, $did, $fid, $version) = @_;
+    my $dinfo = $self->GetDocInfo($did);
+    if (! defined($dinfo)) {PSMT::Error->throw_error_user('invalid_docid'); }
+    if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo WRITE');
+    my $sth;
+    if ($version) {
+        $sth = $dbh->prepare('UPDATE docinfo SET docid = ?, version = 0 WHERE fileid = ?');
+    } else {
+        $sth = $dbh->prepare('UPDATE docinfo SET docid = ? WHERE fileid = ?');
+    }
+    if ($sth->execute($did, $fid) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    $dbh->db_unlock_tables();
+}
+
 sub EditFileAccess {
     my ($self, $fid, $is_enabled) = @_;
     my $dbh = PSMT->dbh;
@@ -1147,6 +1168,20 @@ sub DeleteEmptyPath {
     $dbh->db_lock_tables('path WRITE');
     my $sth = $dbh->prepare('DELETE FROM path WHERE pathid = ?');
     if ($sth->execute($pid) == 0) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+sub DeleteEmptyDoc {
+    my ($self, $did) = @_;
+    my $dnum;
+    $dnum = $self->ListFilesInDoc($did, TRUE);
+    if ($#$dnum > -1) {return FALSE; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docreg WRITE');
+    my $sth = $dbh->prepare('DELETE FROM docreg WHERE docid = ?');
+    if ($sth->execute($did) == 0) {
         return FALSE;
     }
     return TRUE;

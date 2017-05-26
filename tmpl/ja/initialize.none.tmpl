@@ -9,7 +9,7 @@
 
     "icon_def"       => "crystal_project-16/mimetypes/unknown.png",
  }
-%]
+-%]
 [%- header_links_def = {
     "index"    => { "name" => "ホーム", "url" => "$UConf.home.value" },
     "dir"      => { "name" => "/", "url" => "pathinfo.cgi?pid=0" },
@@ -21,18 +21,16 @@
     "admin"    => { "name" => "管理", "url" => "admin.cgi", group => Param.admingroup },
     "config"   => { "name" => "設定", "url" => "config.cgi" },
  }
-%]
-[% BLOCK site_announce %]
+-%]
+[%- BLOCK site_announce %]
 [% END %]
-
 [%- user_config_help = {
     "history"    => "更新履歴で表示するドキュメントの最終更新日数",
     "email"      => "お気に入りが更新されたときにメールを送信する",
     "home"       => "ホーム(トップページ)として表示する画面 (\"index.cgi\"のようなURLの最後の'/'よりあと)",
  }
 %]
-
-[%# 表の中のアイコンの表示定義
+[%-# 表の中のアイコンの表示定義
   #   id : アイコンID
   #%]
 [%- BLOCK show_table_icon %]<img 
@@ -47,7 +45,6 @@
   [% IF html_class.defined %]class="[% html_class FILTER html %]"[% END -%]
   [% IF title.defined %]title="[% title FILTER html %]"[% END -%]
 />[% END -%]
-
 [%- BLOCK show_mime_icon %]<img 
   [%- IF IcoMime.$id.defined -%]
     src="skins/images/[% IcoMime.$id.value %]" alt="[% IcoMime.$id.tiphelp %]"

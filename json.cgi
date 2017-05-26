@@ -31,6 +31,17 @@ my $objattr;
 if ($type eq 'allpath') {
     PSMT::File->ListAllPath($hash);
     $outtm = 'table';
+} elsif ($type eq 'docsinpath') {
+    my $tarr = PSMT::File->ListDocsInPath($iid);
+    $outtm = 'table';
+    foreach (@$tarr) {
+        my $chash = {};
+        $chash->{docid} = $_->{docid};
+        $chash->{filename} = $_->{filename};
+        $chash->{description} = $_->{description};
+        $chash->{secure} = $_->{secure};
+        $hash->{$_->{docid}} = $chash;
+    }
 } elsif ($type eq 'pathinfo') {
     $hash = PSMT::File->GetPathInfo($iid);
     $hash->{parr} = PSMT::File->GetFullPathArray($iid);
@@ -58,8 +69,11 @@ $obj->template->set_vars('id', $iid);
 $obj->template->set_vars('jsondata', $hash);
 
 if (! defined(PSMT->cgi()->param('format'))) {
-    $obj_cgi->header( -type => "application/json" );
-    $obj->template->process('json/' . $outtm, 'json');
+    print $obj_cgi->header( -type => "application/json" );
+    print "\n";
+    my $json;
+    $obj->template->process('json/' . $outtm, 'json', undef, \$json);
+    print $json;
 } else {
     if (PSMT->cgi()->param('format') eq 'js') {
         $obj->template->process('json/wrap', 'js');

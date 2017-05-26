@@ -2,6 +2,6 @@
   [%- FOREACH hid IN jsondata.keys %]
     [%- IF ! loop.first %], [% END %]"[% hid %]":{
     [%- FOREACH hkey IN jsondata.$hid.keys %]
-      [%- IF ! loop.first %], [% END %]"[% hkey %]":"[% jsondata.$hid.$hkey %]"
+      [%- IF ! loop.first %], [% END %]"[% hkey %]":"[% jsondata.$hid.$hkey FILTER js %]"
     [% END %]}
   [%- END %]}}

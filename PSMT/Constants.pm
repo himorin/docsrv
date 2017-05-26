@@ -63,6 +63,7 @@ use constant AVAIL_FORMATS => {
   'docgroup'           => ['html'],
   'docinfo'            => ['html'],
   'doclabel'           => ['html'],
+  'docmerge'           => ['html'],
   'docupdate'          => ['html'],
   'favlist'            => ['html'],
   'fileinfo'           => ['html', 'json'],
