@@ -76,16 +76,11 @@ if ($obj_cgi->request_method() eq 'POST') {
     $path = PSMT::File->GetFullPathFromId($pid);
 }
 
-my %hash;
-PSMT::File->ListAllPath(\%hash);
-
 # insert parameters
 $obj->template->set_vars('pid', $pid);
 $obj->template->set_vars('full_path', $path);
 $obj->template->set_vars('path_info', $pathinfo);
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
-$obj->template->set_vars('allpath', \%hash);
-$obj->template->set_vars('allpathrev', PSMT::Util->MakeReverseHashByKey(\%hash, "fullpath"));
 
 my $subpath = PSMT::File->ListPathInPath($pid);
 my (%subpath_access, $cpid);

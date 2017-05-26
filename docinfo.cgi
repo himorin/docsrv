@@ -70,8 +70,6 @@ $obj->template->set_vars('doc_labels', PSMT::Label->ListLabelOnDoc($did));
 $obj->template->set_vars('file_list', $file_list);
 $obj->template->set_vars('file_uname', \@file_users);
 $obj->template->set_vars('group_list', PSMT::Access->ListDocRestrict($did));
-$obj->template->set_vars('allpath', \%hash);
-$obj->template->set_vars('allpathrev', PSMT::Util->MakeReverseHashByKey(\%hash, "fullpath"));
 
 $obj->template->process('docinfo', 'html');
 

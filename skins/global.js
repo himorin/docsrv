@@ -58,23 +58,6 @@ function tweak_ToggleFavPath (target) {
     ).fail(function(data, stat, errorTh){alert("Async call failed: " + stat);});
 }
 
-function AllPathChange() {
-/*
-  var selid = document.docadd_set.pid.selectedIndex;
-  var hid = document.docadd_set.pid.options[selid].value;
-  if (hid == 0) {
-    document.getElementById("hid").innerHTML = 0;
-    document.getElementById("fullpath").innerHTML = "";
-    document.getElementById("desc").innerHTML = "Top Directory";
-  } else {
-    document.getElementById("hid").innerHTML = hid;
-    document.getElementById("fullpath").innerHTML = conf_data_allpath.data[hid].fullpath;
-    document.getElementById("desc").innerHTML = conf_data_allpath.data[hid].description;
-  }
-*/
-}
-
-
 // InfoTip will use id 'gbit' element
 
 var def_gbit_id = 'gbit';
@@ -110,5 +93,43 @@ function GetData(url) {
       return undefined;
   } 
   return json_data;
+}
+
+// handler for allpath in json
+var cnf_allpath = 'json.cgi?type=allpath';
+var json_allpath = undefined;
+var json_allpath_rev = {};
+var json_allpath_order = []; // array of alphabetical sorted fullpath
+function AcquireAllpath() {
+  if (json_allpath != undefined) {return json_allpath; }
+  json_allpath = GetData(cnf_allpath);
+  if (json_allpath == undefined) {return undefined; }
+  json_allpath = json_allpath.data;
+  for (var i in json_allpath) {
+    json_allpath_rev[json_allpath[i].fullpath] = json_allpath[i];
+    json_allpath_order.push(json_allpath[i].fullpath);
+  }
+  json_allpath_order.sort(function(a,b) {
+    if (a < b) {return -1; }; if (a > b) {return 1; }; return 0;
+  });
+  return json_allpath;
+}
+
+function SetPathSelect(sel_id, cur_id) {
+  if (sel_id == '') {return ; }
+  AcquireAllpath();
+  var sel = document.getElementById(sel_id);
+  if (sel.length > 0) {return; }
+  var co = document.createElement('option');
+  co.text = "/";
+  co.value = 0;
+  sel.options.add(co);
+  for (var i = 0; i < json_allpath_order.length; i++) {
+    co = document.createElement('option');
+    co.text = json_allpath_order[i];
+    co.value = json_allpath_rev[co.text].pathid;
+    if (co.value == cur_id) {co.selected = true; }
+    sel.options.add(co);
+  }
 }
 
