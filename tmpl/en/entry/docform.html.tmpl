@@ -2,9 +2,13 @@
   <ul>
     <li><label for="filename">Name for new [% terms.document %]:</label> <tt>
       [%- IF pid == -1 %]
-        <select name="pid" onChange="AllPathChange();">
-        [% INCLUDE entry/pathlist.html.tmpl %]
+        <select name="pid" onChange="AllPathChange();" id="pid">
         </select>/
+        <script type="text/javascript">
+        <!--
+          SetPathSelect('pid', 0);
+        -->
+        </script>
       [%- ELSE %]
         <input type="hidden" name="pid" value="[% path_info.pathid %]">
         /[% full_path FILTER html %]
