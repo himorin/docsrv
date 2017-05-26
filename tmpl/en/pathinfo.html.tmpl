@@ -24,8 +24,7 @@
   [% PROCESS global/formopt.html.tmpl %]
   <ul>
     <li id="path_name_edit" class="ui_hidden">Move/Change this [% terms.path %] to: 
-      <select name="new_parent" onChange="AllPathChange();">
-      [% INCLUDE entry/pathlist.html.tmpl  pidsel = path_info.parent %]
+      <select name="new_parent" onChange="AllPathChange();" id="new_parent">
       </select>/<input type="text" name="new_name" size="50" value="[% path_info.pathname FILTER html %]"></li>
     <li><label for="new_description">[% terms.path %] information:</label> [% path_info.short_description FILTER html %]
       [% IF Admin %]
@@ -67,6 +66,7 @@
     \$("#path_update").removeClass("ui_hidden");
     \$("#update_link").addClass("ui_hidden");
     \$("#path_desc_json").removeClass("ui_hidden");
+    SetPathSelect('new_parent', [% path_info.parent %]);
   }
   // -->
   </script>
