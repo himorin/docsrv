@@ -1,16 +1,24 @@
 [% PROCESS global/header.html.tmpl %]
 
+[% IF merged.defined %]
+<h3>[% terms.document %] <tt>[% full_path FILTER html %][% doc_info.filename FILTER html %]</tt> にマージしました</h3>
+[% ELSE %]
 <h3>[% terms.document %] <tt>[% full_path FILTER html %][% doc_info.filename FILTER html %]</tt> をマージします</h3>
+[% END %]
 
 <p>マージ元の [% terms.document %] の [% terms.file %] (以下の表) から
 他の [% terms.document %] にマージする [% terms.file %] を選択したのち、
 マージ先の [% terms.document %] を選択するか新規 [% terms.document %] 
 の情報を入力してください。
+<br />
+なお、マージ元とマージ先のアクセス可能グループに共通グループが存在しない
+場合、管理者グループが設定されます。
 </p>
 
 <form method="POST" action="docmerge.cgi">
 
 <h4>マージ元 [% terms.document %] の [% terms.file %] リスト</h4>
+<input type="hidden" name="src_document" value="[% did %]" />
 
 <table class="dirlist">
   <tr>
@@ -36,7 +44,7 @@
      ">
     <td class="filelist">
       <input type="checkbox"
-        name="file_[% item.fileid %]" id="file_[% item.fileid %]"
+        name="files" value="[% item.fileid %]" id="file_[% item.fileid %]"
         checked="checked"
         />
       </td>

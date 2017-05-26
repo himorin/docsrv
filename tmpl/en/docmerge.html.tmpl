@@ -1,15 +1,23 @@
 [% PROCESS global/header.html.tmpl %]
 
+[% IF merged.defined %]
+<h3>Merged [% terms.document %] into <tt>[% full_path FILTER html %][% doc_info.filename FILTER html %]</tt></h3>
+[% ELSE %]
 <h3>Merge [% terms.document %] <tt>[% full_path FILTER html %][% doc_info.filename FILTER html %]</tt> to another</h3>
+[% END %]
 
 <p>Select [% terms.file %] in the source document (table below) to be merged 
 into another [% terms.document %], and specify a target [% terms.document %] 
 or enter information of a new [% terms.document %].
+<br />
+If there is no group in both of ones for the source [% terms.document %] 
+and the target [% terms.document %], the administrator group will be set. 
 </p>
 
 <form method="POST" action="docmerge.cgi">
 
 <h4>List of [% terms.file %] in a [% terms.document %] to merge</h4>
+<input type="hidden" name="src_document" value="[% did %]" />
 
 <table class="dirlist">
   <tr>
@@ -35,7 +43,7 @@ or enter information of a new [% terms.document %].
      ">
     <td class="filelist">
       <input type="checkbox"
-        name="file_[% item.fileid %]" id="file_[% item.fileid %]"
+        name="files" value="[% item.fileid %]" id="file_[% item.fileid %]"
         checked="checked"
         />
       </td>

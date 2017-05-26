@@ -98,6 +98,7 @@ use PSMT::FullSearchMroonga;
     UpdateDocInfo
     UpdateFileDesc
     UpdateFileVersion
+    UpdateFileDocid
     EditFileAccess
 
     ValidateNameInPath
@@ -923,6 +924,25 @@ sub UpdateFileVersion {
     $dbh->db_lock_tables('docinfo WRITE');
     my $sth = $dbh->prepare('UPDATE docinfo SET version = ? WHERE fileid = ?');
     if ($sth->execute($ver, $fid) == 0) {
+        PSMT::Error->throw_error_code('update_info_failed');
+    }
+    $dbh->db_unlock_tables();
+}
+
+sub UpdateFileDocid {
+    my ($self, $did, $fid, $version) = @_;
+    my $dinfo = $self->GetDocInfo($did);
+    if (! defined($dinfo)) {PSMT::Error->throw_error_user('invalid_docid'); }
+    if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo WRITE');
+    my $sth;
+    if ($version) {
+        $sth = $dbh->prepare('UPDATE docinfo SET docid = ?, version = 0 WHERE fileid = ?');
+    } else {
+        $sth = $dbh->prepare('UPDATE docinfo SET docid = ? WHERE fileid = ?');
+    }
+    if ($sth->execute($did, $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
     $dbh->db_unlock_tables();
