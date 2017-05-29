@@ -2,7 +2,6 @@
 
 use strict;
 
-use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use File::Temp qw/ tempfile tempdir /;                                          
 use Encode;
 use Digest::SHA;
@@ -18,6 +17,7 @@ use PSMT::User;
 use PSMT::Util;
 use PSMT::File;
 use PSMT::Access;
+use PSMT::Archive;
 
 my $obj = new PSMT;
 my $obj_cgi = $obj->cgi();
@@ -25,8 +25,6 @@ my $obj_cgi = $obj->cgi();
 if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
 }
-
-my $zip_enc = PSMT::Config->GetParam('zip_win_encoding');
 
 # if not POST && pid invalid, redirect to path view
 my $pid = $obj_cgi->param('pid');
@@ -70,7 +68,7 @@ if ($source eq 'dav') {
 } else {
     PSMT::Error->throw_error_user('invalid_file_source');
 }
-my ($flist, $dlist, $iflist, $idlist) = &ExtractZip($src);
+my ($flist, $dlist, $iflist, $idlist) = PSMT::Archive->Extract($src);
 unlink($src);
 if ((! defined($flist)) || ($#$flist < 0)) {
     &EraseFiles($flist, $iflist);
@@ -228,74 +226,6 @@ sub AddUpfailed {
     $hash->{error} = $err;
     push(@upfailed, $hash);
     if (defined($hash->{stored})) {unlink $hash->{stored}; }
-}
-
-# XXX: check on path/file names non-UTF8
-sub ExtractZip {
-    my ($fname) = @_;
-    my $obj_zip = Archive::Zip->new();
-    if ($obj_zip->read($fname) != AZ_OK) {
-        return undef;
-    }
-    my @fmem = $obj_zip->members();
-    my (@rfile, @rdir, @invfile, @invdir, $dtdos, $extfile, $out);
-    # create directory for temporary files in zipupload
-    # no to expose files in uploaded zip into normal file from webdav operation
-    my $tmp_dir = PSMT::Config->GetParam('dav_path') . '/' . PATH_SP_ZIPADD;
-    mkdir $tmp_dir;
-    foreach (@fmem) {
-        my $hret = {};
-        if (ref $_ eq 'Archive::Zip::ZipFileMember') {
-            $hret->{fullname} = $_->{fileName};
-            if ($obj_cgi->is_windows()) {
-                $hret->{fullname} = Encode::decode($zip_enc, $hret->{fullname});
-            }
-            $hret->{lastmodified} = $_->lastModTime();
-            $hret->{size} = $_->{uncompressedSize};
-            if (index($hret->{fullname}, '/') > -1) {
-                $hret->{filename} = substr($hret->{fullname},
-                    rindex($hret->{fullname}, '/') + 1);
-                $hret->{dirname} = substr($hret->{fullname}, 0,
-                    rindex($hret->{fullname}, '/'));
-            } else {
-                $hret->{filename} = $hret->{fullname};
-                $hret->{dirname} = '';
-            }
-            if (PSMT::Util->ValidateEncoding($hret->{fullname}) > 0) {
-                push(@invfile, $hret);
-                next;
-            }
-            ($out, $extfile) = tempfile( DIR => $tmp_dir );
-            close $out;
-            if ($obj_zip->extractMember($_->{fileName}, $extfile) == AZ_OK) {
-                $hret->{stored} = $extfile;
-            }
-            push(@rfile, $hret);
-        } elsif (ref $_ eq 'Archive::Zip::DirectoryMember') {
-            $extfile = $_->{fileName};
-            if ($obj_cgi->is_windows()) {
-                $extfile = Encode::decode($zip_enc, $extfile);
-            }
-            if (PSMT::Util->ValidateEncoding($extfile) > 0) {
-                push(@invdir, $extfile);
-                next;
-            }
-            if (substr($extfile, length($extfile) - 1) eq '/') {
-                $extfile = substr($extfile, 0, length($extfile) - 1);
-            }
-            push(@rdir, $extfile);
-        }
-    }
-    # tweak for Windows zip
-    my (%hrdir, $cdir);
-    foreach (@rdir) {$hrdir{$_} = 1; }
-    foreach (@rfile) {
-        if ($_->{dirname} ne '') {
-            if (! defined($hrdir{$_->{dirname}})) {$hrdir{$_->{dirname}} = 1; }
-        }
-    }
-    @rdir = keys(%hrdir);
-    return (\@rfile, \@rdir, \@invfile, \@invdir);
 }
 
 sub EraseFiles {
