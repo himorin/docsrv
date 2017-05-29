@@ -7,7 +7,7 @@
 [% IF mode == 'upload' %]
 <h3>Upload files to [% terms.path %] "/[% full_path %]"</h3>
 <form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
-<input type="hidden" name="pid" value="[% pid %]"></li>
+<input type="hidden" name="pid" value="[% pid %]">
 <p>
   <label><input type="radio" name="source" value="upload" checked="checked" /> Upload from local file: </label>
   <input type="file" name="target_file" size="80" />
