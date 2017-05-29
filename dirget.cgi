@@ -13,9 +13,7 @@ use PSMT::Util;
 use PSMT::File;
 use PSMT::Access;
 use PSMT::Email;
-
-use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
-use Encode;
+use PSMT::Archive;
 
 #### options
 # pid : path ID to download (all below this ID will be included)
@@ -32,8 +30,6 @@ my $obj_cgi = $obj->cgi();
 if ((! defined($obj->config())) || (! defined($obj->user()))) {
     PSMT::Error->throw_error_user('system_invoke_error');
 }
-
-my $zip_enc = PSMT::Config->GetParam('zip_win_encoding');
 
 my $pid = $obj_cgi->param('pid');
 if (! defined($pid)) {PSMT::Error->throw_error_user('invalid_pathid'); }
@@ -121,29 +117,10 @@ my $head = $obj_cgi->header(
 );
 binmode STDOUT, ':bytes';
 if ($zip_sec) {
-    PSMT::File->MakeEncZipFile(\%zip_files, $head, $dname);
+    PSMT::Archive->MakeEncrypted(\%zip_files, $head, $dname);
     exit;
 }
-
-# output to client, just name $pid.zip
-print $head;
-
-# start zip object
-my $obj_zip = Archive::Zip->new();
-my $tname;
-my $is_win = $obj_cgi->is_windows();
-foreach $tname (@zip_path) {
-    if ($is_win) {$tname = Encode::encode($zip_enc, $tname); }
-    else {$tname = Encode::encode('utf8', $tname); }
-    $obj_zip->addDirectory($tname);
-}
-foreach (keys %zip_files) {
-    $tname = $zip_files{$_};
-    if ($is_win) {$tname = Encode::encode($zip_enc, $tname); }
-    else {$tname = Encode::encode('utf8', $tname); }
-    $obj_zip->addFile($_, $tname);
-}
-$obj_zip->writeToFileHandle(*STDOUT);
+PSMT::Archive->MakeNormal(\@zip_path, \%zip_files, $head);
 
 exit;
 
