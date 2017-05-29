@@ -17,6 +17,7 @@ use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use File::Path;
 use File::Temp qw/ tempfile tempdir /;
 use Encode;
+use JSON;
 
 use PSMT::Constants;
 use PSMT::Config;
@@ -30,9 +31,37 @@ use PSMT::CGI;
 
     MakeEncrypted
     MakeNormal
+
+    ParseConfig
+    StoreConfig
+    ReadFilesConfigJson
+    ReadFilesConfigTSV
 );
 
 my $bin_zip = '/usr/bin/zip';
+
+# Config parsers
+#  ReadFilesConfig* : read from stream or file to internal hash
+#    ReadFilesConfig* will call ParseFilesConfig right before returning hash
+#  ParseFilesConfig : check and filter hash to defined structure
+#    validation of values are not included
+#    return undef if no valid item found
+#
+# REQ = required, OPT = option, SRD = only for stored files
+# FilesConfig = [ {
+#   filename (REQ): filename including ext and full path (in docsrv or zip archive)
+#   uptime (OPT): uploaded timestamp
+#   uname (OPT): uploaded username
+#   filedesc (OPT): description for file
+#   docdesc (OPT): description for document
+#   secure (OPT): security flag for document
+#   version (OPT): version number for file
+#   shahash (STD): SHA hash
+#   fileid (STD): docinfo.fileid
+#   ext (SRD): extension recorded in database
+# } ]
+my @fcfields = [ 'filename', 'uptime', 'uname', 'filedesc', 'docdesc', 
+   'secure', 'version', 'shahash', 'fileid', 'ext' ];
 
 sub new {
     my ($this) = @_;
@@ -162,6 +191,60 @@ sub MakeNormal {
     print $head;
     $obj_zip->writeToFileHandle(*STDOUT);
     return TRUE;
+}
+
+sub ParseFilesConfig {
+    my ($self, $config) = @_;
+    my $valed = [];
+    my $corig;
+    foreach (@$config) {
+        my $vhash = {};
+        $corig = $_;
+        if (! defined($corig->{filename})) {next; }
+        foreach (@fcfields) {
+            if (defined($corig->{$_})) {$vhash->{$_} = $corig->{$_}; }
+        }
+        push(@$valed, $vhash);
+    }
+    if ($#$valed < 0) {return undef; }
+    return $valed;
+}
+
+sub ReadFilesConfigJson {
+    my ($self, $source) = @_;
+    my $hash;
+    $hash = decode_json($source);
+    return $self->ParseFilesConfig($hash);
+}
+
+sub ReadFilesConfigTSV {
+    my ($self, $source) = @_;
+    my $hash = [];
+    my @lines = split(/[\r\n]+/, $source);
+    my @head = split(/\t/, shift(@lines));
+    if ($#head < 1) {return undef; }
+    my @clarr;
+    foreach (@lines) {
+        @clarr = split(/\t/, $_);
+        if ($#head != $#clarr) {next; }
+        my $chash = {};
+        foreach (0 ... $#head) {
+            $chash->{$head[$_]} = $clarr[$_];
+        }
+        push(@$hash, $chash);
+    }
+    return $self->ParseFilesConfig($hash);
+}
+
+sub StoreFilesConfig {
+    my ($self, $config) = @_;
+    my ($fh, $cfname) = tempfile(
+        DIR => PSMT::Constants::LOCATIONS()->{'rel_zipcache'},
+        SUFFIX => '.json'
+    );
+    print $fh encode_json($config);
+    close($fh);
+    return $cfname;
 }
 
 ################################################################## PRIVATE

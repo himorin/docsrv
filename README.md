@@ -13,6 +13,7 @@ You need the following softwares.
     * XML::DOM
     * Text::Markdown
     * Digest::SHA
+    * JSON (JSON::XS)
 * Zip (executable; for security flagged file download)
 * Apache (with LDAP auth)
 * LibreOffice (for ms-office and OOXML preview)
