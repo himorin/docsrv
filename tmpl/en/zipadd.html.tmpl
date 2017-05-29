@@ -8,6 +8,8 @@
 <h3>Upload files to [% terms.path %] "/[% full_path %]"</h3>
 <form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
 <input type="hidden" name="pid" value="[% pid %]">
+
+<h4>Archive file to use</h4>
 <p>
   <label><input type="radio" name="source" value="upload" checked="checked" /> Upload from local file: </label>
   <input type="file" name="target_file" size="80" />
@@ -38,7 +40,55 @@
   </p>
 [% END %]
 
+<h4>Attribute configuration file for archive to be uploaded</h4>
+<p>You can attach one file to configure attributes for [% terms.document %] / 
+[% terms.file %] in the archive file to be uploaded. Format is selectable 
+from Tab Separated Values (TSV) or JSON format, and their data definitions 
+and configurable pairs of key/value are descripbed below.</p>
+
+<h5>Configurable key/value</h5>
+
+<dl>
+  <dt>filename</dt>
+  <dd>(REQUIRED) Full file name including both full path from root of archive 
+    and file extension.</dd>
+  <dt>uptime</dt>
+  <dd>Upload time (if not specified, system will use timestamp from one of 
+    archive)</dd>
+  <dt>uname</dt>
+  <dd>Creator of file</dd>
+  <dt>filedesc</dt>
+  <dd>Description of the [% terms.file %]</dd>
+  <dt>docdesc</dt>
+  <dd>Description of the [% terms.document %] to be added into, will be 
+    overrided if existed. If more than two files with different extensions 
+    are included in an uploaded archive, specify the same description or 
+    left blank for second and after.</dd>
+  <dt>secure</dt>
+  <dd>Security flag to be set or not (1: to set)</dd>
+  <dt>version</dt>
+  <dd>Version number of the [% terms.file %]</dd>
+</dl>
+
+<h5>Format of configuration file</h5>
+<ul>
+  <li><label><input type="radio" name="config_format" value="tsv" 
+    checked="checked">: 
+    Tab separated formatted file (TSV), first line shall ccontain list of keys 
+    (e.g. <tt>filename</tt>), and contain one line per one file from second 
+    row. Lines with small number of values are just ignored.</label></li>
+  <li><label><input type="radio" name="config_format" value="json">: 
+    JSON format, which has an array of hashes with keys of field name and 
+    values of configurations.</label></li>
+</ul>
+
+<h5>Configuration file</h5>
+<p>Specify a configuration file to upload (this section will not be effective 
+if no file is selected): 
+<input type="file" name="target_config" /></p>
+
 <input type="submit" />
+<input type="reset" />
 </form>
 [% ELSIF mode == 'result' %]
 <h3>Uploaded files to [% terms.path %] "/[% full_path %]"</h3>

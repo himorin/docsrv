@@ -8,6 +8,8 @@
 <h3>[% terms.path %] "/[% full_path %]" への一括アップロード</h3>
 <form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
 <input type="hidden" name="pid" value="[% pid %]">
+
+<h4>利用するアーカイブファイル</h4>
 <p>
   <label><input type="radio" name="source" value="upload" checked="checked" /> ローカルファイルをアップロード: </label>
   <input type="file" name="target_file" size="80" />
@@ -36,7 +38,52 @@
     [% END %]
   </p>
 [% END %]
+
+<h4>アップロードの属性設定</h4>
+<p>アップロードするアーカイブファイルの属性を設定するためのファイルを同時に
+アップロードすることができます。ファイルのフォーマットはタブ区切り形式(TSV)
+とJSON形式が選択可能です。以下の設定可能な値を各型式の指定に従ってファイルに
+保存しアップロードしてください。</p>
+
+<h5>設定可能な値</h5>
+
+<dl>
+  <dt>filename</dt>
+  <dd>(必須) 拡張子を含むアーカイブ内のルートからのディレクトリを含んだファイル名</dd>
+  <dt>uptime</dt>
+  <dd>指定するアップロード時間 (なければアーカイブ内のファイルのタイムスタンプ)</dd>
+  <dt>uname</dt>
+  <dd>アップロードファイルの作成者</dd>
+  <dt>filedesc</dt>
+  <dd>アップロードするファイルの説明</dd>
+  <dt>docdesc</dt>
+  <dd>アップロード先ドキュメントの説明、既存の場合も上書きされます。アーカイブ
+    中に同じドキュメントに入る複数の拡張子のファイルがある場合は同じ文章を入れ
+    るか二つ目以降は空白にしてください。</dd>
+  <dt>secure</dt>
+  <dd>セキュリティーフラグ (1 = 設定する)</dd>
+  <dt>version</dt>
+  <dd>ファイルのバージョン番号</dd>
+</dl>
+
+<h5>アップロードするファイルの形式</h5>
+<ul>
+  <li><label><input type="radio" name="config_format" value="tsv" checked="checked">: 
+    タブ区切り形式ファイル (TSV)、先頭行に設定可能な値の種別(<tt>filename</tt>
+    など)を並べ、2行目以降に設定を記述してください。値が足らない業は無視されま
+    す。</label></li>
+  <li><label><input type="radio" name="config_format" value="json">: 
+    JSON形式。設定可能な値のハッシュ(キーが種別名、値が設定値)の配列を持つJSON
+    形式のデータを指定してください。</label></li>
+</ul>
+
+<h5>アップロードするファイル</h5>
+<p>アップロードするファイルを指定してください (ここでファイルが選択されない場合
+はこのセクションは有効になりません): 
+<input type="file" name="target_config" /></p>
+
 <input type="submit" />
+<input type="reset" />
 </form>
 [% ELSIF mode == 'result' %]
 <h3>[% terms.path %] "/[% full_path %]" への一括アップロード結果</h3>
