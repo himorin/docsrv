@@ -111,6 +111,7 @@ if (defined($att_fh)) {
 
 my ($flist, $dlist, $iflist, $idlist) = PSMT::Archive->Extract($src);
 unlink($src);
+unlink($src . '.json');
 if ((! defined($flist)) || ($#$flist < 0)) {
     &EraseFiles($flist, $iflist);
     PSMT::Error->throw_error_user('null_file_upload');
