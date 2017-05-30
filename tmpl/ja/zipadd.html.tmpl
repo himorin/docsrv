@@ -8,6 +8,7 @@
 <h3>[% terms.path %] "/[% full_path %]" への一括アップロード</h3>
 <form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
 <input type="hidden" name="pid" value="[% pid %]">
+[% INCLUDE global/formopt.html.tmpl %]
 
 <h4>利用するアーカイブファイル</h4>
 <p>
@@ -51,20 +52,24 @@
   <dt>filename</dt>
   <dd>(必須) 拡張子を含むアーカイブ内のルートからのディレクトリを含んだファイル名</dd>
   <dt>uptime</dt>
-  <dd>指定するアップロード時間 (なければアーカイブ内のファイルのタイムスタンプ)</dd>
+  <dd>指定するアップロード時間 (なければアーカイブ内のファイルのタイムスタンプ)
+    ただし<tt>POSIX time</tt>の数値で指定してください。</dd>
   <dt>uname</dt>
   <dd>アップロードファイルの作成者</dd>
   <dt>filedesc</dt>
   <dd>アップロードするファイルの説明</dd>
-  <dt>docdesc</dt>
-  <dd>アップロード先ドキュメントの説明、既存の場合も上書きされます。アーカイブ
-    中に同じドキュメントに入る複数の拡張子のファイルがある場合は同じ文章を入れ
-    るか二つ目以降は空白にしてください。</dd>
-  <dt>secure</dt>
-  <dd>セキュリティーフラグ (1 = 設定する)</dd>
   <dt>version</dt>
   <dd>ファイルのバージョン番号</dd>
+  <dt>docdesc</dt>
+  <dd>アップロード先ドキュメントの説明</dd>
+  <dt>secure</dt>
+  <dd>セキュリティーフラグ (1 = 設定する)</dd>
 </dl>
+
+<p><tt>docdesc</tt>と<tt>secure</tt>は [% terms.document %] のパラメータです。
+このため、新規に [% terms.document %] が登録されるときにのみ利用されます。
+アーカイブ中に同じ [% terms.document %] に入る複数の拡張子の [% terms.file %] 
+がある場合は同じ文章を入れるか二つ目以降は空白にしてください。</p>
 
 <h5>アップロードするファイルの形式</h5>
 <ul>
@@ -81,6 +86,12 @@
 <p>アップロードするファイルを指定してください (ここでファイルが選択されない場合
 はこのセクションは有効になりません): 
 <input type="file" name="target_config" /></p>
+
+<h5>属性設定ファイルの内容確認</h5>
+<p>アップロード後に指定した属性設定ファイルの読み込み結果を確認することが可能
+です。必要な場合はチェックしてください。<br />
+<label><input type="checkbox" name="config_confirm"> 属性設定ファイルの確認を
+行う</label></p>
 
 <input type="submit" />
 <input type="reset" />

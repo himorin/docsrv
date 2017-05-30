@@ -68,6 +68,47 @@ if ($source eq 'dav') {
 } else {
     PSMT::Error->throw_error_user('invalid_file_source');
 }
+
+# check attribute configuration
+my ($att_config, $att_fh);
+$att_fh = $obj_cgi->upload('target_config');
+if (defined($att_fh)) {
+    my $cfmt= $obj_cgi->param('config_format');
+    my ($cfh, $cdat);
+    foreach (<$att_fh>) {
+        chomp();
+        $cdat .= $_ . "\n";
+    }
+    if (! defined($cfmt))
+        {PSMT::Error->throw_error_user('invalid_config_source'); }
+    if ($cfmt eq 'tsv') {
+        $att_config = PSMT::Archive->ReadFilesConfigTSV($cdat);
+    } elsif ($cfmt eq 'json') {
+        $att_config = PSMT::Archive->ReadFilesConfigJson($cdat);
+    } else {PSMT::Error->throw_error_user('invalid_config_source'); }
+    if (! defined($att_config))
+        {PSMT::Error->throw_error_user('invalid_config_source'); }
+    if (defined($obj_cgi->param('config_confirm'))) {
+        PSMT::Archive->StoreFilesConfig($att_config, $src . '.json');
+        $obj->template->set_vars('pid', $pid);
+        if (rindex($src,'/') > -1) {
+            $src = substr($src, rindex($src, '/') + 1);
+        }
+        $obj->template->set_vars('dav', $src);
+        $obj->template->set_vars('config', $att_config);
+        $obj->template->process('zipadd-confirm', 'html');
+        exit;
+    }
+} elsif ((defined($obj_cgi->param('config_format'))) && 
+         ($obj_cgi->param('config_format') eq 'dav') &&
+         (-f $src . '.json')) {
+    open(JSON, $src . '.json');
+    my $cdat;
+    foreach (<JSON>) {$cdat .= $_ . "\n"; }
+    close(JSON);
+    $att_config = PSMT::Archive->ReadFilesConfigJson($cdat);
+}
+
 my ($flist, $dlist, $iflist, $idlist) = PSMT::Archive->Extract($src);
 unlink($src);
 if ((! defined($flist)) || ($#$flist < 0)) {
@@ -144,10 +185,36 @@ while ($cdir = shift(@$dlist)) {
     }
 }
 
+# reorg from @$att_config to hashes
+# %att_doc{path+docname} = { docdesc => '', secure => '' }
+# %att_file{fullname} = id in @att_config
+#   $att_config[$att_file{'AAA'}]->{filename} = 'AAA'
+my (%att_doc, %att_file, $cacdoc, $cidx);
+foreach (0 ... $#$att_config) {
+    $att_file{$att_config->[$_]->{filename}} = $_;
+    if (($cidx = rindex($att_config->[$_]->{filename}, '.')) > -1) {
+        $cacdoc = substr($att_config->[$_]->{filename}, 0, $cidx);
+        if (defined($att_doc{$cacdoc})) {
+            if ((! defined($att_doc{$cacdoc}->{docdesc})) && 
+                (defined($att_config->[$_]->{docdesc}))) {
+                $att_doc{$cacdoc}->{docdesc} = $att_config->[$_]->{docdesc};
+            }
+            if ((! defined($att_doc{$cacdoc}->{secure})) && 
+                (defined($att_config->[$_]->{secure}))) {
+                $att_doc{$cacdoc}->{secure} = $att_config->[$_]->{secure};
+            }
+        } else {
+            # even if att_config key not defined, it just returns undef
+            $att_doc{$cacdoc} = { 'docdesc' => $att_config->[$_]->{docdesc}, 
+                'secure' => $att_config->[$_]->{secure} };
+        }
+    }
+}
+
 # entry files
 # keep did->version
 my %dver;
-my ($cdid, $cname, $cext, $cfid);
+my ($cdid, $cname, $cext, $cfid, $cdcnf);
 foreach (@$iflist) {&AddUpfailed($_, 'doc', 'invalid_encoding'); }
 foreach (@$flist) {
     $cext = 'dat';
@@ -175,19 +242,43 @@ foreach (@$flist) {
             &AddUpfailed($_, 'doc', 'path_db_doc');
             next;
         }
-        $cdid = PSMT::File->RegNewDoc($didlist{$_->{dirname}}, $cname, "", FALSE);
+        if (defined($cdcnf = $att_doc{$_->{dirname} . '/' . $cname})) {
+            if (! defined($cdcnf->{docdesc})) {$cdcnf->{docdesc} = ''; }
+            if (! defined($cdcnf->{secure})) {$cdcnf->{secure} = FALSE; }
+        } else {
+            $cdcnf = { 'docdesc' => '', 'secure' => FALSE };
+        }
+        $cdid = PSMT::File->RegNewDoc($didlist{$_->{dirname}}, $cname, 
+            $cdcnf->{docdesc}, $cdcnf->{secure});
         if ($cdid == 0) {
             &AddUpfailed($_, 'doc', 'invalid_doc');
             next;
         } # what to do?
 #        if ($cdid == 0) {PSMT::Error->throw_error_user('doc_add_failed'); }
     }
-    if (defined($dver{$cdid})) {
-        $dver{$cdid} = $dver{$cdid} + 0.1;
+    if (defined($cdcnf = $att_file{$_->{fullname}})) {
+        $cdcnf = $att_config->[$cdcnf];
+        if (! defined($cdcnf->{uptime}))
+            {$cdcnf->{uptime} = $_->{lastmodified}; }
+        if (! defined($cdcnf->{version})) {
+        }
+        if (! defined($cdcnf->{filedesc})) {$cdcnf->{filedesc} = ''; }
+        if (! defined($cdcnf->{uname}))
+            {$cdcnf->{uname} = PSMT->user()->get_uid(); }
     } else {
-        $dver{$cdid} = PSMT::File->GetNextVersionForDoc($cdid);
+        if (defined($dver{$cdid})) {$dver{$cdid} = $dver{$cdid} + 0.1; }
+        else {$dver{$cdid} = PSMT::File->GetNextVersionForDoc($cdid); }
+        $cdcnf = {
+            'filedesc' => '',
+            'version' => $dver{$cdid},
+            'uptime' => $_->{lastmodified},
+            'uname' => PSMT->user()->get_uid(),
+        };
     }
-    $cfid = PSMT::File->RegNewFileTime($cext, $cdid, '', FALSE, $_->{lastmodified}, $_->{shahash}, undef, $dver{$cdid});
+    # need to deal with uname
+    $cfid = PSMT::File->RegNewFileTime($cext, $cdid, $cdcnf->{filedesc}, FALSE, 
+        $cdcnf->{uptime}, $_->{shahash}, undef, $cdcnf->{version},
+        $cdcnf->{uname});
     if (! defined($cfid)) {
         &AddUpfailed($_, 'doc', 'fail_add_file');
         next;

@@ -761,16 +761,16 @@ sub RegNewDoc {
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add, $hash, $daddrs, $ver) = @_;
-    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs, $ver);
+    my ($self, $ext, $docid, $desc, $is_add, $hash, $daddrs, $ver, $uname) = @_;
+    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs, $ver, $uname);
 }
 
 sub RegNewFileTime {
-    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs, $ver) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs, $ver, $uname) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
     if (! $self->_check_version_value($ver)) {return undef; }
     my $fileid = undef;
-    my $uname = PSMT->user()->get_uid();
+    if (! defined($uname)) {$uname = PSMT->user()->get_uid(); }
     my $srcip = PSMT::Util->IpAddr();
     my $hashcnt = 0;
     my $dbh = PSMT->dbh;

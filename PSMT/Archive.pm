@@ -60,7 +60,7 @@ my $bin_zip = '/usr/bin/zip';
 #   fileid (STD): docinfo.fileid
 #   ext (SRD): extension recorded in database
 # } ]
-my @fcfields = [ 'filename', 'uptime', 'uname', 'filedesc', 'docdesc', 
+my $fcfields = [ 'filename', 'uptime', 'uname', 'filedesc', 'docdesc', 
    'secure', 'version', 'shahash', 'fileid', 'ext' ];
 
 sub new {
@@ -201,9 +201,17 @@ sub ParseFilesConfig {
         my $vhash = {};
         $corig = $_;
         if (! defined($corig->{filename})) {next; }
-        foreach (@fcfields) {
-            if (defined($corig->{$_})) {$vhash->{$_} = $corig->{$_}; }
+        foreach (@$fcfields) {
+            if (defined($corig->{$_}) && ($corig->{$_} ne ''))
+                {$vhash->{$_} = $corig->{$_}; }
         }
+        # check values
+        if (defined($vhash->{uptime}) && (! ($vhash->{uptime} > 0)))
+            {delete $vhash->{uptime}; }
+        if (defined($vhash->{secure}) && (! ($vhash->{secure} > 0)))
+            {delete $vhash->{secure}; }
+        if (defined($vhash->{version}) && (! ($vhash->{version} > 0)))
+            {delete $vhash->{version}; }
         push(@$valed, $vhash);
     }
     if ($#$valed < 0) {return undef; }
@@ -237,14 +245,19 @@ sub ReadFilesConfigTSV {
 }
 
 sub StoreFilesConfig {
-    my ($self, $config) = @_;
-    my ($fh, $cfname) = tempfile(
-        DIR => PSMT::Constants::LOCATIONS()->{'rel_zipcache'},
-        SUFFIX => '.json'
-    );
+    my ($self, $config, $fname) = @_;
+    my $fh;
+    if (! defined($fname)) {
+        ($fh, $fname) = tempfile(
+            DIR => PSMT::Constants::LOCATIONS()->{'rel_zipcache'},
+            SUFFIX => '.json'
+        );
+    } else {
+        open($fh, "> $fname");
+    }
     print $fh encode_json($config);
     close($fh);
-    return $cfname;
+    return $fname;
 }
 
 ################################################################## PRIVATE
