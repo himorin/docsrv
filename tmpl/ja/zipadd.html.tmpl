@@ -55,7 +55,7 @@
   <dd>指定するアップロード時間 (なければアーカイブ内のファイルのタイムスタンプ)
     ただし<tt>POSIX time</tt>の数値で指定してください。</dd>
   <dt>uname</dt>
-  <dd>アップロードファイルの作成者</dd>
+  <dd>アップロードファイルの作成者 (有効なユーザのリストとの照合はされません)</dd>
   <dt>filedesc</dt>
   <dd>アップロードするファイルの説明</dd>
   <dt>version</dt>
@@ -76,7 +76,8 @@
   <li><label><input type="radio" name="config_format" value="tsv" checked="checked">: 
     タブ区切り形式ファイル (TSV)、先頭行に設定可能な値の種別(<tt>filename</tt>
     など、順不同・必要な項目だけでも可)を並べ、2行目以降に設定を記述してください。
-    値が足らない行は無視されます。</label></li>
+    値の個数が異なる行は無視されます。また無効値(versionに数値以外など)は未定義
+    として取り扱われます。</label></li>
   <li><label><input type="radio" name="config_format" value="json">: 
     JSON形式。設定可能な値のハッシュ(キーが種別名、値が設定値)の配列を持つJSON
     形式のデータを指定してください。</label></li>
@@ -91,7 +92,8 @@
 <p>アップロード後に指定した属性設定ファイルの読み込み結果を確認することが可能
 です。必要な場合はチェックしてください。<br />
 <label><input type="checkbox" name="config_confirm"> 属性設定ファイルの確認を
-行う</label></p>
+行う (ただし、アップロードされた属性設定ファイルのみの検証で、アーカイブファイル
+と合わせての検証はされません。)</label></p>
 
 <input type="submit" />
 <input type="reset" />

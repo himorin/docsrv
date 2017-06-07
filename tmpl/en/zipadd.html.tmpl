@@ -57,7 +57,7 @@ and configurable pairs of key/value are descripbed below.</p>
   <dd>Upload time (if not specified, system will use timestamp from one of 
     archive) in POSIX time</dd>
   <dt>uname</dt>
-  <dd>Creator of file</dd>
+  <dd>Creator of file (not checked against user directory)</dd>
   <dt>filedesc</dt>
   <dd>Description of the [% terms.file %]</dd>
   <dt>version</dt>
@@ -84,7 +84,9 @@ left ones after second as null.</p>
     Tab separated formatted file (TSV), first line shall ccontain list of keys 
     (e.g. <tt>filename</tt>; random order, include only keys/values you want 
     to set), and contain one line per one file from second 
-    row. Lines with small number of values are just ignored.</label></li>
+    row. Lines with unmatched number of values are just ignored.
+    Illegal values (e.g. non-number for version) will be handled as 
+    undefined but not error.</label></li>
   <li><label><input type="radio" name="config_format" value="json">: 
     JSON format, which has an array of hashes with keys of field name and 
     values of configurations.</label></li>
@@ -100,7 +102,7 @@ if no file is selected):
 before actual processing of [% terms.file %] in an uploaded archive. 
 Please check below if you want.<br />
 <label><input type="checkbox" name="config_confirm"> Check parsed results 
-after upload</label></p>
+after upload (This will check only uploaded attribute configuration file, but not contents in the zip archive file.)</label></p>
 
 <input type="submit" />
 <input type="reset" />
