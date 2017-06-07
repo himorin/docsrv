@@ -77,6 +77,7 @@ if (defined($att_fh)) {
     my ($cfh, $cdat);
     foreach (<$att_fh>) {
         chomp();
+        utf8::decode($_);
         $cdat .= $_ . "\n";
     }
     if (! defined($cfmt))
