@@ -233,7 +233,7 @@ sub ReadFilesConfigTSV {
     if ($#head < 1) {return undef; }
     my @clarr;
     foreach (@lines) {
-        @clarr = split(/\t/, $_);
+        @clarr = split(/\t/, $_, -1);
         if ($#head != $#clarr) {next; }
         my $chash = {};
         foreach (0 ... $#head) {
