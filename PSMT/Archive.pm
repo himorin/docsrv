@@ -254,6 +254,9 @@ sub _validateFilesConfig {
             if (defined($corig->{$_}) && ($corig->{$_} ne ''))
                 {$vhash->{$_} = $corig->{$_}; }
         }
+        if (substr($vhash->{filename}, 0, 1) eq '/') {
+            $vhash->{filename} = substr($vhash->{filename}, 1);
+        }
         # check values
         if (defined($vhash->{uptime}) && (! ($vhash->{uptime} > 0)))
             {delete $vhash->{uptime}; }
