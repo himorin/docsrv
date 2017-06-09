@@ -193,32 +193,6 @@ sub MakeNormal {
     return TRUE;
 }
 
-sub _validateFilesConfig {
-    my ($self, $config) = @_;
-    my $valed = [];
-    my $corig;
-    foreach (@$config) {
-        my $vhash = {};
-        $corig = $_;
-        if ((! defined($corig->{filename})) ||
-            ($corig->{filename} eq '')) {next; }
-        foreach (@$fcfields) {
-            if (defined($corig->{$_}) && ($corig->{$_} ne ''))
-                {$vhash->{$_} = $corig->{$_}; }
-        }
-        # check values
-        if (defined($vhash->{uptime}) && (! ($vhash->{uptime} > 0)))
-            {delete $vhash->{uptime}; }
-        if (defined($vhash->{secure}) && (! ($vhash->{secure} > 0)))
-            {delete $vhash->{secure}; }
-        if (defined($vhash->{version}) && (! ($vhash->{version} > 0)))
-            {delete $vhash->{version}; }
-        push(@$valed, $vhash);
-    }
-    if ($#$valed < 0) {return undef; }
-    return $valed;
-}
-
 sub ReadFilesConfigJson {
     my ($self, $source) = @_;
     my $hash;
@@ -266,6 +240,32 @@ sub StoreFilesConfig {
 }
 
 ################################################################## PRIVATE
+
+sub _validateFilesConfig {
+    my ($self, $config) = @_;
+    my $valed = [];
+    my $corig;
+    foreach (@$config) {
+        my $vhash = {};
+        $corig = $_;
+        if ((! defined($corig->{filename})) ||
+            ($corig->{filename} eq '')) {next; }
+        foreach (@$fcfields) {
+            if (defined($corig->{$_}) && ($corig->{$_} ne ''))
+                {$vhash->{$_} = $corig->{$_}; }
+        }
+        # check values
+        if (defined($vhash->{uptime}) && (! ($vhash->{uptime} > 0)))
+            {delete $vhash->{uptime}; }
+        if (defined($vhash->{secure}) && (! ($vhash->{secure} > 0)))
+            {delete $vhash->{secure}; }
+        if (defined($vhash->{version}) && (! ($vhash->{version} > 0)))
+            {delete $vhash->{version}; }
+        push(@$valed, $vhash);
+    }
+    if ($#$valed < 0) {return undef; }
+    return $valed;
+}
 
 
 
