@@ -43,7 +43,7 @@ my $bin_zip = '/usr/bin/zip';
 # Config parsers
 #  ReadFilesConfig* : read from stream or file to internal hash
 #    ReadFilesConfig* will call ParseFilesConfig right before returning hash
-#  ParseFilesConfig : check and filter hash to defined structure
+#  _validateFilesConfig : check and filter hash to defined structure
 #    validation of values are not included
 #    return undef if no valid item found
 #
@@ -193,14 +193,15 @@ sub MakeNormal {
     return TRUE;
 }
 
-sub ParseFilesConfig {
+sub _validateFilesConfig {
     my ($self, $config) = @_;
     my $valed = [];
     my $corig;
     foreach (@$config) {
         my $vhash = {};
         $corig = $_;
-        if (! defined($corig->{filename})) {next; }
+        if ((! defined($corig->{filename})) ||
+            ($corig->{filename} eq '')) {next; }
         foreach (@$fcfields) {
             if (defined($corig->{$_}) && ($corig->{$_} ne ''))
                 {$vhash->{$_} = $corig->{$_}; }
@@ -231,6 +232,10 @@ sub ReadFilesConfigTSV {
     my @lines = split(/[\r\n]+/, $source);
     my @head = split(/\t/, shift(@lines));
     if ($#head < 1) {return undef; }
+    # check filename is included
+    my $isdef = FALSE;
+    foreach (@lines) {if ($_ eq 'filename') {$isdef = TRUE; }}
+    if ($isdef != TRUE) {PSMT::Error->throw_error_code('config_filename_required'); }
     my @clarr;
     foreach (@lines) {
         @clarr = split(/\t/, $_, -1);
