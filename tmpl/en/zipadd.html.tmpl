@@ -45,7 +45,11 @@
 <p>You can attach one file to configure attributes for [% terms.document %] / 
 [% terms.file %] in the archive file to be uploaded. Format is selectable 
 from Tab Separated Values (TSV) or JSON format, and their data definitions 
-and configurable pairs of key/value are descripbed below.</p>
+and configurable pairs of key/value are descripbed below. 
+This attribute configuration file need to contain lines for [% terms.file %] 
+which you want to override attributes, but not need to contain lines for 
+every files in the archive (<i>default attribute values</i> are used for 
+[% terms.file %] not listed).</p>
 
 <h5>Configurable key/value</h5>
 
@@ -54,21 +58,24 @@ and configurable pairs of key/value are descripbed below.</p>
   <dd>(REQUIRED) Full file name including both full path from root of archive 
     and file extension.</dd>
   <dt>uptime</dt>
-  <dd>Upload time (if not specified, system will use timestamp from one of 
-    archive) in POSIX time</dd>
+  <dd>Upload time in POSIX time
+    (<i>default = system will use timestamp from one of archive</i>)</dd>
   <dt>uname</dt>
-  <dd>Creator of file (not checked against user directory)</dd>
+  <dd>Creator of file (not checked against user directory)
+    (<i>default = uploader</i>)</dd>
   <dt>filedesc</dt>
-  <dd>Description of the [% terms.file %]</dd>
+  <dd>Description of the [% terms.file %] (<i>default is blank</i>)</dd>
   <dt>version</dt>
-  <dd>Version number of the [% terms.file %]</dd>
+  <dd>Version number of the [% terms.file %] (<i>default is 
+    autonumbered from existing [% terms.file %]</i>)</dd>
   <dt>docdesc</dt>
   <dd>Description of the [% terms.document %] to be added into, will be 
     overrided if existed. If more than two files with different extensions 
     are included in an uploaded archive, specify the same description or 
-    left blank for second and after.</dd>
+    left blank for second and after. (<i>default is blank</i>)</dd>
   <dt>secure</dt>
-  <dd>Security flag to be set or not (1: to set)</dd>
+  <dd>Security flag to be set or not (1: to set)
+    (<i>default is not set</i>)</dd>
 </dl>
 
 <p>Key <tt>docdesc</tt> and <tt>secure</tt> are parameters for 
