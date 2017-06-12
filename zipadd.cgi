@@ -263,6 +263,9 @@ foreach (@$flist) {
         if (! defined($cdcnf->{uptime}))
             {$cdcnf->{uptime} = $_->{lastmodified}; }
         if (! defined($cdcnf->{version})) {
+            if (defined($dver{$cdid})) {$dver{$cdid} = $dver{$cdid} + 0.1; }
+            else {$dver{$cdid} = PSMT::File->GetNextVersionForDoc($cdid); }
+            $cdcnf->{version} = $dver{$cdid};
         }
         if (! defined($cdcnf->{filedesc})) {$cdcnf->{filedesc} = ''; }
         if (! defined($cdcnf->{uname}))
