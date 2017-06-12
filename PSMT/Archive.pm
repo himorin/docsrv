@@ -17,6 +17,7 @@ use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use File::Path;
 use File::Temp qw/ tempfile tempdir /;
 use Encode;
+use JSON;
 
 use PSMT::Constants;
 use PSMT::Config;
@@ -30,9 +31,37 @@ use PSMT::CGI;
 
     MakeEncrypted
     MakeNormal
+
+    ParseConfig
+    StoreConfig
+    ReadFilesConfigJson
+    ReadFilesConfigTSV
 );
 
 my $bin_zip = '/usr/bin/zip';
+
+# Config parsers
+#  ReadFilesConfig* : read from stream or file to internal hash
+#    ReadFilesConfig* will call _validateFilesConfig right before returning hash
+#  _validateFilesConfig : check and filter hash to defined structure
+#    validation of values are not included
+#    return undef if no valid item found
+#
+# REQ = required, OPT = option, SRD = only for stored files
+# FilesConfig = [ {
+#   filename (REQ): filename including ext and full path (in docsrv or zip archive)
+#   uptime (OPT): uploaded timestamp
+#   uname (OPT): uploaded username
+#   filedesc (OPT): description for file
+#   docdesc (OPT): description for document
+#   secure (OPT): security flag for document
+#   version (OPT): version number for file
+#   shahash (STD): SHA hash
+#   fileid (STD): docinfo.fileid
+#   ext (SRD): extension recorded in database
+# } ]
+my $fcfields = [ 'filename', 'uptime', 'uname', 'filedesc', 'docdesc', 
+   'secure', 'version', 'shahash', 'fileid', 'ext' ];
 
 sub new {
     my ($this) = @_;
@@ -164,7 +193,82 @@ sub MakeNormal {
     return TRUE;
 }
 
+sub ReadFilesConfigJson {
+    my ($self, $source) = @_;
+    my $hash;
+    $hash = decode_json($source);
+    return $self->_validateFilesConfig($hash);
+}
+
+sub ReadFilesConfigTSV {
+    my ($self, $source) = @_;
+    my $hash = [];
+    my @lines = split(/[\r\n]+/, $source);
+    my @head = split(/\t/, shift(@lines));
+    if ($#head < 1) {return undef; }
+    # check filename is included
+    my $isdef = FALSE;
+    foreach (@head) {if ($_ eq 'filename') {$isdef = TRUE; }}
+    if ($isdef != TRUE) {PSMT::Error->throw_error_code('config_filename_required'); }
+    my @clarr;
+    foreach (@lines) {
+        @clarr = split(/\t/, $_, -1);
+        if ($#head != $#clarr) {next; }
+        my $chash = {};
+        foreach (0 ... $#head) {
+            $chash->{$head[$_]} = $clarr[$_];
+        }
+        push(@$hash, $chash);
+    }
+    return $self->_validateFilesConfig($hash);
+}
+
+sub StoreFilesConfig {
+    my ($self, $config, $fname) = @_;
+    my $fh;
+    if (! defined($fname)) {
+        ($fh, $fname) = tempfile(
+            DIR => PSMT::Constants::LOCATIONS()->{'rel_zipcache'},
+            SUFFIX => '.json'
+        );
+    } else {
+        open($fh, "> $fname");
+    }
+    print $fh encode_json($config);
+    close($fh);
+    return $fname;
+}
+
 ################################################################## PRIVATE
+
+sub _validateFilesConfig {
+    my ($self, $config) = @_;
+    my $valed = [];
+    my $corig;
+    foreach (@$config) {
+        my $vhash = {};
+        $corig = $_;
+        if ((! defined($corig->{filename})) ||
+            ($corig->{filename} eq '')) {next; }
+        foreach (@$fcfields) {
+            if (defined($corig->{$_}) && ($corig->{$_} ne ''))
+                {$vhash->{$_} = $corig->{$_}; }
+        }
+        if (substr($vhash->{filename}, 0, 1) eq '/') {
+            $vhash->{filename} = substr($vhash->{filename}, 1);
+        }
+        # check values - mark as undef for invalid entry but not delete
+        if (defined($vhash->{uptime}) && (! ($vhash->{uptime} > 0)))
+            {$vhash->{uptime} = undef; }
+        if (defined($vhash->{secure}) && (! ($vhash->{secure} > 0)))
+            {$vhash->{secure} = undef; }
+        if (defined($vhash->{version}) && (! ($vhash->{version} > 0)))
+            {$vhash->{version} = undef; }
+        push(@$valed, $vhash);
+    }
+    if ($#$valed < 0) {return undef; }
+    return $valed;
+}
 
 
 

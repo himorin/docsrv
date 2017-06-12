@@ -1,0 +1,57 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "zipadd"
+  page_title = "Check attribute configuration for zipadd"
+  javascript = "table_sort.js"
+%]
+
+<p>Parsed list of attributes is shown in table below.</p>
+
+<table class="dirlist tablesorter">
+<tr>
+  <th>File name</th>
+  <th>DateTime</th>
+  <th>Uploader</th>
+  <th>File description</th>
+  <th>Document description</th>
+  <th>Security flag</th>
+  <th>Version</th>
+</tr>
+<tr>
+  <th>(filename)</th>
+  <th>(uptime)</th>
+  <th>(uname)</th>
+  <th>(filedesc)</th>
+  <th>(docdesc)</th>
+  <th>(secure)</th>
+  <th>(version)</th>
+</tr>
+[% FOREACH item IN config %]
+<tr>
+  <td>[% item.filename %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'uptime' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'uname' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'filedesc' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'docdesc' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'secure' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'version' %]</td>
+</tr>
+[% END %]
+</table>
+
+<p>If you are fine with a list above, please proceed to register files.<br />
+Or you can <a href="javascript: history.back()">back to file upload page</a> 
+to try another configuration file. Select <tt>[% dav FILTER html %]</tt> 
+in drop down of WebDAV files for retry, not to upload archive (zip) file 
+twice.</p>
+
+<form action="zipadd.cgi" method="POST">
+<input type="hidden" name="pid" value="[% pid %]">
+[% INCLUDE global/formopt.html.tmpl %]
+<input type="hidden" name="source" value="dav" />
+<input type="hidden" name="dav_source" value="[% dav FILTER html %]" />
+<input type="hidden" name="config_format" value="dav" />
+<input type="submit" />
+</form>
+
+[% PROCESS global/footer.html.tmpl %]
+[%- BLOCK show_config_value %][% IF hash.$id.defined %][% hash.$id %][% ELSIF hash.exists(id) %](invalid)[% ELSE %](undefined)[% END %][% END %]

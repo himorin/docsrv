@@ -1,0 +1,57 @@
+[% PROCESS global/header.html.tmpl
+  current_page = "zipadd"
+  page_title = "zipadd で利用する属性の内容確認"
+  javascript = "table_sort.js"
+%]
+
+<p>入力された属性の一覧がいかに表示されています。</p>
+
+<table class="dirlist tablesorter">
+<tr>
+  <th>ファイル名</th>
+  <th>更新日時</th>
+  <th>更新者</th>
+  <th>[% terms.file %] の説明</th>
+  <th>[% terms.document %] の説明</th>
+  <th>セキュリティーフラグ</th>
+  <th>バージョン</th>
+</tr>
+<tr>
+  <th>(filename)</th>
+  <th>(uptime)</th>
+  <th>(uname)</th>
+  <th>(filedesc)</th>
+  <th>(docdesc)</th>
+  <th>(secure)</th>
+  <th>(version)</th>
+</tr>
+[% FOREACH item IN config %]
+<tr>
+  <td>[% item.filename %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'uptime' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'uname' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'filedesc' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'docdesc' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'secure' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'version' %]</td>
+</tr>
+[% END %]
+</table>
+
+<p>上記のリストで問題なければ、[% terms.file %] の追加を行ってください。<br />
+もしくは <a href="javascript: history.back()">アップロードページに戻って</a> 
+別な属性の設定ファイルを入力することも可能です。WebDAV にあるファイル一覧の
+<tt>[% dav FILTER html %]</tt> を選択することで、再度アーカイブ (zip) ファイル
+をアップロードすることなく進めることができます。</p>
+
+<form action="zipadd.cgi" method="POST">
+<input type="hidden" name="pid" value="[% pid %]">
+[% INCLUDE global/formopt.html.tmpl %]
+<input type="hidden" name="source" value="dav" />
+<input type="hidden" name="dav_source" value="[% dav FILTER html %]" />
+<input type="hidden" name="config_format" value="dav" />
+<input type="submit" />
+</form>
+
+[% PROCESS global/footer.html.tmpl %]
+[%- BLOCK show_config_value %][% IF hash.$id.defined %][% hash.$id %][% ELSIF hash.exists(id) %](無効値)[% ELSE %](未定義)[% END %][% END %]

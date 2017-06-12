@@ -8,6 +8,9 @@
 <h3>[% terms.path %] "/[% full_path %]" への一括アップロード</h3>
 <form action="zipadd.cgi" method="POST" enctype="multipart/form-data">
 <input type="hidden" name="pid" value="[% pid %]">
+[% INCLUDE global/formopt.html.tmpl %]
+
+<h4>利用するアーカイブファイル</h4>
 <p>
   <label><input type="radio" name="source" value="upload" checked="checked" /> ローカルファイルをアップロード: </label>
   <input type="file" name="target_file" size="80" />
@@ -36,7 +39,64 @@
     [% END %]
   </p>
 [% END %]
+
+<h4>アップロードの属性設定</h4>
+<p>アップロードするアーカイブファイルの属性を設定するためのファイルを同時に
+アップロードすることができます。ファイルのフォーマットはタブ区切り形式(TSV)
+とJSON形式が選択可能です。以下の設定可能な値を各型式の指定に従ってファイルに
+保存しアップロードしてください。</p>
+
+<h5>設定可能な値</h5>
+
+<dl>
+  <dt>filename</dt>
+  <dd>(必須) 拡張子を含むアーカイブ内のルートからのディレクトリを含んだファイル名</dd>
+  <dt>uptime</dt>
+  <dd>指定するアップロード時間 (なければアーカイブ内のファイルのタイムスタンプ)
+    ただし<tt>POSIX time</tt>の数値で指定してください。</dd>
+  <dt>uname</dt>
+  <dd>アップロードファイルの作成者 (有効なユーザのリストとの照合はされません)</dd>
+  <dt>filedesc</dt>
+  <dd>アップロードするファイルの説明</dd>
+  <dt>version</dt>
+  <dd>ファイルのバージョン番号</dd>
+  <dt>docdesc</dt>
+  <dd>アップロード先ドキュメントの説明</dd>
+  <dt>secure</dt>
+  <dd>セキュリティーフラグ (1 = 設定する)</dd>
+</dl>
+
+<p><tt>docdesc</tt>と<tt>secure</tt>は [% terms.document %] のパラメータです。
+このため、新規に [% terms.document %] が登録されるときにのみ利用されます。
+アーカイブ中に同じ [% terms.document %] に入る複数の拡張子の [% terms.file %] 
+がある場合は同じ文章を入れるか二つ目以降は空白にしてください。</p>
+
+<h5>アップロードするファイルの形式</h5>
+<ul>
+  <li><label><input type="radio" name="config_format" value="tsv" checked="checked">: 
+    タブ区切り形式ファイル (TSV)、先頭行に設定可能な値の種別(<tt>filename</tt>
+    など、順不同・必要な項目だけでも可)を並べ、2行目以降に設定を記述してください。
+    値の個数が異なる行は無視されます。また無効値(versionに数値以外など)は未定義
+    として取り扱われます。</label></li>
+  <li><label><input type="radio" name="config_format" value="json">: 
+    JSON形式。設定可能な値のハッシュ(キーが種別名、値が設定値)の配列を持つJSON
+    形式のデータを指定してください。</label></li>
+</ul>
+
+<h5>アップロードするファイル</h5>
+<p>アップロードするファイルを指定してください (ここでファイルが選択されない場合
+はこのセクションは有効になりません): 
+<input type="file" name="target_config" /></p>
+
+<h5>属性設定ファイルの内容確認</h5>
+<p>アップロード後に指定した属性設定ファイルの読み込み結果を確認することが可能
+です。必要な場合はチェックしてください。<br />
+<label><input type="checkbox" name="config_confirm"> 属性設定ファイルの確認を
+行う (ただし、アップロードされた属性設定ファイルのみの検証で、アーカイブファイル
+と合わせての検証はされません。)</label></p>
+
 <input type="submit" />
+<input type="reset" />
 </form>
 [% ELSIF mode == 'result' %]
 <h3>[% terms.path %] "/[% full_path %]" への一括アップロード結果</h3>
