@@ -257,13 +257,13 @@ sub _validateFilesConfig {
         if (substr($vhash->{filename}, 0, 1) eq '/') {
             $vhash->{filename} = substr($vhash->{filename}, 1);
         }
-        # check values
+        # check values - mark as undef for invalid entry but not delete
         if (defined($vhash->{uptime}) && (! ($vhash->{uptime} > 0)))
-            {delete $vhash->{uptime}; }
+            {$vhash->{uptime} = undef; }
         if (defined($vhash->{secure}) && (! ($vhash->{secure} > 0)))
-            {delete $vhash->{secure}; }
+            {$vhash->{secure} = undef; }
         if (defined($vhash->{version}) && (! ($vhash->{version} > 0)))
-            {delete $vhash->{version}; }
+            {$vhash->{version} = undef; }
         push(@$valed, $vhash);
     }
     if ($#$valed < 0) {return undef; }

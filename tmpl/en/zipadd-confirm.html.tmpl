@@ -28,12 +28,12 @@
 [% FOREACH item IN config %]
 <tr>
   <td>[% item.filename %]</td>
-  <td>[% IF item.uptime.defined %][% item.uptime %][% ELSE %](undefined)[% END %]</td>
-  <td>[% IF item.uname.defined %][% item.uname %][% ELSE %](undefined)[% END %]</td>
-  <td>[% IF item.filedesc.defined %][% item.filedesc %][% ELSE %](undefined)[% END %]</td>
-  <td>[% IF item.docdesc.defined %][% item.docdesc %][% ELSE %](undefined)[% END %]</td>
-  <td>[% IF item.secure.defined %][% item.secure %][% ELSE %](undefined)[% END %]</td>
-  <td>[% IF item.version.defined %][% item.version %][% ELSE %](undefined)[% END %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'uptime' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'uname' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'filedesc' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'docdesc' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'secure' %]</td>
+  <td>[% INCLUDE show_config_value hash = item id = 'version' %]</td>
 </tr>
 [% END %]
 </table>
@@ -54,3 +54,4 @@ twice.</p>
 </form>
 
 [% PROCESS global/footer.html.tmpl %]
+[%- BLOCK show_config_value %][% IF hash.$id.defined %][% hash.$id %][% ELSIF hash.exists(id) %](invalid)[% ELSE %](undefined)[% END %][% END %]
