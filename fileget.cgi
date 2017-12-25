@@ -13,6 +13,7 @@ use PSMT::Util;
 use PSMT::File;
 use PSMT::Access;
 use PSMT::Email;
+use PSMT::Archive;
 
 my $max_read = 65536;
 
