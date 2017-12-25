@@ -3,6 +3,8 @@
 use strict;
 use PSMT;
 
+use JSON;
+
 use PSMT::Constants;
 use PSMT::Template;
 use PSMT::Config;
@@ -68,19 +70,32 @@ $obj->template->set_vars('outtm', $outtm);
 $obj->template->set_vars('id', $iid);
 $obj->template->set_vars('jsondata', $hash);
 
-if (! defined(PSMT->cgi()->param('format'))) {
+if ( (! defined(PSMT->cgi()->param('format'))) ||
+     (PSMT->cgi()->param('format') eq 'json') ) {
     print $obj_cgi->header( -type => "application/json" );
     print "\n";
-    my $json;
-    $obj->template->process('json/' . $outtm, 'json', undef, \$json);
-    print $json;
+    print MakeJson();
 } else {
     if (PSMT->cgi()->param('format') eq 'js') {
-        $obj->template->process('json/wrap', 'js');
+        print $obj_cgi->header( -type => "application/javascript" );
+        print "\n";
+        print "var conf_data_$type = ";
+        print MakeJson();
+        print ";";
     } else {
         $obj->template->process('json/' . $outtm);
     }
 }
 
 exit;
+
+sub MakeJson {
+    my $json;
+    if ($outtm eq 'table') {
+        $json = to_json( { 'type' => $type, 'data' => $hash } );
+    } else {
+        $obj->template->process('json/' . $outtm, 'json', undef, \$json);
+    }
+    return $json;
+}
 
