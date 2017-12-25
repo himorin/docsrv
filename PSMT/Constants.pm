@@ -107,8 +107,7 @@ use constant AVAIL_FORMATS => {
   'json/loaddoc'       => ['html', 'json'],
   'json/loadfile'      => ['html', 'json'],
   'json/pathinfo'      => ['html', 'json'],
-  'json/table'         => ['html', 'json'],
-  'json/wrap'          => ['js'],
+  'json/table'         => ['html'],
 
   'skins/index'             => ['html'],
   'skins/list'              => ['html'],
