@@ -36,6 +36,7 @@ use MIME::Types;
     IpAddr
     GetHashString
     ValidateEncoding
+    ValidateName
 
     AddShortDesc
     GetLastFileId
@@ -186,6 +187,16 @@ sub ValidateEncoding {
         else {return length($str); }
     }
     return 0;
+}
+
+sub ValidateName {
+    my ($self, $str) = @_;
+    # invalid if heading or tailing charactor
+    if (index(INVALID_HEAD_TAIL, substr($str, 0, 1)) > -1) {return 'head_char'; }
+    if (index(INVALID_HEAD_TAIL, substr($str, -1)) > -1) {return 'tail_char'; }
+    # double white-sp is invalid
+    if (index($str, '  ') > -1) {return 'double_white_sp'; }
+    return undef;
 }
 
 sub GetLastFileId {
