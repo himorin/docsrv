@@ -11,8 +11,8 @@ var popup_callback = function(messages) {
     pmes += "<br>Name: ";
     var ppid = 0;
     while (ppid != messages.data.pathid) {
-      pmes += "/<a href=\"pathinfo.cgi?pid=" + messages.data.parr[ppid].pid + "\">" + messages.data.parr[ppid].name + "</a>";
-      ppid = messages.data.parr[ppid].pid;
+      pmes += "/<a href=\"pathinfo.cgi?pid=" + messages.data.parr[ppid].pathid + "\">" + messages.data.parr[ppid].pathname + "</a>";
+      ppid = messages.data.parr[ppid].pathid;
     }
     pmes += "/" + messages.data.filename;
     pmes += "<br>Description: " + messages.data.short_description;
@@ -39,8 +39,8 @@ var popup_callback = function(messages) {
     pmes += "<br>Name: ";
     var ppid = 0;
     while (ppid != messages.data.pathid) {
-      pmes += "/<a href=\"pathinfo.cgi?pid=" + messages.data.parr[ppid].pid + "\">" + messages.data.parr[ppid].name + "</a>";
-      ppid = messages.data.parr[ppid].pid;
+      pmes += "/<a href=\"pathinfo.cgi?pid=" + messages.data.parr[ppid].pathid + "\">" + messages.data.parr[ppid].pathname + "</a>";
+      ppid = messages.data.parr[ppid].pathid;
     }
     pmes += "<br>Description: " + messages.data.short_description;
     pmes += "<br>Groups: " + messages.data.gname.join(", ");

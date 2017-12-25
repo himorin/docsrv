@@ -103,10 +103,10 @@ use constant AVAIL_FORMATS => {
   'global/footer'      => ['html'],
   'global/header'      => ['html'],
 
-  'json/docinfo'       => ['html', 'json'],
+  'json/docinfo'       => ['html'],
   'json/loaddoc'       => ['html'],
   'json/loadfile'      => ['html'],
-  'json/pathinfo'      => ['html', 'json'],
+  'json/pathinfo'      => ['html'],
   'json/table'         => ['html'],
 
   'skins/index'             => ['html'],

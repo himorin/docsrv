@@ -57,7 +57,6 @@ if ($type eq 'allpath') {
     $objattr = PSMT::Attribute->new();
     $objattr->SetTarget('doc');
     $hash->{attr} = $objattr->GetAttrForId($iid);
-    $hash->{lastfile}->{filemime} = PSMT::Util->GetMimeType($hash->{lastfile}->{fileext});
 } elsif ($type eq 'loaddoc') {
     $hash = PSMT::File->ListUserLoadForDoc($iid);
     FilterIP($hash);
@@ -93,11 +92,7 @@ exit;
 
 sub MakeJson {
     my $json;
-    if (($outtm eq 'table') || ($outtm eq 'loaddoc') || ($outtm eq 'loadfile')) {
-        $json = to_json( { 'type' => $type, 'data' => $hash } );
-    } else {
-        $obj->template->process('json/' . $outtm, 'json', undef, \$json);
-    }
+    $json = to_json( { 'type' => $type, 'data' => $hash } );
     return $json;
 }
 
