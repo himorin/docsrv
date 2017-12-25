@@ -277,7 +277,7 @@ sub GetMimeType {
     my ($self, $ext) = @_;
     my $mime = MIME::Types->new();
     my $fmime = $mime->mimeTypeOf($ext);
-    if (defined($fmime)) {return $fmime; }
+    if (defined($fmime)) {return lc($fmime); }
     return DEF_CONTENTTYPE;
 }
 
