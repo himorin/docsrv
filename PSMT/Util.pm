@@ -34,6 +34,7 @@ use MIME::Types;
     filter_markdown
 
     IpAddr
+    StrToIpaddr
     GetHashString
     ValidateEncoding
 

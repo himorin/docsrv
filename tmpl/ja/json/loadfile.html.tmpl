@@ -15,7 +15,7 @@
   [% FOREACH query = jsondata %]
   <tr>
     <td>[% query.fileid %]</td><td>[% query.uname %]</td>
-    <td>[% query.dltime %]</td><td>[% query.srcip FILTER ipaddr %]</td>
+    <td>[% query.dltime %]</td><td>[% query.srcip %]</td>
   </tr>
   [% END %]
 </tbody>

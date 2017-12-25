@@ -60,8 +60,10 @@ if ($type eq 'allpath') {
     $hash->{lastfile}->{filemime} = PSMT::Util->GetMimeType($hash->{lastfile}->{fileext});
 } elsif ($type eq 'loaddoc') {
     $hash = PSMT::File->ListUserLoadForDoc($iid);
+    FilterIP($hash);
 } elsif ($type eq 'loadfile') {
     $hash = PSMT::File->ListUserLoad($iid);
+    FilterIP($hash);
 } else {PSMT::Error->throw_error_user('invalid_param'); }
 if (! defined($hash)) {PSMT::Error->throw_error_user('invalid_param'); }
 
@@ -91,11 +93,18 @@ exit;
 
 sub MakeJson {
     my $json;
-    if ($outtm eq 'table') {
+    if (($outtm eq 'table') || ($outtm eq 'loaddoc') || ($outtm eq 'loadfile')) {
         $json = to_json( { 'type' => $type, 'data' => $hash } );
     } else {
         $obj->template->process('json/' . $outtm, 'json', undef, \$json);
     }
     return $json;
+}
+
+sub FilterIP {
+    my ($arr) = @_;
+    foreach (0 ... $#$arr) {
+        $arr->[$_]->{srcip} = PSMT::Util::StrToIpaddr($arr->[$_]->{srcip});
+    }
 }
 
