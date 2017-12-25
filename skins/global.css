@@ -116,13 +116,19 @@ footer {
     padding: 0.5em;
 }
 
-tr.row_odd {
-    background-color: #F7F7F7;
-    color: #000000;
+table thead tr, table th {
+    background-color: #D0D0D0;
 }
 
-tr.row_even {
+table tr:nth-child(even) {
+    background-color: #F0F0F0;
+}
+
+table tr:nth-child(odd) {
     background-color: #FFFFFF;
+}
+
+table tr {
     color: #000000;
 }
 
@@ -258,13 +264,6 @@ table.tablesorter thead tr .header {
     background-position: center right;
     cursor: pointer;
 }
-table.tablesorter tbody td {
-    color: #3D3D3D;
-    background-color: #FFF;
-}
-table.tablesorter tbody tr.odd td {
-    background-color:#F0F0F6;
-}
 table.tablesorter thead tr .headerSortUp {
     background-image: url(jquery/skins/blue/asc.gif);
 }
@@ -277,6 +276,9 @@ table.tablesorter thead tr .headerSortUp {
 }
 table.tablesorter thead td.tdhead {
     text-align: center;
+}
+table tr.upper_path {
+    background-color: #E0E0E0;
 }
 
 p.step {

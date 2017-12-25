@@ -17,12 +17,7 @@
     <th></th>
   </tr>
   [% FOREACH icon = target.keys %]
-    [% count = loop.count() %]
-    <tr
-      class="
-        icon_[% icon %]
-        [% count % 2 == 1 ? "row_odd" : "row_even" %]
-       ">
+    <tr class="icon_[% icon %]">
       <td><a href="editicon.cgi?class=[% class FILTER html %]&amp;target=[% icon FILTER html %]"
         ><img src="skins/images/[% target.$icon.value FILTER html %]"
         title="[% target.$icon.tiphelp FILTER html %]"></a></td>

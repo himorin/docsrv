@@ -15,11 +15,10 @@
 </thead>
 <tbody>
   [% FOREACH item IN dups.keys %]
-  [% count = loop.count() %]
-  <tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">
+  <tr>
     <td rowspan="[% dups.$item.size %]">[% item FILTER html %]</td>
     [% FOREACH file IN dups.$item %]
-    [% IF ! loop.first %]</tr><tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">[% END %]
+    [% IF ! loop.first %]</tr><tr>[% END %]
     <td><a href="fileinfo.cgi?fid=[% file.fileid FILTER html %]">[% file.fileid FILTER html %]</a></td>
     <td>[% file.fileext %]</td>
     <td>[% file.uname %]</td>

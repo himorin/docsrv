@@ -28,12 +28,7 @@ function tweak_default_change (item) {
   </tr>
 
   [% FOREACH item IN config_user.keys %]
-    [% count = loop.count() %]
-    <tr 
-      class="
-        config_[% item %]
-        [%+ count % 2 == 1 ? "row_odd" : "row_even" %]
-       ">
+    <tr class="config_[% item %]">
       <td><label for="[% item %]_input">[% item FILTER html %]</label></td>
       <td>[% user_config_help.$item FILTER html %]</td>
       <td>

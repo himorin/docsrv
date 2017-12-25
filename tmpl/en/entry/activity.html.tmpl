@@ -6,8 +6,7 @@
     <th>Source IP Address</th>
   </tr>
   [% FOREACH query = activity %]
-    [% count = loop.count() %]
-    <tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">
+    <tr>
       <td>[% query.fileid %]</td>
       <td>[% query.uname %]</td>
       <td>[% query.dltime %]</td>
