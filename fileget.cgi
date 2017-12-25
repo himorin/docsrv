@@ -87,7 +87,7 @@ if (PSMT::Access->CheckSecureForFile($fid)) {
     my %fhash;
     $fhash{PSMT::File->GetFilePath($fid) . '/' . $fid} =
         PSMT::File->GetFileFullPath($fid);
-    PSMT::File->MakeEncZipFile(\%fhash, $head, $fname);
+    PSMT::Archive->MakeEncrypted(\%fhash, $head, $fname);
     exit;
 } elsif (PSMT::File->CheckMimeIsView($ext)) {
     print $obj_cgi->header(
