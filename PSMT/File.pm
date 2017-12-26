@@ -272,14 +272,6 @@ sub ListFilesInDocByExt {
 }
 
 # Always select 'enabeld' one (for user-wide consistency)
-sub GetDocLastPostFileId {
-    my ($self, $docid, $ext) = @_;
-    my $ref = $self->GetDocLastPostFileInfo($docid, $ext);
-    if (! defined($ref)) {return undef; }
-    return $ref->{fileid};
-}
-
-# Always select 'enabeld' one (for user-wide consistency)
 sub GetDocLastPostFileInfo {
     my ($self ,$docid, $ext) = @_;
     my $dbh = PSMT->dbh;
