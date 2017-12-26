@@ -178,6 +178,7 @@ sub GetDocsInfo {
         $ref = PSMT::Util->AddShortDesc($ref);
         $ref->{gname} = PSMT::Access->ListDocRestrict($ref->{docid});
         $ref->{labelid} = PSMT::Label->ListLabelOnDoc($ref->{docid});
+        $ref->{lastfile} = $self->GetDocLastPostFileInfo($docid);
         $ret{$ref->{docid}} = $ref;
     }
     # name
