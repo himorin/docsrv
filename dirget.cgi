@@ -72,13 +72,13 @@ while ($#lpid > -1) {
         if ($pmode ne 'all') {
             if ($pext eq 'ALL') {
                 foreach (@{PSMT::File->ListExtInDoc($chid->{docid})}) {
-                    $clid = PSMT::File->GetDocLastPostFileId($chid->{docid}, $_);
+                    $clid = PSMT::File->GetDocLastPostFileInfo($chid->{docid}, $_)->{fileid};
                     if (&AddFileToZipEntry(\%zip_files, $clid)) {$zip_sec = TRUE; }
                 }
             } elsif ($pext eq 'NEW') {
                 if (&AddFileToZipEntry(\%zip_files, $chid->{lastfile}->{fileid})) {$zip_sec = TRUE; }
             } else {
-                $clid = PSMT::File->GetDocLastPostFileId($chid->{docid}, $pext);
+                $clid = PSMT::File->GetDocLastPostFileInfo($chid->{docid}, $pext)->{fileid};
                 if (&AddFileToZipEntry(\%zip_files, $clid)) {$zip_sec = TRUE; }
             }
             next;
@@ -92,7 +92,7 @@ while ($#lpid > -1) {
         }
         if ($#$docfiles < 0) {next; }
         foreach (@{PSMT::File->ListExtInDoc($chid->{docid})}) {
-            $lastfiles{PSMT::File->GetDocLastPostFileId($chid->{docid}, $_)}
+            $lastfiles{PSMT::File->GetDocLastPostFileInfo($chid->{docid}, $_)->{fileid}}
                 = $_;
         }
         foreach (@$docfiles) {
