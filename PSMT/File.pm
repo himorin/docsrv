@@ -78,7 +78,7 @@ use PSMT::FullSearchMroonga;
     GetDocsInfo
     ListFilesInDoc
     ListFilesInDocByExt
-    GetDocLastPostFileInfo
+    GetDocLastPostFile
     GetAllDocCount
 
     GetFileInfo
@@ -155,7 +155,7 @@ sub GetDocInfo {
     $ref = PSMT::Util->AddShortDesc($ref);
     $ref->{gname} = PSMT::Access->ListDocRestrict($docid);
     $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
-    $ref->{lastfile} = $self->GetDocLastPostFileInfo($docid);
+    $ref->{lastfile} = $self->GetDocLastPostFile($docid);
     return $ref;
 }
 
@@ -177,7 +177,7 @@ sub GetDocsInfo {
         $ref = PSMT::Util->AddShortDesc($ref);
         $ref->{gname} = PSMT::Access->ListDocRestrict($ref->{docid});
         $ref->{labelid} = PSMT::Label->ListLabelOnDoc($ref->{docid});
-        $ref->{lastfile} = $self->GetDocLastPostFileInfo($docid);
+        $ref->{lastfile} = $self->GetDocLastPostFile($docid);
         $ret{$ref->{docid}} = $ref;
     }
     # name
@@ -272,7 +272,7 @@ sub ListFilesInDocByExt {
 }
 
 # Always select 'enabeld' one (for user-wide consistency)
-sub GetDocLastPostFileInfo {
+sub GetDocLastPostFile {
     my ($self ,$docid, $ext) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
@@ -1282,7 +1282,7 @@ sub ListFileHashDup {
 
 sub GetNextVersionForDoc {
     my ($self, $did) = @_;
-    my $finfo = $self->GetDocLastPostFileInfo($did);
+    my $finfo = $self->GetDocLastPostFile($did);
     if (! defined($finfo)) {return 1.0; }
     if (! defined($finfo->{'version'})) {return 1.0; }
     return floor($finfo->{'version'} + 1.0);

@@ -30,7 +30,7 @@ my $ext = $obj_cgi->param('ext');
 my $conv = $obj_cgi->param('conv');
 my $fileinfo;
 if (defined($did)) {
-    $fileinfo = PSMT::File->GetDocLastPostFileInfo($did, $ext);
+    $fileinfo = PSMT::File->GetDocLastPostFile($did, $ext);
     if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
     $fid = $fileinfo->{fileid};
 }

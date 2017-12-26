@@ -106,7 +106,7 @@ sub CreateResult {
         if (PSMT::Access->CheckForDoc($cid, FALSE) == TRUE) {
             $ref->{filename} = PSMT::File->GetFullPathFromId($ref->{pathid}) . $ref->{filename};
             $ref->{labelid} = PSMT::Label->ListLabelOnDoc($cid);
-            $ref->{lastfile} = PSMT::File->GetDocLastPostFileInfo($cid);
+            $ref->{lastfile} = PSMT::File->GetDocLastPostFile($cid);
             $ref->{gname} = PSMT::Access->ListDocRestrict($cid);
             $ref = PSMT::Util->AddShortDesc($ref);
             push(@result, $ref);

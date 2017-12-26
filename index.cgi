@@ -39,7 +39,7 @@ my $favs = PSMT->user->ListFavsDoc();
 foreach (@$favs) {
     $favdocs{$_} = PSMT::File->GetDocInfo($_);
     $favdocs{$_}->{full_path} = PSMT::File->GetFullPathFromId($favdocs{$_}->{pathid});
-    $favdocs{$_}->{fid} = PSMT::File->GetDocLastPostFileInfo($_);
+    $favdocs{$_}->{fid} = PSMT::File->GetDocLastPostFile($_);
 }
 my %favpath;
 $favs = PSMT->user->ListFavsPath();
