@@ -127,7 +127,7 @@ function SetPathSelect(sel_id, cur_id) {
   for (var i = 0; i < json_allpath_order.length; i++) {
     co = document.createElement('option');
     co.text = json_allpath_order[i];
-    co.value = json_allpath_rev[co.text].pathid;
+    co.value = json_allpath_rev[json_allpath_order[i]].pathid;
     if (co.value == cur_id) {co.selected = true; }
     sel.options.add(co);
   }

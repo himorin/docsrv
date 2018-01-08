@@ -26,6 +26,7 @@ use Cwd;
   PATH_SP_ZIPADD
 
   INVALID_NAME_CHAR
+  INVALID_HEAD_TAIL
   HE_FILE_FILTER
   HE_FILE_FILTER_INTERNAL
 
@@ -117,6 +118,7 @@ use constant AVAIL_FORMATS => {
 };
 
 use constant INVALID_NAME_CHAR => '[\\/\\?\\*\\\\]';
+use constant INVALID_HEAD_TAIL => ' ._';
 
 use constant HE_FILE_FILTER_INTERNAL => 'INTERNAL';
 use constant HE_FILE_FILTER => {

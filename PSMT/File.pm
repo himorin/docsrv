@@ -1027,6 +1027,11 @@ sub CheckDavHash {
 sub ValidateNameInPath {
     my ($self, $pid, $name) = @_;
     my $errid = '';
+    if (defined($errid = PSMT::Util->ValidateName($name))) {
+        PSMT::Template->set_vars('method', 'Util::ValidateName');
+        PSMT::Template->set_vars('reason', $errid);
+        PSMT::Error->throw_error_user('invalid_name');
+    }
     if (! defined($name)) {
         PSMT::Template->set_vars('method', 'File::ValidateNameInPath');
         PSMT::Error->throw_error_code('invalid_parameter');
