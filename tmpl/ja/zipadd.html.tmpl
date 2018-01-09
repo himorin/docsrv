@@ -104,7 +104,7 @@
 <input type="reset" />
 </form>
 [% ELSIF mode == 'result' %]
-<h3>[% terms.path %] "/[% full_path %]" への一括アップロード結果</h3>
+<h3>[% terms.path %] "<a href="path/[% full_path %]">/[% full_path %]</a>" への一括アップロード結果</h3>
 [% IF up_succ.size > 0 %]
 <h4>追加成功ファイルリスト</h4>
 <table class="dirlist tablesorter">
@@ -119,10 +119,10 @@
 </tr>
 [% FOREACH item IN up_succ %]
 <tr>
-  <td>[% full_path %][% item.storename %]</td>
+  <td><a href="doc/[% full_path %][% item.storename %]">[% full_path %][% item.storename %]</a></td>
   <td>[% item.ext %]</td>
-  <td>[% item.did %]</td>
-  <td>[% item.fid %]</td>
+  <td><a href="docinfo.cgi?did=[% item.did %]">[% item.did %]</a></td>
+  <td><a href="fileinfo.cgi?fid=[% item.fid %]">[% item.fid %]</a></td>
   <td>[% item.lastmodified %]</td>
   <td>[% item.version %]</td>
   <td>[% SizeDisp(item.size) %]</td>
