@@ -36,12 +36,7 @@
   </tr>
 
 [% FOREACH item IN file_list %]
-  [% count = loop.count() %]
-  <tr 
-    class="
-      doc_[% item.fileid %]
-      [% count % 2 == 1 ? "row_odd" : "row_even" %]
-     ">
+  <tr class="doc_[% item.fileid %]">
     <td class="filelist">
       <input type="checkbox"
         name="files" value="[% item.fileid %]" id="file_[% item.fileid %]"

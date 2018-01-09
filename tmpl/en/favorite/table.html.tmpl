@@ -9,12 +9,7 @@
   </tr>
 
 [% FOREACH item IN favpath.keys %]
-  [% count = loop.count() %]
-  <tr
-    class="
-      path_[% item %]
-      [% count % 2 == 1 ? "row_odd" : "row_even" %]
-     ">
+  <tr class="path_[% item %]">
     <td class="docmanage">
       <a href="docadd.cgi?pid=[% item %]">[% INCLUDE show_table_icon id = 'add_doc' %]</a>
       </td>
@@ -26,12 +21,7 @@
 [% END %]
 
 [% FOREACH item IN favlist.keys %]
-  [% count = loop.count() %]
-  <tr 
-    class="
-      doc_[% item %]
-      [% count % 2 == 1 ? "row_odd" : "row_even" %]
-     ">
+  <tr class="doc_[% item %]">
     <td class="docmanage">
       [% IF favlist.$item.fid.defined %]
         <a href="fileget.cgi?did=[% item %]">[% INCLUDE show_table_icon id = 'download' %]</a>

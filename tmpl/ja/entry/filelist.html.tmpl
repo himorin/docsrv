@@ -49,12 +49,7 @@ function tweak_ToggleFileDisp (target) {
 
 
 [% FOREACH item IN files %]
-  [% count = loop.count() %]
-  <tr 
-    class="
-      doc_[% item.fileid %]
-      [% count % 2 == 1 ? "row_odd" : "row_even" %]
-     ">
+  <tr class="doc_[% item.fileid %]">
     <td class="filelist">
       <a href="fileget.cgi?fid=[% item.fileid %]">[% INCLUDE show_table_icon id = 'download' %]</a>
       <a href="attribute.cgi?target=file&method=get&id=[% item.fileid %]">[% INCLUDE show_table_icon id = 'attribute' %]</a>

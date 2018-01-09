@@ -9,12 +9,7 @@
     <th>Description</th>
   </tr>
 [% FOREACH item = labels.keys %]
-  [% count = loop.count() %]
-  <tr 
-    class="
-      label_[% item %]
-      [% count % 2 == 1 ? "row_odd" : "row_even" %]
-     ">
+  <tr class="label_[% item %]">
     <td><a href="labeledit.cgi?lid=[% item %]">[% item %]</a></td>
     <td>[% labels.$item.name %]</td>
     <td>[% labels.$item.description %]</td>

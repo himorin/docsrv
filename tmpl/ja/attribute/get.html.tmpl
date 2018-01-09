@@ -15,8 +15,7 @@
     <th>属性値</th>
   </tr>
   [% FOREACH attr IN hash.keys %]
-    [% count = loop.count() %]
-    <tr class="[% count % 2 == 1 ? "row_odd" : "row_even" %]">
+    <tr>
       <td>[% attr FILTER html %]</td>
       <td>[% hash.$attr FILTER html %]</td>
     </tr>
