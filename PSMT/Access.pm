@@ -19,6 +19,9 @@ use PSMT::Util;
 use PSMT::Error;
 use PSMT::File;
 
+my %cache_path;
+my %cache_doc;
+
 %PSMT::Access::EXPORT = qw(
     new
 
@@ -31,8 +34,10 @@ use PSMT::File;
 
     ListFullPathRestrict
     ListPathRestrict
+    ListPathsRestrict
     ListFullDocRestrict
     ListDocRestrict
+    ListDocsRestrict
 
     SetPathAccessGroup
     SetDocAccessGroup
@@ -116,13 +121,37 @@ sub ListFullPathRestrict {
 
 sub ListPathRestrict {
     my ($self, $pathid) = @_;
+    if (defined($cache_path{$pathid})) {return $cache_path{$pathid}; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('access_path READ');
     my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
     $sth->execute($pathid);
     my ($ref, @glist);
     while ($ref = $sth->fetchrow_hashref()) {push(@glist, $ref->{gname}); }
+    $cache_path{$pathid} = \@glist;
     return \@glist;
+}
+
+sub ListPathsRestrict {
+    my ($self, @pathid) = @_;
+    my @target;
+    foreach (@pathid) {
+        if (! defined($cache_path{$_})) {
+            $cache_path{$_} = ();
+            push(@target, $_);
+        }
+    }
+    if ($#target < 0) {return \%cache_path; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('access_path READ');
+    my $places = '(' . ('?,' x $#target) . '?)';
+    my $sth = $dbh->prepare('SELECT * FROM access_path WHERE pathid IN ' . $places);
+    $sth->execute(@target);
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {
+        push($cache_path{$ref->{pathid}}, $ref->{gname});
+    }
+    return \%cache_path;
 }
 
 sub ListFullDocRestrict {
@@ -136,13 +165,37 @@ sub ListFullDocRestrict {
 
 sub ListDocRestrict {
     my ($self, $docid) = @_;
+    if (defined($cache_doc{$docid})) {return $cache_doc{$docid}; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('access_doc READ');
     my $sth = $dbh->prepare('SELECT gname FROM access_doc WHERE docid = ?');
     $sth->execute($docid);
     my ($ref, @glist);
     while ($ref = $sth->fetchrow_hashref()) {push(@glist, $ref->{gname}); }
+    $cache_doc{$docid} = \@glist;
     return \@glist;
+}
+
+sub ListDocsRestrict {
+    my ($self, @docid) = @_;
+    my @target;
+    foreach (@docid) {
+        if (! defined($cache_doc{$_})) {
+            $cache_doc{$_} = ();
+            push(@target, $_);
+        }
+    }
+    if ($#target < 0) {return \%cache_doc; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('access_doc READ');
+    my $places = '(' . ('?,' x $#target) . '?)';
+    my $sth = $dbh->prepare('SELECT * FROM access_doc WHERE docid IN ' . $places);
+    $sth->execute(@target);
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {
+        push($cache_doc{$ref->{docid}}, $ref->{gname});
+    }
+    return \%cache_doc;
 }
 
 sub SetPathAccessGroup {
@@ -215,6 +268,9 @@ sub _SetAccessGroup {
             else {$gconf{$ref->{gname}} = 0; }
         }
     }
+    # delete cache
+    if ($cat eq 'path') {delete($cache_path{$id}); }
+    elsif ($cat eq 'doc') {delete($cache_doc{$id}); }
     # update
     foreach (keys %gconf) {
         if ($gconf{$_} == 1) {
