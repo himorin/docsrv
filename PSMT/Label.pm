@@ -83,7 +83,7 @@ sub UpdateLabel {
 
 sub ListLabelOnDoc {
     my ($self, $docid) = @_;
-    if (defined($cache_doc{$docid})) {return $cache_doc{$docid}; }
+    if (exists($cache_doc{$docid})) {return $cache_doc{$docid}; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('label_doc READ');
     my $sth = $dbh->prepare('SELECT labelid FROM label_doc WHERE docid = ?');
@@ -96,10 +96,11 @@ sub ListLabelOnDoc {
 
 sub ListLabelOnDocs {
     my ($self, @docid) = @_;
-    my @target;
+    my (@target, $tmp);
     foreach (@docid) {
-        if (! defined($cache_doc{$_})) {
-            $cache_doc{$_} = ();
+        if (! exists($cache_doc{$_})) {
+            $tmp = ();
+            $cache_doc{$_} = $tmp;
             push(@target, $_);
         }
     }
@@ -111,7 +112,7 @@ sub ListLabelOnDocs {
     $sth->execute(@target);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {
-        push($cache_doc{$ref->{docid}}, $ref->{labelid});
+        push(@{$cache_doc{$ref->{docid}}}, $ref->{labelid});
     }
     return \%cache_doc;
 }

@@ -406,13 +406,12 @@ sub ListDocsInPath {
     $dbh->db_lock_tables('docreg READ');
     my $sth = $dbh->prepare('SELECT docid FROM docreg WHERE pathid = ?');
     $sth->execute($pathid);
-    my (@docs, $ref);
-    while ($ref = $sth->fetchrow_hashref()) {
-        push(@docs, $self->GetDocInfo($ref->{docid}));
-    }
+    my (@docid, @docs, $ref);
+    while ($ref = $sth->fetchrow_hashref()) {push(@docid, $ref->{docid}); }
     # cache
-    PSMT::Access->ListDocsRestrict(@docs);
-    PSMT::Label->ListLabelOnDocs(@docs);
+    PSMT::Access->ListDocsRestrict(@docid);
+    PSMT::Label->ListLabelOnDocs(@docid);
+    foreach (@docid) {push(@docs, $self->GetDocInfo($_)); }
     return \@docs;
 }
 

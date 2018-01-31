@@ -121,7 +121,7 @@ sub ListFullPathRestrict {
 
 sub ListPathRestrict {
     my ($self, $pathid) = @_;
-    if (defined($cache_path{$pathid})) {return $cache_path{$pathid}; }
+    if (exists($cache_path{$pathid})) {return $cache_path{$pathid}; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('access_path READ');
     my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
@@ -134,10 +134,11 @@ sub ListPathRestrict {
 
 sub ListPathsRestrict {
     my ($self, @pathid) = @_;
-    my @target;
+    my (@target, $tmp);
     foreach (@pathid) {
-        if (! defined($cache_path{$_})) {
-            $cache_path{$_} = ();
+        if (! exists($cache_path{$_})) {
+            $tmp = ();
+            $cache_path{$_} = $tmp;
             push(@target, $_);
         }
     }
@@ -149,7 +150,7 @@ sub ListPathsRestrict {
     $sth->execute(@target);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {
-        push($cache_path{$ref->{pathid}}, $ref->{gname});
+        push(@{$cache_path{$ref->{pathid}}}, $ref->{gname});
     }
     return \%cache_path;
 }
@@ -165,7 +166,7 @@ sub ListFullDocRestrict {
 
 sub ListDocRestrict {
     my ($self, $docid) = @_;
-    if (defined($cache_doc{$docid})) {return $cache_doc{$docid}; }
+    if (exists($cache_doc{$docid})) {return $cache_doc{$docid}; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('access_doc READ');
     my $sth = $dbh->prepare('SELECT gname FROM access_doc WHERE docid = ?');
@@ -178,10 +179,11 @@ sub ListDocRestrict {
 
 sub ListDocsRestrict {
     my ($self, @docid) = @_;
-    my @target;
+    my (@target, $tmp);
     foreach (@docid) {
-        if (! defined($cache_doc{$_})) {
-            $cache_doc{$_} = ();
+        if (! exists($cache_doc{$_})) {
+            $tmp = ();
+            $cache_doc{$_} = $tmp;
             push(@target, $_);
         }
     }
@@ -193,7 +195,7 @@ sub ListDocsRestrict {
     $sth->execute(@target);
     my $ref;
     while ($ref = $sth->fetchrow_hashref()) {
-        push($cache_doc{$ref->{docid}}, $ref->{gname});
+        push(@{$cache_doc{$ref->{docid}}}, $ref->{gname});
     }
     return \%cache_doc;
 }
