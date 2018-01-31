@@ -412,6 +412,7 @@ sub ListDocsInPath {
     }
     # cache
     PSMT::Access->ListDocsRestrict(@docs);
+    PSMT::Label->ListLabelOnDocs(@docs);
     return \@docs;
 }
 
