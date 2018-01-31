@@ -410,6 +410,9 @@ sub ListDocsInPath {
     while ($ref = $sth->fetchrow_hashref()) {
         push(@docs, $self->GetDocInfo($ref->{docid}));
     }
+    # cache
+    PSMT::Access->ListDocsRestrict(@docs);
+    PSMT::Label->ListLabelOnDocs(@docs);
     return \@docs;
 }
 

@@ -16,6 +16,8 @@ use PSMT::DB;
 use PSMT::Constants;
 use PSMT::Util;
 
+my %cache_doc;
+
 %PSMT::Label::EXPORT = qw(
     new
 
@@ -27,6 +29,7 @@ use PSMT::Util;
     CreateLabel
 
     ListLabelOnDoc
+    ListLabelOnDocs
     ModLabelOnDoc
     ListDocOnLabel
 );
@@ -80,13 +83,37 @@ sub UpdateLabel {
 
 sub ListLabelOnDoc {
     my ($self, $docid) = @_;
+    if (defined($cache_doc{$docid})) {return $cache_doc{$docid}; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('label_doc READ');
     my $sth = $dbh->prepare('SELECT labelid FROM label_doc WHERE docid = ?');
     $sth->execute($docid);
     my (@labels, $ref);
     while ($ref = $sth->fetchrow_hashref()) {push(@labels, $ref->{labelid}); }
+    $cache_doc{$docid} = \@labels;
     return \@labels;
+}
+
+sub ListLabelOnDocs {
+    my ($self, @docid) = @_;
+    my @target;
+    foreach (@docid) {
+        if (! defined($cache_doc{$_})) {
+            $cache_doc{$_} = ();
+            push(@target, $_);
+        }
+    }
+    if ($#target < 0) {return \%cache_doc; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('label_doc READ');
+    my $places = '(' . ('?,' x $#target) . '?)';
+    my $sth = $dbh->prepare('SELECT * FROM label_doc WHERE docid IN ' . $places);
+    $sth->execute(@target);
+    my $ref;
+    while ($ref = $sth->fetchrow_hashref()) {
+        push($cache_doc{$ref->{docid}}, $ref->{labelid});
+    }
+    return \%cache_doc;
 }
 
 sub CreateLabel {
@@ -121,6 +148,7 @@ sub ModLabelOnDoc {
     my $sth = $dbh->prepare('SELECT labelid FROM label_doc WHERE docid = ?');
     my $ref;
     $sth->execute($docid);
+    delete($cache_doc{$docid});
     while ($ref = $sth->fetchrow_hashref()) {
         if (defined($labels{$ref->{labelid}})) {$labels{$ref->{labelid}} = 0; }
         else {$labels{$ref->{labelid}} = 2; }
