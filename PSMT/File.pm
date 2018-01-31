@@ -289,6 +289,37 @@ sub GetDocLastPostFile {
     return $self->_attach_file_info($ref);
 }
 
+# Always select 'enabeld' one (for user-wide consistency)
+sub GetDocsLastPostFile {
+    my ($self ,$docid, $ext) = @_;
+    if ($#$docid < 0) {return undef; }
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('docinfo READ');
+    my $stmp = '(' . ('?, ' x $#$docid) . '?)';
+    my $sth;
+    if (defined($ext)) {
+      $sth = $dbh->prepare(
+        qq/ SELECT * FROM docinfo AS d WHERE version IN 
+              (SELECT MAX(version) FROM docinfo AS a WHERE d.docid = a.docid 
+                 ORDER BY a.uptime)
+              AND docid IN $stmp AND enabled = 1 AND fileext = ?/);
+      $sth->execute(@$docid, $ext);
+    } else {
+      $sth = $dbh->prepare(
+        qq/ SELECT * FROM docinfo AS d WHERE version IN 
+              (SELECT MAX(version) FROM docinfo AS a WHERE d.docid = a.docid 
+                 ORDER BY a.uptime)
+              AND docid IN $stmp AND enabled = 1/);
+      $sth->execute(@$docid);
+    }
+    if ($sth->rows() < 1) {return undef; }
+    my (@flist, $ref);
+    while ($ref = $sth->fetchrow_hashref()) {
+        push(@flist, $self->_attach_file_info($ref));
+    }
+    return \@flist;
+}
+
 sub GetFullPathArray {
     my ($self, $pid) = @_;
     my $dbh = PSMT->dbh;
