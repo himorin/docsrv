@@ -84,6 +84,11 @@ sub template {
 sub dbh {
     my $this = shift;
     $this->request->{dbh} ||= new PSMT::DB::connect();
+    if (defined($this->request->{cgi})) {
+        if ($this->request->{cgi}->param('debug')) {
+            $this->request->{dbh}->SetDebug();
+        }
+    }
     return $this->request->{dbh};
 }
 

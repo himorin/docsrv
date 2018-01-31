@@ -16,17 +16,26 @@ use strict;
 use DBI;
 use base qw(DBI::db);
 
+use Time::HiRes qw( tv_interval gettimeofday );
+
 use PSMT::Constants;
 use PSMT::Config;
 use PSMT::Util;
+use PSMT::DBst;
 
 my @prepare_sql;
+my $is_debug;
+my $t_prepare;
+my $t_execute;
 
 BEGIN {
     if ($ENV{SERVER_SOFTWARE}) {
         require CGI::Carp;
         CGI::Carp->import('fatalsToBrowser');
     }
+    $is_debug = FALSE;
+    $t_prepare = 0;
+    $t_execute = 0;
 }
 
 sub connect {
@@ -114,15 +123,51 @@ sub db_new_conn {
 
 sub prepare {
     my ($self, $sql, @opts) = @_;
-    push(@prepare_sql, $sql);
-    return $self->SUPER::prepare($sql, @opts);
+    my ($tst, $tstd, $ttv);
+    if ($is_debug) {
+        $tst = [gettimeofday];
+        $tstd = $tst->[0] + $tst->[1] / 1000000;
+    }
+    my $sth = $self->SUPER::prepare($sql, @opts);
+    if ($is_debug) {
+        bless($sth, 'PSMT::DBst');
+        $ttv = tv_interval($tst);
+        $sth->AddObjDB($self);
+        push(@prepare_sql, "PREPARE: elapse $ttv (from $tstd): $sql");
+        $self->AddTimePrepare($ttv);
+    }
+    return $sth;
 }
 
 sub DebugSQL {
     my ($self) = @_;
-    PSMT->template->set_vars('debug_sql', \@prepare_sql);
+    if ($is_debug) {
+        push(@prepare_sql, "Total elapse: PREPARE $t_prepare, EXECUTE $t_execute");
+        PSMT->template->set_vars('debug_sql', \@prepare_sql);
+        return TRUE;
+    }
+    return FALSE;
 }
 
+sub SetDebug {
+    my ($self) = @_;
+    $is_debug = TRUE;
+}
+
+sub AddDebug {
+    my ($self, $line) = @_;
+    push(@prepare_sql, $line);
+}
+
+sub AddTimePrepare {
+    my ($self, $time) = @_;
+    $t_prepare += $time;
+}
+
+sub AddTimeExecute {
+    my ($self, $time) = @_;
+    $t_execute += $time;
+}
 
 ################################################################## PRIVATE
 
