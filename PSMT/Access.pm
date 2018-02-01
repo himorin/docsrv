@@ -134,11 +134,11 @@ sub ListPathRestrict {
 
 sub ListPathsRestrict {
     my ($self, @pathid) = @_;
-    my (@target, $tmp);
+    my (@target, @tmp);
     foreach (@pathid) {
         if (! exists($cache_path{$_})) {
-            $tmp = ();
-            $cache_path{$_} = $tmp;
+            @tmp = ();
+            $cache_path{$_} = \@tmp;
             push(@target, $_);
         }
     }
@@ -179,11 +179,11 @@ sub ListDocRestrict {
 
 sub ListDocsRestrict {
     my ($self, @docid) = @_;
-    my (@target, $tmp);
+    my (@target, @tmp);
     foreach (@docid) {
         if (! exists($cache_doc{$_})) {
-            $tmp = ();
-            $cache_doc{$_} = $tmp;
+            @tmp = ();
+            $cache_doc{$_} = \@tmp;
             push(@target, $_);
         }
     }
