@@ -152,6 +152,7 @@ sub GetDocInfo {
     $sth->execute($docid);
     if ($sth->rows != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
+    if (! PSMT::Access->CheckForDoc($ref->{docid}, FALSE)) {return undef; }
     $ref = PSMT::Util->AddShortDesc($ref);
     $ref->{gname} = PSMT::Access->ListDocRestrict($docid);
     $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
@@ -173,11 +174,11 @@ sub GetDocsInfo {
     $sth->execute(@$docid);
     my %ret;
     while ((my $ref = $sth->fetchrow_hashref())) {
-        if (! PSMT::Access->CheckForDoc($ref->{docid})) {next; }
+        if (! PSMT::Access->CheckForDoc($ref->{docid}, FALSE)) {next; }
         $ref = PSMT::Util->AddShortDesc($ref);
         $ref->{gname} = PSMT::Access->ListDocRestrict($ref->{docid});
         $ref->{labelid} = PSMT::Label->ListLabelOnDoc($ref->{docid});
-        $ref->{lastfile} = $self->GetDocLastPostFile($docid);
+        $ref->{lastfile} = $self->GetDocLastPostFile($ref->{docid});
         $ret{$ref->{docid}} = $ref;
     }
     # name
@@ -427,11 +428,10 @@ sub ListDocsInPath {
     $sth->execute($pathid);
     my (@docid, @docs, $ref);
     while ($ref = $sth->fetchrow_hashref()) {push(@docid, $ref->{docid}); }
-    # cache
+    # call two for cache
     PSMT::Access->ListDocsRestrict(@docid);
     PSMT::Label->ListLabelOnDocs(@docid);
-    foreach (@docid) {push(@docs, $self->GetDocInfo($_)); }
-    return \@docs;
+    return $self->GetDocsInfo(\@docid);
 }
 
 sub ListPathIdInPath {
@@ -1150,7 +1150,7 @@ sub DeleteEmptyPath {
     my ($self, $pid) = @_;
     my $tnum;
     $tnum = $self->ListDocsInPath($pid);
-    if ($#$tnum > -1) {return FALSE; }
+    if ($#{keys(%$tnum)} > -1) {return FALSE; }
     $tnum = $self->ListPathIdInPath($_);
     if ($#$tnum > -1) {return FALSE; }
     my $dbh = PSMT->dbh;

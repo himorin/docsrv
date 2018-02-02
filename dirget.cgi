@@ -64,10 +64,10 @@ while ($#lpid > -1) {
     $ch = PSMT::File->ListPathIdInPath($cpid);
     push(@lpid, @$ch);
     $ch = PSMT::File->ListDocsInPath($cpid);
-    foreach (@$ch) {
+    foreach (keys($ch)) {
         # per doc: get last fid, check security flag, check group restriction
         #          get full path + ext, get storage path
-        $chid = $_;
+        $chid = $ch->{$_};
         # first, last uploaded file mode
         if ($pmode ne 'all') {
             if ($pext eq 'ALL') {
