@@ -129,10 +129,6 @@ foreach (keys %$out_doc) {
 @tdarr = keys %$res_merge;
 my $out_file = PSMT::File->GetFilesInfo(\@tdarr);
 
-#print "Content-Type: text/plain\n\n";
-#use Data::Dumper;
-#print Data::Dumper->Dump([ $out_doc ]);
-
 $obj->template->set_vars('list_path', $res_doc_path);
 $obj->template->set_vars('list_doc', $out_doc);
 $obj->template->set_vars('list_file', $out_file);
