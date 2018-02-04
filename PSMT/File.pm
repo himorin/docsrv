@@ -152,7 +152,7 @@ sub GetDocInfo {
     $sth->execute($docid);
     if ($sth->rows != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
-    if (! PSMT::Access->CheckForDoc($ref->{docid}, FALSE)) {return undef; }
+    if (! PSMT::Access->CheckForDocobj($ref, FALSE)) {return undef; }
     $ref = PSMT::Util->AddShortDesc($ref);
     $ref->{gname} = PSMT::Access->ListDocRestrict($docid);
     $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
@@ -172,9 +172,10 @@ sub GetDocsInfo {
     my $stmp = '(' . ('?, ' x $#$docid) . '?)';
     my $sth = $dbh->prepare('SELECT * FROM docreg WHERE docid IN ' . $stmp);
     $sth->execute(@$docid);
+    if ($sth->rows() < 1) {return undef; }
     my %ret;
     while ((my $ref = $sth->fetchrow_hashref())) {
-        if (! PSMT::Access->CheckForDoc($ref->{docid}, FALSE)) {next; }
+        if (! PSMT::Access->CheckForDocobj($ref, FALSE)) {next; }
         $ref = PSMT::Util->AddShortDesc($ref);
         $ref->{gname} = PSMT::Access->ListDocRestrict($ref->{docid});
         $ref->{labelid} = PSMT::Label->ListLabelOnDoc($ref->{docid});
@@ -212,7 +213,7 @@ sub HashFileToDoc {
     my $stmp = '(' . ('?, ' x $#$fid) . '?)';
     my $sth = $dbh->prepare('SELECT docid, fileid FROM docinfo WHERE fileid IN ' . $stmp);
     $sth->execute(@$fid);
-    if ($sth->rows() == 0) {return undef; }
+    if ($sth->rows() < 1) {return undef; }
     my %hash;
     while ((my $ref = $sth->fetchrow_hashref())) {
         $hash{$ref->{fileid}} = $ref->{docid};
@@ -484,6 +485,7 @@ sub GetFileInfoInDocs {
                ' ORDER BY docinfo.version DESC, docinfo.uptime DESC');
         $sth->execute(@$docid, $uname);
     }
+    if ($sth->rows() < 1) {return undef; }
 
     my (%docs, $files, $ref);  # doc->{docid}->{fileid}
     while ($ref = $sth->fetchrow_hashref()) {
