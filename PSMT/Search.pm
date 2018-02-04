@@ -31,12 +31,6 @@ sub new {
     return $self;
 }
 
-sub Cond {
-    my ($self, $cond) = @_;
-    if ((! defined($cond)) || (lc($cond) ne 'and')) {return 'OR'; }
-    return 'AND';
-}
-
 sub RecentUpdate {
     my ($self, $days) = @_;
     if ($days == 0) {return undef; }
@@ -99,6 +93,14 @@ sub SearchDoc {
     return \@res;
 }
 
+################################################################## PRIVATE
+
+sub Cond {
+    my ($self, $cond) = @_;
+    if ((! defined($cond)) || (lc($cond) ne 'and')) {return 'OR'; }
+    return 'AND';
+}
+
 sub SQLCondLike {
     my ($self, $col, $arr, $cond, $sth) = @_;
     my ($sql, $app);
@@ -126,12 +128,6 @@ sub SQLCondEq {
     }
     return ' (' . $sql . ') ';
 }
-
-
-
-
-################################################################## PRIVATE
-
 
 
 1;
