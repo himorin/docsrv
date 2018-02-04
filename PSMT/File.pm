@@ -281,16 +281,16 @@ sub ListFilesInDocByExt {
 
 # Always select 'enabeld' one (for user-wide consistency)
 sub GetDocLastPostFile {
-    my ($self ,$docid, $ext) = @_;
+    my ($self, $docid, $ext) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
     my $sth;
     if (defined($ext)) {
-      $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 AND fileext = ? ORDER BY version DESC, uptime DESC LIMIT 1');
-      $sth->execute($docid, $ext);
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 AND fileext = ? ORDER BY version DESC, uptime DESC LIMIT 1');
+        $sth->execute($docid, $ext);
     } else {
-      $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY version DESC, uptime DESC LIMIT 1');
-      $sth->execute($docid);
+        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY version DESC, uptime DESC LIMIT 1');
+        $sth->execute($docid);
     }
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
@@ -299,7 +299,7 @@ sub GetDocLastPostFile {
 
 # Always select 'enabeld' one (for user-wide consistency)
 sub GetDocsLastPostFile {
-    my ($self ,$docid, $ext) = @_;
+    my ($self, $docid, $ext) = @_;
     if ($#$docid < 0) {return undef; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
