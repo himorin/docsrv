@@ -123,11 +123,12 @@ sub CheckEditForFile {
 sub ListFullPathRestrict {
     my ($self, $pathid) = @_;
     if (exists($cache_fpath{$pathid})) {return $cache_fpath{$pathid}; }
-    my (@res, $cur);
+    my (@res, $cur, $cpid);
     $cur = $self->ListPathRestrict($pathid);
     @res = @$cur;
-    while (($pathid = PSMT::File->GetPathIdForParent($pathid)) > 0) {
-        @res = $self->_AndGroupList(\@res, $self->ListPathRestrict($pathid));
+    $cpid = $pathid;
+    while (($cpid = PSMT::File->GetPathIdForParent($cpid)) > 0) {
+        @res = $self->_AndGroupList(\@res, $self->ListPathRestrict($cpid));
     }
     $cache_fpath{$pathid} = \@res;
     return \@res;
