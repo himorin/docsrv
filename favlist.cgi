@@ -27,15 +27,15 @@ foreach (@$favs) {
     $favdocs{$_}->{fid} = PSMT::File->GetDocLastPostFile($_);
 }
 
-my %favpath;
+my $favpath;
 $favs = PSMT->user->ListFavsPath();
-foreach (@$favs) {
-    $favpath{$_} = PSMT::File->GetPathInfo($_);
-    $favpath{$_}->{full_path} = PSMT::File->GetFullPathFromId($_);
+$favpath = PSMT::File->GetPathsInfo($favs);
+foreach (keys(%$favpath)) {
+    $favpath->{$_}->{full_path} = PSMT::File->GetFullPathFromId($_);
 }
 
 $obj->template->set_vars('favs', \%favdocs);
-$obj->template->set_vars('favs_path', \%favpath);
+$obj->template->set_vars('favs_path', $favpath);
 $obj->template->process('favlist', 'html');
 
 

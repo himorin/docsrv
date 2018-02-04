@@ -67,6 +67,7 @@ use PSMT::FullSearchMroonga;
     HashFileToDoc
 
     GetPathInfo
+    GetPathsInfo
 
     GetFullPathFromId
     GetFullPathArray
@@ -448,15 +449,9 @@ sub ListPathIdInPath {
 
 sub ListPathInPath {
     my ($self, $pathid) = @_;
-    my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
-    my $sth = $dbh->prepare('SELECT pathid FROM path WHERE parent = ?');
-    $sth->execute($pathid);
-    my (@path, $ref);
-    while ($ref = $sth->fetchrow_hashref()) {
-        push(@path, $self->GetPathInfo($ref->{pathid}));
-    }
-    return \@path;
+    my $pids = $self->ListPathIdInPath($pathid);
+    if (! defined($pids)) {return undef; }
+    return $self->GetPathsInfo($pids);
 }
 
 # GetFileInfoInDocs(\@docid, $is_all)
@@ -675,6 +670,26 @@ sub GetPathInfo {
     $ref = PSMT::Util->AddShortDesc($ref);
     $ref->{gname} = PSMT::Access->ListPathRestrict($pathid);
     return $ref;
+}
+
+sub GetPathsInfo {
+    my ($self, $pathids) = @_;
+    if ($#$pathids < 0) {return undef; }
+    # build cache
+    PSMT::Access->ListPathsRestrict(@$pathids);
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path READ');
+    my $stmp = '(' . ('?, ' x $#$pathids) . '?)';
+    my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid IN ' . $stmp);
+    $sth->execute(@$pathids);
+    if ($sth->rows() < 1) {return undef; }
+    my %ret;
+    while ((my $ref = $sth->fetchrow_hashref())) {
+        $ref = PSMT::Util->AddShortDesc($ref);
+        $ref->{gname} = PSMT::Access->ListPathRestrict($ref->{pathid});
+        $ret{$ref->{pathid}} = $ref;
+    }
+    return \%ret;
 }
 
 # NOT filename BUT "PATH"

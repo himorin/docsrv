@@ -1,4 +1,4 @@
-[% paths_exist = 1 IF paths.size > 0 %]
+[% paths_exist = 1 IF paths.keys.size > 0 %]
 [% docs_exist = 1  IF docs.keys.size > 0 %]
 [% pop_list = [] %]
 
@@ -36,7 +36,8 @@
 </thead>
 
 <tbody>
-[% FOREACH item IN paths %]
+[% FOREACH cpid IN paths.keys %]
+  [% item = paths.$cpid %]
   <tr class="path_[% item.pathid %]">
     <td class="docmanage">
       [% IF InList(User.favs_path, item.pathid) %]
