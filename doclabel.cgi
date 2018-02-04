@@ -25,7 +25,7 @@ my $did = $obj_cgi->param('did');
 if (! defined($did)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 my $docinfo = PSMT::File->GetDocInfo($did);
 if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
-PSMT::Access->CheckForDoc($did);
+PSMT::Access->CheckForDocobj($docinfo);
 
 # check permission - in group admin or file upload-ed user
 if (($obj->user()->is_inadmin() != TRUE) && (! PSMT::File->IsUserUpForDoc($did))) {

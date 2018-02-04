@@ -31,7 +31,7 @@ if (defined($did)) {
   my $docinfo = PSMT::File->GetDocInfo($did);
   if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
   # check permission
-  PSMT::Access->CheckForDoc($did);
+  PSMT::Access->CheckForDocobj($docinfo);
   if ($op eq 'add') {PSMT->user->MakeFavDoc($did); } 
   elsif ($op eq 'remove') {PSMT->user->RemoveFavDoc($did); } 
   else {PSMT::Error->throw_error_user('unknown_operation_method'); }

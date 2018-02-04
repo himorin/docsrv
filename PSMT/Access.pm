@@ -20,6 +20,7 @@ use PSMT::Error;
 use PSMT::File;
 
 my %cache_path;
+my %cache_fpath;
 my %cache_doc;
 
 %PSMT::Access::EXPORT = qw(
@@ -27,6 +28,7 @@ my %cache_doc;
 
     CheckForPath
     CheckForDoc
+    CheckForDocobj
     CheckForFile
     CheckSecureForFile
 
@@ -36,6 +38,7 @@ my %cache_doc;
     ListPathRestrict
     ListPathsRestrict
     ListFullDocRestrict
+    ListFullDocobjRestrict
     ListDocRestrict
     ListDocsRestrict
 
@@ -63,6 +66,15 @@ sub CheckForDoc {
     my ($self, $docid, $is_throw) = @_;
     if (! defined($is_throw)) {$is_throw = TRUE; }
     my $doc_group = $self->ListFullDocRestrict($docid);
+    if ($self->_MatchGroupList($doc_group) == TRUE) {return TRUE; }
+    if ($is_throw) {PSMT::Error->throw_error_user('permission_error'); }
+    return FALSE;
+}
+
+sub CheckForDocobj {
+    my ($self, $doc, $is_throw) = @_;
+    if (! defined($is_throw)) {$is_throw = TRUE; }
+    my $doc_group = $self->ListFullDocobjRestrict($doc);
     if ($self->_MatchGroupList($doc_group) == TRUE) {return TRUE; }
     if ($is_throw) {PSMT::Error->throw_error_user('permission_error'); }
     return FALSE;
@@ -110,12 +122,14 @@ sub CheckEditForFile {
 
 sub ListFullPathRestrict {
     my ($self, $pathid) = @_;
+    if (exists($cache_fpath{$pathid})) {return $cache_fpath{$pathid}; }
     my (@res, $cur);
     $cur = $self->ListPathRestrict($pathid);
     @res = @$cur;
     while (($pathid = PSMT::File->GetPathIdForParent($pathid)) > 0) {
         @res = $self->_AndGroupList(\@res, $self->ListPathRestrict($pathid));
     }
+    $cache_fpath{$pathid} = \@res;
     return \@res;
 }
 
@@ -161,6 +175,17 @@ sub ListFullDocRestrict {
     $doc = $self->ListDocRestrict($docid);
     $path = $self->ListFullPathRestrict(PSMT::File->GetPathIdForDoc($docid));
     @glist = $self->_AndGroupList($doc, $path);
+    return \@glist;
+}
+
+sub ListFullDocobjRestrict {
+    my ($self, $doc) = @_;
+    my (@glist, $path);
+    if (! exists($doc->{gname})) {
+        $doc->{gname} = $self->ListDocRestrict($doc->{docid});
+    }
+    $path = $self->ListFullPathRestrict($doc->{pathid});
+    @glist = $self->_AndGroupList($doc->{gname}, $path);
     return \@glist;
 }
 

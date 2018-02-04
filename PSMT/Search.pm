@@ -103,7 +103,7 @@ sub CreateResult {
     while ($ref = $sth->fetchrow_hashref()) {
         # exclude non-permitted documents
         $cid = $ref->{docid};
-        if (PSMT::Access->CheckForDoc($cid, FALSE) == TRUE) {
+        if (PSMT::Access->CheckForDocobj($ref, FALSE) == TRUE) {
             $ref->{filename} = PSMT::File->GetFullPathFromId($ref->{pathid}) . $ref->{filename};
             $ref->{labelid} = PSMT::Label->ListLabelOnDoc($cid);
             $ref->{lastfile} = PSMT::File->GetDocLastPostFile($cid);
