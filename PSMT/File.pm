@@ -1210,12 +1210,9 @@ sub SearchPath {
     }
     my $sth = $dbh->prepare($sthstr);
     $sth->execute(@stharg);
-    if ($sth->rows() == 0) {return undef; }
-    my ($ref, %ret);
-    while ($ref = $sth->fetchrow_hashref()) {
-        $ret{$ref->{pathid}} = $ref;
-    }
-    return \%ret;
+    my $ret = $sth->fetchall_hashref('pathid');
+    if (keys(%$ret) < 1) {return undef; }
+    return $ret;
 }
 
 sub SearchDocFile {
