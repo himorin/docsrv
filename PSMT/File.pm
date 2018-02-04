@@ -80,6 +80,7 @@ use PSMT::FullSearchMroonga;
     ListFilesInDoc
     ListFilesInDocByExt
     GetDocLastPostFile
+    GetDocsLastPostFile
     GetAllDocCount
 
     GetFileInfo
@@ -175,11 +176,15 @@ sub GetDocsInfo {
     $sth->execute(@$docid);
     if ($sth->rows() < 1) {return undef; }
     my %ret;
+#    my $lds = $self->GetDocsLastPostFile($docid);
     while ((my $ref = $sth->fetchrow_hashref())) {
         if (! PSMT::Access->CheckForDocobj($ref, FALSE)) {next; }
         $ref = PSMT::Util->AddShortDesc($ref);
         $ref->{gname} = PSMT::Access->ListDocRestrict($ref->{docid});
         $ref->{labelid} = PSMT::Label->ListLabelOnDoc($ref->{docid});
+#        if (defined($lds->{$ref->{docid}})) {
+#            $ref->{lastfile} = $lds->{$ref->{docid}};
+#        } else {$ref->{lastfile} = undef; }
         $ref->{lastfile} = $self->GetDocLastPostFile($ref->{docid});
         $ret{$ref->{docid}} = $ref;
     }
@@ -298,29 +303,45 @@ sub GetDocsLastPostFile {
     if ($#$docid < 0) {return undef; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
-    my $stmp = '(' . ('?, ' x $#$docid) . '?)';
     my $sth;
+    my $stmp = '(' . ('?, ' x $#$docid) . '?)';
     if (defined($ext)) {
-      $sth = $dbh->prepare(
-        qq/ SELECT * FROM docinfo AS d WHERE version IN 
-              (SELECT MAX(version) FROM docinfo AS a WHERE d.docid = a.docid 
-                 ORDER BY a.uptime)
-              AND docid IN $stmp AND enabled = 1 AND fileext = ?/);
-      $sth->execute(@$docid, $ext);
+        $sth = $dbh->prepare(
+            qq/ SELECT docinfo.*, UNIX_TIMESTAMP(docinfo.uptime) AS ut
+                  FROM docinfo
+            INNER JOIN (
+                       SELECT docid, MAX(version) AS maxv
+                         FROM docinfo
+                        WHERE docid IN $stmp
+                          AND fileext = ?
+                     GROUP BY docid ) lmax
+                    ON docinfo.version = lmax.maxv
+                   AND docinfo.docid = lmax.docid
+                   AND docinfo.fileext = ? /);
+        $sth->execute(@$docid, $ext);
     } else {
-      $sth = $dbh->prepare(
-        qq/ SELECT * FROM docinfo AS d WHERE version IN 
-              (SELECT MAX(version) FROM docinfo AS a WHERE d.docid = a.docid 
-                 ORDER BY a.uptime)
-              AND docid IN $stmp AND enabled = 1/);
-      $sth->execute(@$docid);
+        $sth = $dbh->prepare(
+            qq/ SELECT docinfo.*, UNIX_TIMESTAMP(docinfo.uptime) AS ut
+                  FROM docinfo
+            INNER JOIN (
+                       SELECT docid, MAX(version) AS maxv
+                         FROM docinfo
+                        WHERE docid IN $stmp 
+                     GROUP BY docid ) lmax
+                    ON docinfo.version = lmax.maxv
+                   AND docinfo.docid = lmax.docid /);
+        $sth->execute(@$docid);
     }
-    if ($sth->rows() < 1) {return undef; }
-    my (@flist, $ref);
-    while ($ref = $sth->fetchrow_hashref()) {
-        push(@flist, $self->_attach_file_info($ref));
+    my (%ret, $cur);
+    while ($cur = $sth->fetchrow_hashref()) {
+        if (defined($ret{$cur->{docid}}) &&
+            ($ret{$cur->{docid}}->{ut} > $cur->{ut})) {
+            next;
+        }
+        $self->_attach_file_info($cur);
+        $ret{$cur->{docid}} = $cur;
     }
-    return \@flist;
+    return \%ret;
 }
 
 sub GetFullPathArray {
