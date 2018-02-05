@@ -169,6 +169,9 @@ sub GetDocInfo {
 sub GetDocsInfo {
     my ($self, $docid) = @_;
     if (! defined($docid)) {return undef; }
+    # call two for cache
+    PSMT::Access->ListDocsRestrict(@$docid);
+    PSMT::Label->ListLabelOnDocs(@$docid);
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docreg READ');
     my $stmp = '(' . ('?, ' x $#$docid) . '?)';
@@ -451,9 +454,6 @@ sub ListDocsInPath {
     $sth->execute($pathid);
     my (@docid, @docs, $ref);
     while ($ref = $sth->fetchrow_hashref()) {push(@docid, $ref->{docid}); }
-    # call two for cache
-    PSMT::Access->ListDocsRestrict(@docid);
-    PSMT::Label->ListLabelOnDocs(@docid);
     return $self->GetDocsInfo(\@docid);
 }
 
