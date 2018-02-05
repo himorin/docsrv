@@ -3,6 +3,8 @@
 use strict;
 use PSMT;
 
+use JSON;
+
 use PSMT::Constants;
 use PSMT::Template;
 use PSMT::Config;
@@ -55,11 +57,12 @@ if ($type eq 'allpath') {
     $objattr = PSMT::Attribute->new();
     $objattr->SetTarget('doc');
     $hash->{attr} = $objattr->GetAttrForId($iid);
-    $hash->{lastfile}->{filemime} = PSMT::Util->GetMimeType($hash->{lastfile}->{fileext});
 } elsif ($type eq 'loaddoc') {
     $hash = PSMT::File->ListUserLoadForDoc($iid);
+    FilterIP($hash);
 } elsif ($type eq 'loadfile') {
     $hash = PSMT::File->ListUserLoad($iid);
+    FilterIP($hash);
 } else {PSMT::Error->throw_error_user('invalid_param'); }
 if (! defined($hash)) {PSMT::Error->throw_error_user('invalid_param'); }
 
@@ -68,19 +71,35 @@ $obj->template->set_vars('outtm', $outtm);
 $obj->template->set_vars('id', $iid);
 $obj->template->set_vars('jsondata', $hash);
 
-if (! defined(PSMT->cgi()->param('format'))) {
+if ( (! defined(PSMT->cgi()->param('format'))) ||
+     (PSMT->cgi()->param('format') eq 'json') ) {
     print $obj_cgi->header( -type => "application/json" );
     print "\n";
-    my $json;
-    $obj->template->process('json/' . $outtm, 'json', undef, \$json);
-    print $json;
+    print MakeJson();
 } else {
     if (PSMT->cgi()->param('format') eq 'js') {
-        $obj->template->process('json/wrap', 'js');
+        print $obj_cgi->header( -type => "application/javascript" );
+        print "\n";
+        print "var conf_data_$type = ";
+        print MakeJson();
+        print ";";
     } else {
         $obj->template->process('json/' . $outtm);
     }
 }
 
 exit;
+
+sub MakeJson {
+    my $json;
+    $json = to_json( { 'type' => $type, 'data' => $hash } );
+    return $json;
+}
+
+sub FilterIP {
+    my ($arr) = @_;
+    foreach (0 ... $#$arr) {
+        $arr->[$_]->{srcip} = PSMT::Util::StrToIpaddr($arr->[$_]->{srcip});
+    }
+}
 

@@ -34,6 +34,7 @@ use MIME::Types;
     filter_markdown
 
     IpAddr
+    StrToIpaddr
     GetHashString
     ValidateEncoding
     ValidateName
@@ -287,7 +288,7 @@ sub GetMimeType {
     my ($self, $ext) = @_;
     my $mime = MIME::Types->new();
     my $fmime = $mime->mimeTypeOf($ext);
-    if (defined($fmime)) {return $fmime; }
+    if (defined($fmime)) {return lc($fmime); }
     return DEF_CONTENTTYPE;
 }
 

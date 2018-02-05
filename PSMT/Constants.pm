@@ -104,12 +104,11 @@ use constant AVAIL_FORMATS => {
   'global/footer'      => ['html'],
   'global/header'      => ['html'],
 
-  'json/docinfo'       => ['html', 'json'],
-  'json/loaddoc'       => ['html', 'json'],
-  'json/loadfile'      => ['html', 'json'],
-  'json/pathinfo'      => ['html', 'json'],
-  'json/table'         => ['html', 'json'],
-  'json/wrap'          => ['js'],
+  'json/docinfo'       => ['html'],
+  'json/loaddoc'       => ['html'],
+  'json/loadfile'      => ['html'],
+  'json/pathinfo'      => ['html'],
+  'json/table'         => ['html'],
 
   'skins/index'             => ['html'],
   'skins/list'              => ['html'],
