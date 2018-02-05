@@ -64,21 +64,21 @@ while ($#lpid > -1) {
     $ch = PSMT::File->ListPathIdInPath($cpid);
     push(@lpid, @$ch);
     $ch = PSMT::File->ListDocsInPath($cpid);
-    foreach (@$ch) {
+    foreach (keys($ch)) {
         # per doc: get last fid, check security flag, check group restriction
         #          get full path + ext, get storage path
-        $chid = $_;
+        $chid = $ch->{$_};
         # first, last uploaded file mode
         if ($pmode ne 'all') {
             if ($pext eq 'ALL') {
                 foreach (@{PSMT::File->ListExtInDoc($chid->{docid})}) {
-                    $clid = PSMT::File->GetDocLastPostFileId($chid->{docid}, $_);
+                    $clid = PSMT::File->GetDocLastPostFile($chid->{docid}, $_)->{fileid};
                     if (&AddFileToZipEntry(\%zip_files, $clid)) {$zip_sec = TRUE; }
                 }
             } elsif ($pext eq 'NEW') {
                 if (&AddFileToZipEntry(\%zip_files, $chid->{lastfile}->{fileid})) {$zip_sec = TRUE; }
             } else {
-                $clid = PSMT::File->GetDocLastPostFileId($chid->{docid}, $pext);
+                $clid = PSMT::File->GetDocLastPostFile($chid->{docid}, $pext)->{fileid};
                 if (&AddFileToZipEntry(\%zip_files, $clid)) {$zip_sec = TRUE; }
             }
             next;
@@ -92,7 +92,7 @@ while ($#lpid > -1) {
         }
         if ($#$docfiles < 0) {next; }
         foreach (@{PSMT::File->ListExtInDoc($chid->{docid})}) {
-            $lastfiles{PSMT::File->GetDocLastPostFileId($chid->{docid}, $_)}
+            $lastfiles{PSMT::File->GetDocLastPostFile($chid->{docid}, $_)->{fileid}}
                 = $_;
         }
         foreach (@$docfiles) {

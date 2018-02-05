@@ -83,10 +83,9 @@ $obj->template->set_vars('path_info', $pathinfo);
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath($pid));
 
 my $subpath = PSMT::File->ListPathInPath($pid);
-my (%subpath_access, $cpid);
-foreach (@$subpath) {
-    $cpid = $_->{pathid};
-    $subpath_access{$cpid} = PSMT::Access->ListPathRestrict($cpid);
+my %subpath_access;
+foreach (keys(%$subpath)) {
+    $subpath_access{$_} = PSMT::Access->ListPathRestrict($_);
 }
 $obj->template->set_vars('spath_list', $subpath);
 $obj->template->set_vars('spath_access', \%subpath_access);

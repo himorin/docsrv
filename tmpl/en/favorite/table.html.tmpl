@@ -23,7 +23,7 @@
 [% FOREACH item IN favlist.keys %]
   <tr class="doc_[% item %]">
     <td class="docmanage">
-      [% IF favlist.$item.fid.defined %]
+      [% IF favlist.$item.lastfile.defined %]
         <a href="fileget.cgi?did=[% item %]">[% INCLUDE show_table_icon id = 'download' %]</a>
       [% END %]
       <a href="docupdate.cgi?did=[% item %]">[% INCLUDE show_table_icon id = 'fileup' %]</a>
@@ -32,11 +32,11 @@
       <a href="fileget.cgi?did=[% item %]"><tt>[% favlist.$item.full_path %][% favlist.$item.filename %]</tt></a></td>
     <td class="docfav">[% favlist.$item.short_description %]</td>
     <td class="docfav_rm"><a href="docfav.cgi?did=[% favlist.$item.docid %]&amp;op=remove">un-fav</a></td>
-    [% IF favlist.$item.fid.defined %]
-      <td>[% favlist.$item.fid.uname %]</td>
-      <td>[% favlist.$item.fid.uptime %]</td>
-      <td class="docsize">[% SizeDisp(favlist.$item.fid.size) %]</td>
-      <td>[% favlist.$item.fid.version %]</td>
+    [% IF favlist.$item.lastfile.defined %]
+      <td>[% favlist.$item.lastfile.uname %]</td>
+      <td>[% favlist.$item.lastfile.uptime %]</td>
+      <td class="docsize">[% SizeDisp(favlist.$item.lastfile.size) %]</td>
+      <td>[% favlist.$item.lastfile.version %]</td>
     [% ELSE %]
       <td colspan="4" class="center">Not exist</td>
     [% END %]

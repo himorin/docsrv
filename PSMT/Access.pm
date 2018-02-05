@@ -20,6 +20,7 @@ use PSMT::Error;
 use PSMT::File;
 
 my %cache_path;
+my %cache_fpath;
 my %cache_doc;
 
 %PSMT::Access::EXPORT = qw(
@@ -27,6 +28,7 @@ my %cache_doc;
 
     CheckForPath
     CheckForDoc
+    CheckForDocobj
     CheckForFile
     CheckSecureForFile
 
@@ -36,6 +38,7 @@ my %cache_doc;
     ListPathRestrict
     ListPathsRestrict
     ListFullDocRestrict
+    ListFullDocobjRestrict
     ListDocRestrict
     ListDocsRestrict
 
@@ -63,6 +66,15 @@ sub CheckForDoc {
     my ($self, $docid, $is_throw) = @_;
     if (! defined($is_throw)) {$is_throw = TRUE; }
     my $doc_group = $self->ListFullDocRestrict($docid);
+    if ($self->_MatchGroupList($doc_group) == TRUE) {return TRUE; }
+    if ($is_throw) {PSMT::Error->throw_error_user('permission_error'); }
+    return FALSE;
+}
+
+sub CheckForDocobj {
+    my ($self, $doc, $is_throw) = @_;
+    if (! defined($is_throw)) {$is_throw = TRUE; }
+    my $doc_group = $self->ListFullDocobjRestrict($doc);
     if ($self->_MatchGroupList($doc_group) == TRUE) {return TRUE; }
     if ($is_throw) {PSMT::Error->throw_error_user('permission_error'); }
     return FALSE;
@@ -110,12 +122,15 @@ sub CheckEditForFile {
 
 sub ListFullPathRestrict {
     my ($self, $pathid) = @_;
-    my (@res, $cur);
+    if (exists($cache_fpath{$pathid})) {return $cache_fpath{$pathid}; }
+    my (@res, $cur, $cpid);
     $cur = $self->ListPathRestrict($pathid);
     @res = @$cur;
-    while (($pathid = PSMT::File->GetPathIdForParent($pathid)) > 0) {
-        @res = $self->_AndGroupList(\@res, $self->ListPathRestrict($pathid));
+    $cpid = $pathid;
+    while (($cpid = PSMT::File->GetPathIdForParent($cpid)) > 0) {
+        @res = $self->_AndGroupList(\@res, $self->ListPathRestrict($cpid));
     }
+    $cache_fpath{$pathid} = \@res;
     return \@res;
 }
 
@@ -134,11 +149,11 @@ sub ListPathRestrict {
 
 sub ListPathsRestrict {
     my ($self, @pathid) = @_;
-    my (@target, $tmp);
+    my (@target);
     foreach (@pathid) {
         if (! exists($cache_path{$_})) {
-            $tmp = ();
-            $cache_path{$_} = $tmp;
+            my @tmp = ();
+            $cache_path{$_} = \@tmp;
             push(@target, $_);
         }
     }
@@ -164,6 +179,17 @@ sub ListFullDocRestrict {
     return \@glist;
 }
 
+sub ListFullDocobjRestrict {
+    my ($self, $doc) = @_;
+    my (@glist, $path);
+    if (! exists($doc->{gname})) {
+        $doc->{gname} = $self->ListDocRestrict($doc->{docid});
+    }
+    $path = $self->ListFullPathRestrict($doc->{pathid});
+    @glist = $self->_AndGroupList($doc->{gname}, $path);
+    return \@glist;
+}
+
 sub ListDocRestrict {
     my ($self, $docid) = @_;
     if (exists($cache_doc{$docid})) {return $cache_doc{$docid}; }
@@ -179,11 +205,11 @@ sub ListDocRestrict {
 
 sub ListDocsRestrict {
     my ($self, @docid) = @_;
-    my (@target, $tmp);
+    my (@target);
     foreach (@docid) {
         if (! exists($cache_doc{$_})) {
-            $tmp = ();
-            $cache_doc{$_} = $tmp;
+            my @tmp = ();
+            $cache_doc{$_} = \@tmp;
             push(@target, $_);
         }
     }

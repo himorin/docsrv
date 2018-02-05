@@ -1,5 +1,5 @@
-[% paths_exist = 1 IF paths.size > 0 %]
-[% docs_exist = 1  IF docs.size > 0 %]
+[% paths_exist = 1 IF paths.keys.size > 0 %]
+[% docs_exist = 1  IF docs.keys.size > 0 %]
 [% pop_list = [] %]
 
 <table class="dirlist tablesorter">
@@ -37,7 +37,8 @@
 </thead>
 
 <tbody>
-[% FOREACH item IN paths %]
+[% FOREACH cpid IN paths.keys %]
+  [% item = paths.$cpid %]
   <tr class="path_[% item.pathid %]">
     <td class="docmanage">
       [% IF InList(User.favs_path, item.pathid) %]
@@ -73,7 +74,8 @@
 [% END %]
 
 
-[% FOREACH item IN docs %]
+[% FOREACH cdid IN docs.keys %]
+  [% item = docs.$cdid %]
   <tr class="doc_[% item.docid %]">
     <td class="docmanage">
       [% IF InList(User.favs, item.docid) %]

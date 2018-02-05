@@ -31,19 +31,13 @@ sub new {
     return $self;
 }
 
-sub Cond {
-    my ($self, $cond) = @_;
-    if ((! defined($cond)) || (lc($cond) ne 'and')) {return 'OR'; }
-    return 'AND';
-}
-
 sub RecentUpdate {
     my ($self, $days) = @_;
     if ($days == 0) {return undef; }
     $days = - $days;
     my ($sql);
     $sql =
-        'SELECT docreg.*
+        'SELECT docreg.docid
          FROM docreg
          LEFT JOIN docinfo ON docreg.docid = docinfo.docid
          WHERE docinfo.uptime > ADDDATE(NOW(), ?)
@@ -55,8 +49,10 @@ sub RecentUpdate {
     $dbh->db_lock_tables('docreg READ', 'docinfo READ');
     my $sth = $dbh->prepare($sql);
     $sth->execute($days);
-    if ($sth->rows() == 0) {return undef; }
-    return $self->CreateResult($sth);
+    my $dret = $sth->fetchall_hashref('docid');
+    my @dids = keys(%$dret);
+    if ($#dids < 0) {return undef; }
+    return PSMT::File->GetDocsInfo(\@dids);
 }
 
 sub SearchDoc {
@@ -97,22 +93,12 @@ sub SearchDoc {
     return \@res;
 }
 
-sub CreateResult {
-    my ($self, $sth) = @_;
-    my (@result, $ref, $cid);
-    while ($ref = $sth->fetchrow_hashref()) {
-        # exclude non-permitted documents
-        $cid = $ref->{docid};
-        if (PSMT::Access->CheckForDoc($cid, FALSE) == TRUE) {
-            $ref->{filename} = PSMT::File->GetFullPathFromId($ref->{pathid}) . $ref->{filename};
-            $ref->{labelid} = PSMT::Label->ListLabelOnDoc($cid);
-            $ref->{lastfile} = PSMT::File->GetDocLastPostFileInfo($cid);
-            $ref->{gname} = PSMT::Access->ListDocRestrict($cid);
-            $ref = PSMT::Util->AddShortDesc($ref);
-            push(@result, $ref);
-        }
-    }
-    return \@result;
+################################################################## PRIVATE
+
+sub Cond {
+    my ($self, $cond) = @_;
+    if ((! defined($cond)) || (lc($cond) ne 'and')) {return 'OR'; }
+    return 'AND';
 }
 
 sub SQLCondLike {
@@ -142,12 +128,6 @@ sub SQLCondEq {
     }
     return ' (' . $sql . ') ';
 }
-
-
-
-
-################################################################## PRIVATE
-
 
 
 1;

@@ -27,7 +27,7 @@ my $docinfo = PSMT::File->GetDocInfo($did);
 if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 
 # check permission
-PSMT::Access->CheckForDoc($did);
+PSMT::Access->CheckForDocobj($docinfo);
 
 # Register file
 if ($obj_cgi->request_method() eq 'POST') {

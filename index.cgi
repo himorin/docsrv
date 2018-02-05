@@ -34,22 +34,20 @@ if (defined($fmt) && ($fmt eq 'ur')) {
 }
 
 # favorites
-my %favdocs;
 my $favs = PSMT->user->ListFavsDoc();
-foreach (@$favs) {
-    $favdocs{$_} = PSMT::File->GetDocInfo($_);
-    $favdocs{$_}->{full_path} = PSMT::File->GetFullPathFromId($favdocs{$_}->{pathid});
-    $favdocs{$_}->{fid} = PSMT::File->GetDocLastPostFileInfo($_);
+my $favdocs = PSMT::File->GetDocsInfo($favs);
+foreach (keys($favdocs)) {
+    $favdocs->{$_}->{full_path} = PSMT::File->GetFullPathFromId($favdocs->{$_}->{pathid});
 }
-my %favpath;
+my $favpath;
 $favs = PSMT->user->ListFavsPath();
-foreach (@$favs) {
-    $favpath{$_} = PSMT::File->GetPathInfo($_);
-    $favpath{$_}->{full_path} = PSMT::File->GetFullPathFromId($_);
+$favpath = PSMT::File->GetPathsInfo($favs);
+foreach (keys(%$favpath)) {
+    $favpath->{$_}->{full_path} = PSMT::File->GetFullPathFromId($_);
 }
 
-$obj->template->set_vars('favs', \%favdocs);
-$obj->template->set_vars('favs_path', \%favpath);
+$obj->template->set_vars('favs', $favdocs);
+$obj->template->set_vars('favs_path', $favpath);
 $obj->template->set_vars('topdirs', PSMT::File->ListPathInPath(0));
 $obj->template->set_vars('doc_list', PSMT::File->ListDocsInPath(0));
 $obj->template->set_vars('recent', PSMT::Search->RecentUpdate(PSMT->user_config->Config()->{history}->{value}));

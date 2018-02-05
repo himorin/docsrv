@@ -67,6 +67,7 @@ use PSMT::FullSearchMroonga;
     HashFileToDoc
 
     GetPathInfo
+    GetPathsInfo
 
     GetFullPathFromId
     GetFullPathArray
@@ -78,8 +79,8 @@ use PSMT::FullSearchMroonga;
     GetDocsInfo
     ListFilesInDoc
     ListFilesInDocByExt
-    GetDocLastPostFileId
-    GetDocLastPostFileInfo
+    GetDocLastPostFile
+    GetDocsLastPostFile
     GetAllDocCount
 
     GetFileInfo
@@ -153,10 +154,11 @@ sub GetDocInfo {
     $sth->execute($docid);
     if ($sth->rows != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
+    if (! PSMT::Access->CheckForDocobj($ref, FALSE)) {return undef; }
     $ref = PSMT::Util->AddShortDesc($ref);
     $ref->{gname} = PSMT::Access->ListDocRestrict($docid);
     $ref->{labelid} = PSMT::Label->ListLabelOnDoc($docid);
-    $ref->{lastfile} = $self->GetDocLastPostFileInfo($docid);
+    $ref->{lastfile} = $self->GetDocLastPostFile($docid);
     return $ref;
 }
 
@@ -167,17 +169,26 @@ sub GetDocInfo {
 sub GetDocsInfo {
     my ($self, $docid) = @_;
     if (! defined($docid)) {return undef; }
+    # call two for cache
+    PSMT::Access->ListDocsRestrict(@$docid);
+    PSMT::Label->ListLabelOnDocs(@$docid);
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docreg READ');
     my $stmp = '(' . ('?, ' x $#$docid) . '?)';
     my $sth = $dbh->prepare('SELECT * FROM docreg WHERE docid IN ' . $stmp);
     $sth->execute(@$docid);
+    if ($sth->rows() < 1) {return undef; }
     my %ret;
+#    my $lds = $self->GetDocsLastPostFile($docid);
     while ((my $ref = $sth->fetchrow_hashref())) {
-        if (! PSMT::Access->CheckForDoc($ref->{docid})) {next; }
+        if (! PSMT::Access->CheckForDocobj($ref, FALSE)) {next; }
         $ref = PSMT::Util->AddShortDesc($ref);
         $ref->{gname} = PSMT::Access->ListDocRestrict($ref->{docid});
         $ref->{labelid} = PSMT::Label->ListLabelOnDoc($ref->{docid});
+#        if (defined($lds->{$ref->{docid}})) {
+#            $ref->{lastfile} = $lds->{$ref->{docid}};
+#        } else {$ref->{lastfile} = undef; }
+        $ref->{lastfile} = $self->GetDocLastPostFile($ref->{docid});
         $ret{$ref->{docid}} = $ref;
     }
     # name
@@ -211,7 +222,7 @@ sub HashFileToDoc {
     my $stmp = '(' . ('?, ' x $#$fid) . '?)';
     my $sth = $dbh->prepare('SELECT docid, fileid FROM docinfo WHERE fileid IN ' . $stmp);
     $sth->execute(@$fid);
-    if ($sth->rows() == 0) {return undef; }
+    if ($sth->rows() < 1) {return undef; }
     my %hash;
     while ((my $ref = $sth->fetchrow_hashref())) {
         $hash{$ref->{fileid}} = $ref->{docid};
@@ -272,7 +283,7 @@ sub ListFilesInDocByExt {
 }
 
 # Always select 'enabeld' one (for user-wide consistency)
-sub GetDocLastPostFileId {
+sub GetDocLastPostFile {
     my ($self, $docid, $ext) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
@@ -286,19 +297,54 @@ sub GetDocLastPostFileId {
     }
     if ($sth->rows() != 1) {return undef; }
     my $ref = $sth->fetchrow_hashref();
-    return $ref->{fileid};
+    return $self->_attach_file_info($ref);
 }
 
 # Always select 'enabeld' one (for user-wide consistency)
-sub GetDocLastPostFileInfo {
-    my ($self ,$docid) = @_;
+sub GetDocsLastPostFile {
+    my ($self, $docid, $ext) = @_;
+    if ($#$docid < 0) {return undef; }
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('docinfo READ');
-    my $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 ORDER BY version DESC, uptime DESC LIMIT 1');
-    $sth->execute($docid);
-    if ($sth->rows() != 1) {return undef; }
-    my $ref = $sth->fetchrow_hashref();
-    return $self->_attach_file_info($ref);
+    my $sth;
+    my $stmp = '(' . ('?, ' x $#$docid) . '?)';
+    if (defined($ext)) {
+        $sth = $dbh->prepare(
+            qq/ SELECT docinfo.*, UNIX_TIMESTAMP(docinfo.uptime) AS ut
+                  FROM docinfo
+            INNER JOIN (
+                       SELECT docid, MAX(version) AS maxv
+                         FROM docinfo
+                        WHERE docid IN $stmp
+                          AND fileext = ?
+                     GROUP BY docid ) lmax
+                    ON docinfo.version = lmax.maxv
+                   AND docinfo.docid = lmax.docid
+                   AND docinfo.fileext = ? /);
+        $sth->execute(@$docid, $ext);
+    } else {
+        $sth = $dbh->prepare(
+            qq/ SELECT docinfo.*, UNIX_TIMESTAMP(docinfo.uptime) AS ut
+                  FROM docinfo
+            INNER JOIN (
+                       SELECT docid, MAX(version) AS maxv
+                         FROM docinfo
+                        WHERE docid IN $stmp 
+                     GROUP BY docid ) lmax
+                    ON docinfo.version = lmax.maxv
+                   AND docinfo.docid = lmax.docid /);
+        $sth->execute(@$docid);
+    }
+    my (%ret, $cur);
+    while ($cur = $sth->fetchrow_hashref()) {
+        if (defined($ret{$cur->{docid}}) &&
+            ($ret{$cur->{docid}}->{ut} > $cur->{ut})) {
+            next;
+        }
+        $self->_attach_file_info($cur);
+        $ret{$cur->{docid}} = $cur;
+    }
+    return \%ret;
 }
 
 sub GetFullPathArray {
@@ -408,11 +454,7 @@ sub ListDocsInPath {
     $sth->execute($pathid);
     my (@docid, @docs, $ref);
     while ($ref = $sth->fetchrow_hashref()) {push(@docid, $ref->{docid}); }
-    # cache
-    PSMT::Access->ListDocsRestrict(@docid);
-    PSMT::Label->ListLabelOnDocs(@docid);
-    foreach (@docid) {push(@docs, $self->GetDocInfo($_)); }
-    return \@docs;
+    return $self->GetDocsInfo(\@docid);
 }
 
 sub ListPathIdInPath {
@@ -428,15 +470,9 @@ sub ListPathIdInPath {
 
 sub ListPathInPath {
     my ($self, $pathid) = @_;
-    my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
-    my $sth = $dbh->prepare('SELECT pathid FROM path WHERE parent = ?');
-    $sth->execute($pathid);
-    my (@path, $ref);
-    while ($ref = $sth->fetchrow_hashref()) {
-        push(@path, $self->GetPathInfo($ref->{pathid}));
-    }
-    return \@path;
+    my $pids = $self->ListPathIdInPath($pathid);
+    if (! defined($pids)) {return undef; }
+    return $self->GetPathsInfo($pids);
 }
 
 # GetFileInfoInDocs(\@docid, $is_all)
@@ -465,9 +501,11 @@ sub GetFileInfoInDocs {
                ' ORDER BY docinfo.version DESC, docinfo.uptime DESC');
         $sth->execute(@$docid, $uname);
     }
+    if ($sth->rows() < 1) {return undef; }
 
-    my (%docs, $files, $ref);  # doc->{docid}->{fileid}
+    my (%docs, $ref);  # doc->{docid}->{fileid}
     while ($ref = $sth->fetchrow_hashref()) {
+        my $files;
         if (! defined($docs{$ref->{docid}})) {
             $files = ();
             $docs{$ref->{docid}} = $files;
@@ -654,6 +692,26 @@ sub GetPathInfo {
     $ref = PSMT::Util->AddShortDesc($ref);
     $ref->{gname} = PSMT::Access->ListPathRestrict($pathid);
     return $ref;
+}
+
+sub GetPathsInfo {
+    my ($self, $pathids) = @_;
+    if ($#$pathids < 0) {return undef; }
+    # build cache
+    PSMT::Access->ListPathsRestrict(@$pathids);
+    my $dbh = PSMT->dbh;
+    $dbh->db_lock_tables('path READ');
+    my $stmp = '(' . ('?, ' x $#$pathids) . '?)';
+    my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid IN ' . $stmp);
+    $sth->execute(@$pathids);
+    if ($sth->rows() < 1) {return undef; }
+    my %ret;
+    while ((my $ref = $sth->fetchrow_hashref())) {
+        $ref = PSMT::Util->AddShortDesc($ref);
+        $ref->{gname} = PSMT::Access->ListPathRestrict($ref->{pathid});
+        $ret{$ref->{pathid}} = $ref;
+    }
+    return \%ret;
 }
 
 # NOT filename BUT "PATH"
@@ -1131,7 +1189,7 @@ sub DeleteEmptyPath {
     my ($self, $pid) = @_;
     my $tnum;
     $tnum = $self->ListDocsInPath($pid);
-    if ($#$tnum > -1) {return FALSE; }
+    if ($#{keys(%$tnum)} > -1) {return FALSE; }
     $tnum = $self->ListPathIdInPath($_);
     if ($#$tnum > -1) {return FALSE; }
     my $dbh = PSMT->dbh;
@@ -1174,12 +1232,9 @@ sub SearchPath {
     }
     my $sth = $dbh->prepare($sthstr);
     $sth->execute(@stharg);
-    if ($sth->rows() == 0) {return undef; }
-    my ($ref, %ret);
-    while ($ref = $sth->fetchrow_hashref()) {
-        $ret{$ref->{pathid}} = $ref;
-    }
-    return \%ret;
+    my $ret = $sth->fetchall_hashref('pathid');
+    if (keys(%$ret) < 1) {return undef; }
+    return $ret;
 }
 
 sub SearchDocFile {
@@ -1294,7 +1349,7 @@ sub ListFileHashDup {
 
 sub GetNextVersionForDoc {
     my ($self, $did) = @_;
-    my $finfo = $self->GetDocLastPostFileInfo($did);
+    my $finfo = $self->GetDocLastPostFile($did);
     if (! defined($finfo)) {return 1.0; }
     if (! defined($finfo->{'version'})) {return 1.0; }
     return floor($finfo->{'version'} + 1.0);

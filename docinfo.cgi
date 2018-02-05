@@ -55,7 +55,7 @@ my $docinfo = PSMT::File->GetDocInfo($did);
 if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_document_id'); }
 
 # check permission
-PSMT::Access->CheckForDoc($did);
+PSMT::Access->CheckForDocobj($docinfo);
 
 my $file_list = PSMT::File->ListFilesInDoc($did);
 my @file_users;

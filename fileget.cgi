@@ -28,11 +28,18 @@ my $fid = undef;
 my $did = $obj_cgi->param('did');
 my $ext = $obj_cgi->param('ext');
 my $conv = $obj_cgi->param('conv');
-if (defined($did)) {$fid = PSMT::File->GetDocLastPostFileId($did, $ext); }
-if (! defined($fid)) {$fid = $obj_cgi->param('fid'); }
+my $fileinfo;
+if (defined($did)) {
+    $fileinfo = PSMT::File->GetDocLastPostFile($did, $ext);
+    if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
+    $fid = $fileinfo->{fileid};
+}
+if (! defined($fid)) {
+    $fid = $obj_cgi->param('fid');
+    $fileinfo = PSMT::File->GetFileInfo($fid);
+    if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
+}
 if (! defined($fid)) {PSMT::Error->throw_error_user('invalid_fileid'); }
-my $fileinfo = PSMT::File->GetFileInfo($fid);
-if (! defined($fileinfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
 if (defined($conv)) {
     if (defined(OOXML_CONV_TO->{$fileinfo->{fileext}})) {
         $conv = OOXML_CONV_TO->{$fileinfo->{fileext}};
@@ -71,7 +78,7 @@ binmode STDOUT, ':bytes';
 my $ext;
 if (defined($conv)) {$ext = PSMT::Util->GetMimeType($conv); }
 else {$ext = PSMT::Util->GetMimeType($fileinfo->{fileext}); }
-my $fsize = (-s $file);
+my $fsize = $fileinfo->{size};
 if ($q_method eq 'HEAD') {
     print "Content-Type: $ext\n";
     print "Content-Length: " . $fsize . "\n";

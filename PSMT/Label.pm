@@ -96,11 +96,11 @@ sub ListLabelOnDoc {
 
 sub ListLabelOnDocs {
     my ($self, @docid) = @_;
-    my (@target, $tmp);
+    my (@target);
     foreach (@docid) {
         if (! exists($cache_doc{$_})) {
-            $tmp = ();
-            $cache_doc{$_} = $tmp;
+            my @tmp = ();
+            $cache_doc{$_} = \@tmp;
             push(@target, $_);
         }
     }
