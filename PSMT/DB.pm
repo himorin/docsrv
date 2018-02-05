@@ -93,9 +93,11 @@ sub db_transaction_commit {
 }
 
 sub db_transaction_rollback {
-    my ($self) = @_;
+    my ($self, $no_throw) = @_;
     if (! $self->{private_db_in_transaction}) {
-        PSMT->error->throw_error_code("not_in_transaction");
+        if (! defined($no_throw)) {
+            PSMT->error->throw_error_code("not_in_transaction");
+        }
     } else {
         $self->rollback();
         $self->{private_db_in_transaction} = 0;
