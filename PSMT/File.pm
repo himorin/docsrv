@@ -503,8 +503,9 @@ sub GetFileInfoInDocs {
     }
     if ($sth->rows() < 1) {return undef; }
 
-    my (%docs, $files, $ref);  # doc->{docid}->{fileid}
+    my (%docs, $ref);  # doc->{docid}->{fileid}
     while ($ref = $sth->fetchrow_hashref()) {
+        my $files;
         if (! defined($docs{$ref->{docid}})) {
             $files = ();
             $docs{$ref->{docid}} = $files;
