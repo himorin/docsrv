@@ -427,7 +427,6 @@ sub RegUserAccess {
     my ($self, $fileid) = @_;
     my $dbh = PSMT->dbh;
     my $srcip = PSMT::Util::IpAddr();
-    $dbh->db_lock_tables('activity WRITE');
     my $sth = $dbh->prepare('INSERT INTO activity (uname, fileid, dltime, srcip) VALUES (?, ?, NOW(), ?)');
     $sth->execute(PSMT->user->get_uid(), $fileid, $srcip);
 }
@@ -780,12 +779,15 @@ sub RegNewDoc {
     my ($self, $pathid, $name, $desc, $secure) = @_;
     my $docid = 0;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path WRITE', 'docreg WRITE');
+    $dbh->db_transaction_start();
     $self->ValidateNameInPath($pathid, $name);
     my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description, secure) VALUES (?, ?, ?, ?)');
-    if ($sth->execute($pathid, $name, $desc, $secure) == 0) {return $docid; }
+    if ($sth->execute($pathid, $name, $desc, $secure) == 0) {
+        $dbh->db_transaction_rollback();
+        return $docid;
+    }
     $docid = $dbh->db_last_key('docreg', 'docid');
-    $dbh->db_unlock_tables();
+    $dbh->db_transaction_commit();
 # No Need To Send Mail in 'RegNewDoc' : Always Followed by 'RegNewFile' !
 #    PSMT->email()->NewDocInPath($pathid, $docid);
     return $docid;
@@ -834,14 +836,18 @@ sub RegNewFileTime {
 sub RegNewPath {
     my ($self, $cur, $path, $desc, $group, $daddrs) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path WRITE', 'docreg WRITE');
+    # start transaction, need commit after
+    $dbh->db_transaction_start();
     $self->ValidateNameInPath($cur, $path);
     my $sth = $dbh->prepare('INSERT INTO path (parent, pathname, description) VALUES (?, ?, ?)');
-    if ($sth->execute($cur, $path, $desc) == 0) {return 0; }
+    if ($sth->execute($cur, $path, $desc) == 0) {
+        $dbh->db_transaction_rollback();
+        return 0;
+    }
     my $pathid = $dbh->db_last_key('path', 'pathid');
-    $dbh->db_unlock_tables();
     PSMT::Access->SetPathAccessGroup($pathid, $group);
     PSMT->email()->NewPathInPath($cur, $pathid, $daddrs);
+    $dbh->db_transaction_commit();
     return $pathid;
 }
 
@@ -851,7 +857,8 @@ sub UpdatePathInfo {
     my $sth;
     my $cur_access = undef;
     if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
-    $dbh->db_lock_tables('path WRITE', 'access_path WRITE');
+    # start transaction, need commit after
+    $dbh->db_transaction_start();
     my $pathinfo = $self->GetPathInfo($pid);
     if (! defined($pathinfo)) {PSMT::Error->throw_error_user('invalid_path_id'); }
     if ($new->{parent} eq $pid) {PSMT::Error->throw_error_user('invalid_new_path'); }
@@ -883,7 +890,7 @@ sub UpdatePathInfo {
     if (defined($cur_access)) {
         PSMT::Access->SetPathAccessGroup($pid, $cur_access);
     }
-    $dbh->db_unlock_tables();
+    $dbh->db_transaction_commit();
 }
 
 sub UpdateDocInfo {
@@ -896,7 +903,8 @@ sub UpdateDocInfo {
     if ((! PSMT->user->is_inadmin()) && ($old->{secure} ne $new->{secure}))
         {PSMT::Error->throw_error_user('update_permission'); }
     # lock
-    $dbh->db_lock_tables('docreg WRITE', 'path WRITE', 'access_doc WRITE');
+    # start transaction, need commit after
+    $dbh->db_transaction_start();
     my $docinfo = $self->GetDocInfo($did);
     if (! defined($docinfo)) {PSMT::Error->throw_error_user('invalid_doc_id'); }
     # check current match
@@ -924,7 +932,7 @@ sub UpdateDocInfo {
     if (defined($cur_access)) {
         PSMT::Access->SetDocAccessGroup($did, $cur_access);
     }
-    $dbh->db_unlock_tables();
+    $dbh->db_transaction_commit();
 }
 
 sub UpdateFileDesc {
@@ -933,12 +941,10 @@ sub UpdateFileDesc {
     if (! defined($finfo)) {PSMT::Error->throw_error_user('invalid_fileid'); }
     PSMT::Access->CheckEditForFile($fid, TRUE);
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo WRITE');
     my $sth = $dbh->prepare('UPDATE docinfo SET description = ? WHERE fileid = ?');
     if ($sth->execute($desc, $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
-    $dbh->db_unlock_tables();
 }
 
 sub UpdateFileVersion {
@@ -950,12 +956,10 @@ sub UpdateFileVersion {
         PSMT::Error->throw_error_user('invalid_version_number');
     }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo WRITE');
     my $sth = $dbh->prepare('UPDATE docinfo SET version = ? WHERE fileid = ?');
     if ($sth->execute($ver, $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
-    $dbh->db_unlock_tables();
 }
 
 sub UpdateFileDocid {
@@ -964,7 +968,6 @@ sub UpdateFileDocid {
     if (! defined($dinfo)) {PSMT::Error->throw_error_user('invalid_docid'); }
     if (! PSMT->user->is_inadmin()) {PSMT::Error->throw_error_user('update_permission'); }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo WRITE');
     my $sth;
     if ($version) {
         $sth = $dbh->prepare('UPDATE docinfo SET docid = ?, version = 0 WHERE fileid = ?');
@@ -974,13 +977,11 @@ sub UpdateFileDocid {
     if ($sth->execute($did, $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
-    $dbh->db_unlock_tables();
 }
 
 sub EditFileAccess {
     my ($self, $fid, $is_enabled) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo WRITE');
     my $finfo = $self->GetFileInfo($fid);
     if (! defined($finfo)) {PSMT::Error->throw_error_user('update_permission'); }
     if ((! PSMT->user->is_inadmin()) && ($finfo->{uname} ne PSMT->user->get_uid())) {
@@ -991,7 +992,6 @@ sub EditFileAccess {
     if ($sth->execute(($is_enabled ? 1 : 0), $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
-    $dbh->db_unlock_tables();
 }
 
 sub MoveNewFile {
@@ -1154,16 +1154,25 @@ sub CheckDocExist {
 sub DeleteEmptyPath {
     my ($self, $pid) = @_;
     my $tnum;
-    $tnum = $self->ListDocsInPath($pid);
-    if ($#{keys(%$tnum)} > -1) {return FALSE; }
-    $tnum = $self->ListPathIdInPath($_);
-    if ($#$tnum > -1) {return FALSE; }
+    # start transaction, need commit after
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path WRITE');
-    my $sth = $dbh->prepare('DELETE FROM path WHERE pathid = ?');
-    if ($sth->execute($pid) == 0) {
+    $dbh->db_transaction_start();
+    $tnum = $self->ListDocsInPath($pid);
+    if ($#{keys(%$tnum)} > -1) {
+        $dbh->db_transaction_rollback();
         return FALSE;
     }
+    $tnum = $self->ListPathIdInPath($_);
+    if ($#$tnum > -1) {
+        $dbh->db_transaction_rollback();
+        return FALSE;
+    }
+    my $sth = $dbh->prepare('DELETE FROM path WHERE pathid = ?');
+    if ($sth->execute($pid) == 0) {
+        $dbh->db_transaction_rollback();
+        return FALSE;
+    }
+    $dbh->db_transaction_commit();
     return TRUE;
 }
 
@@ -1173,7 +1182,6 @@ sub DeleteEmptyDoc {
     $dnum = $self->ListFilesInDoc($did, TRUE);
     if ($#$dnum > -1) {return FALSE; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg WRITE');
     my $sth = $dbh->prepare('DELETE FROM docreg WHERE docid = ?');
     if ($sth->execute($did) == 0) {
         return FALSE;
@@ -1246,7 +1254,6 @@ sub ListFileNoHash {
 sub AddFileHash {
     my ($self, $fid, $hash) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo WRITE');
     my $sth = $dbh->prepare("UPDATE docinfo SET shahash = ? WHERE fileid = ?");
     if ($sth->execute($hash, $fid) == 0) {
         return FALSE;
