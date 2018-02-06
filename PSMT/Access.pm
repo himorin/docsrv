@@ -280,8 +280,8 @@ sub _SetAccessGroup {
     foreach (@{PSMT->ldap->GetAvailGroups}) {$gconf{$_} = 0; }
     # check group valid (via ldap)
     foreach (@$group) {$gconf{$_} = 1; }
-    # grant lock for table
-    $dbh->db_lock_tables("access_$cat WRITE");
+    # start transaction, need commit after
+    $dbh->db_transaction_start();
     # check current
     my $sth = $dbh->prepare('SELECT gname FROM access_' . $cat . ' WHERE ' . $cat . 'id = ?');
     my $ref;
@@ -305,6 +305,8 @@ sub _SetAccessGroup {
             $sth->execute($id, $_);
         }
     }
+    # commit transaction, no intermediate return
+    $dbh->db_transaction_commit();
     return TRUE;
 }
 
