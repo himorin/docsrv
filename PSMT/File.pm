@@ -175,16 +175,15 @@ sub GetDocsInfo {
     $sth->execute(@$docid);
     if ($sth->rows() < 1) {return undef; }
     my %ret;
-#    my $lds = $self->GetDocsLastPostFile($docid);
+    my $lds = $self->GetDocsLastPostFile($docid);
     while ((my $ref = $sth->fetchrow_hashref())) {
         if (! PSMT::Access->CheckForDocobj($ref, FALSE)) {next; }
         $ref = PSMT::Util->AddShortDesc($ref);
         $ref->{gname} = PSMT::Access->ListDocRestrict($ref->{docid});
         $ref->{labelid} = PSMT::Label->ListLabelOnDoc($ref->{docid});
-#        if (defined($lds->{$ref->{docid}})) {
-#            $ref->{lastfile} = $lds->{$ref->{docid}};
-#        } else {$ref->{lastfile} = undef; }
-        $ref->{lastfile} = $self->GetDocLastPostFile($ref->{docid});
+        if (defined($lds->{$ref->{docid}})) {
+            $ref->{lastfile} = $lds->{$ref->{docid}};
+        } else {$ref->{lastfile} = undef; }
         $ret{$ref->{docid}} = $ref;
     }
     # name
@@ -603,56 +602,29 @@ sub ListAllPath {
 sub ListNullPath {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-# NOT WORKING WITH WARNING "Table 'path' was not locked with LOCK TABLES"
-#    my $sth = $dbh->prepare(
-#        qq {    SELECT pathid, pathnum, docnum
-#                  FROM (
-#                SELECT pathdoc.pathid, pathdoc.docnum,
-#                       count(path.pathid) AS pathnum
-#                  FROM (
-#                SELECT path.pathid, count(docreg.pathid) AS docnum
-#                  FROM path
-#       LEFT OUTER JOIN docreg
-#                    ON path.pathid = docreg.pathid 
-#              GROUP BY path.pathid)
-#                    AS pathdoc
-#       LEFT OUTER JOIN path
-#                    ON pathdoc.pathid = path.parent
-#              GROUP BY path.pathid )
-#                    AS pdnum
-#                 WHERE pathnum = 0 AND docnum = 0
-#           });
-    # document count
     my $sth = $dbh->prepare(
-        qq{    SELECT pathid, entries
+           qq/ SELECT pathid, docnum, subpath
                  FROM (
-               SELECT path.pathid, COUNT(docreg.pathid) AS entries
+               SELECT plist.pathid, docnum, 
+                      COUNT(path.pathid) AS subpath
+                 FROM (
+               SELECT pathid, docnum
+                 FROM (
+               SELECT path.pathid, COUNT(docreg.pathid) AS docnum 
                  FROM path
       LEFT OUTER JOIN docreg
                    ON path.pathid = docreg.pathid
-             GROUP BY path.pathid )
-                   AS docnum
-                WHERE entries = 0
-        });
+             GROUP BY path.pathid ) AS docnum ) AS plist
+      LEFT OUTER JOIN path
+                   ON plist.pathid = path.parent
+             GROUP BY plist.pathid ) AS sumpath
+                WHERE docnum = 0 AND subpath = 0
+           /);
     $sth->execute();
     if ($sth->rows == 0) {return undef; }
-    my (@dlist, %hdlist);
-    while (my $ref = $sth->fetchrow_hashref()) {
-        push(@dlist, $ref->{pathid});
-        $hdlist{$ref->{pathid}} = 1;
-    }
-    # path count
-    $sth = $dbh->prepare('SELECT parent, COUNT(pathid) FROM path WHERE parent IN (' . ('?,' x $#dlist) . '?) GROUP BY parent');
-    $sth->execute(@dlist);
-    if ($sth->rows == 0) {return undef; }
     my @plist;
-    while (my $ref = $sth->fetchrow_hashref()) {
-        delete($hdlist{$ref->{parent}});
-    }
-    my @ref = keys(%hdlist);
-    return \@ref;
-#    while (my $ref = $sth->fetchrow_hashref()) {push(@plist, $ref->{parent}); }
-#    return \@plist;
+    while (my $ref = $sth->fetchrow_hashref()) {push(@plist, $ref->{pathid}); }
+    return \@plist;
 }
 
 sub GetPathInfo {
@@ -669,7 +641,7 @@ sub GetPathInfo {
 
 sub GetPathsInfo {
     my ($self, $pathids) = @_;
-    if ($#$pathids < 0) {return undef; }
+    if ((! defined($pathids)) || ($#$pathids < 0)) {return undef; }
     # build cache
     PSMT::Access->ListPathsRestrict(@$pathids);
     my $dbh = PSMT->dbh;
@@ -1174,7 +1146,7 @@ sub DeleteEmptyPath {
     my $dbh = PSMT->dbh;
     $dbh->db_transaction_start();
     $tnum = $self->ListDocsInPath($pid);
-    if ($#{keys(%$tnum)} > -1) {
+    if (defined($tnum) && ($#{keys(%$tnum)} > -1)) {
         $dbh->db_transaction_rollback();
         return FALSE;
     }
@@ -1291,32 +1263,20 @@ sub CheckFileHash {
 sub ListFileHashDup {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-# same issue, not locked for subquery
-#    my $sth = $dbh->prepare(
-#        qq{       SELECT docinfo.*, pathid, filename, secure
-#                    FROM docinfo
-#              INNER JOIN (
-#                  SELECT shahash AS duphash
-#                    FROM docinfo
-#                GROUP BY shahash
-#                  HAVING COUNT(fileid) > 1
-#                       ) duphash
-#                      ON duphash.duphash = docinfo.shahash
-#               LEFT JOIN docreg
-#                      ON docinfo.docid = docreg.docid
-#        });
-
-    # 1st, list dup hash
-    my $sth = $dbh->prepare('SELECT shahash FROM docinfo GROUP BY shahash HAVING COUNT(fileid) > 1');
+    my $sth = $dbh->prepare(
+        qq/       SELECT docinfo.*, pathid, filename, secure
+                    FROM docinfo
+              INNER JOIN (
+                  SELECT shahash AS duphash
+                    FROM docinfo
+                GROUP BY shahash
+                  HAVING COUNT(fileid) > 1
+                       ) duphash
+                      ON duphash.duphash = docinfo.shahash
+               LEFT JOIN docreg
+                      ON docinfo.docid = docreg.docid
+        /);
     $sth->execute();
-    if ($sth->rows() == 0) {return undef; }
-    my $ref;
-    my @hash;
-    while ($ref = $sth->fetchrow_hashref()) {push(@hash, $ref->{shahash}); }
-
-    # 2nd build file list
-    my $sth = $dbh->prepare('SELECT docinfo.*, pathid, filename, secure FROM docinfo LEFT JOIN docreg ON docinfo.docid = docreg.docid WHERE docinfo.shahash IN (' . ('?,' x $#hash) . '?)');
-    $sth->execute(@hash);
     if ($sth->rows() == 0) {return undef; }
     my ($ref, %ret);
     while ($ref = $sth->fetchrow_hashref()) {
