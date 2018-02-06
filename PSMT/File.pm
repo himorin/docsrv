@@ -792,21 +792,35 @@ sub RegNewDoc {
     return $docid;
 }
 
+# no parameter shall be missing, just pass undef
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add, $fsrc, $hash, $daddrs, $ver, $uname) = @_;
-    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $fsrc, $hash, $daddrs, $ver, $uname);
+    my ($self, $ext, $docid, $desc, $is_add, $fsrc, $hash, $daddrs, 
+        $ver, $uname, $perr) = @_;
+    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, 
+                                 $fsrc, $hash, $daddrs, $ver, $uname, $perr);
 }
 
+# no parameter shall be missing, just pass undef
 sub RegNewFileTime {
-    my ($self, $ext, $docid, $desc, $is_add, $uptime, $fsrc, $hash, $daddrs, $ver, $uname) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $fsrc, $hash, $daddrs, 
+        $ver, $uname, $perr) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
-    if (! $self->_check_version_value($ver)) {return undef; }
+    if (! $self->_check_version_value($ver)) {
+        if (defined($perr)) {$$perr = 'version_not_numeric'; }
+        return undef;
+    }
     my $fileid = undef;
     if (! defined($uname)) {$uname = PSMT->user()->get_uid(); }
     my $srcip = PSMT::Util->IpAddr();
     my $hashcnt = 0;
     my $dbh = PSMT->dbh;
     $dbh->db_transaction_start();
+    # could be double, but check
+    if (defined($self->CheckFileHash($hash))) {
+        $dbh->db_transaction_rollback();
+        if (defined($perr)) {$$perr = 'file_hash_match'; }
+        return undef;
+    }
     my $sth;
     $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ?');
     while (! defined($fileid)) {
@@ -817,6 +831,7 @@ sub RegNewFileTime {
             $hashcnt += 1;
             if ($hashcnt > 20) {
                 $dbh->db_transaction_rollback();
+                if (defined($perr)) {$$perr = 'hash_generation_failed'; }
                 return undef;
             }
         }
@@ -831,6 +846,7 @@ sub RegNewFileTime {
     }
     if ($sth->rows != 1) {
         $dbh->db_transaction_rollback();
+        if (defined($perr)) {$$perr = 'file_register_failed'; }
         return undef;
     }
     # move real file
@@ -838,10 +854,11 @@ sub RegNewFileTime {
     eval {
         File::Path::mkpath($newpath);
     };
-    if ($@) {
-        PSMT::Error->throw_error_user('file_move_failed');
+    if (($@) ||  (! rename($fsrc, $newpath . $fileid))) {
+        $dbh->db_transaction_rollback();
+        if (defined($perr)) {$$perr = 'file_register_failed'; }
+        return undef;
     }
-    rename($fsrc, $newpath . $fileid);
     my $fidx_obj = new PSMT::FullSearchMroonga(TRUE);
     $fidx_obj->AddNewFile($fileid);
     $dbh->db_transaction_commit();
