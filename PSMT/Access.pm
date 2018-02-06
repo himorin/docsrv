@@ -281,7 +281,7 @@ sub _SetAccessGroup {
     # check group valid (via ldap)
     foreach (@$group) {$gconf{$_} = 1; }
     # start transaction, need commit after
-    $dbh->db_transaction_start();
+    my $need_commit = $dbh->db_transaction_start(TRUE);
     # check current
     my $sth = $dbh->prepare('SELECT gname FROM access_' . $cat . ' WHERE ' . $cat . 'id = ?');
     my $ref;
@@ -306,7 +306,7 @@ sub _SetAccessGroup {
         }
     }
     # commit transaction, no intermediate return
-    $dbh->db_transaction_commit();
+    if ($need_commit) {$dbh->db_transaction_commit(); }
     return TRUE;
 }
 

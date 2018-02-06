@@ -73,13 +73,15 @@ sub db_last_key {
 }
 
 sub db_transaction_start {
-    my ($self) = @_;
+    my ($self, $can_nest) = @_;
     if ($self->{private_db_in_transaction}) {
+        if (defined($can_nest)) {return FALSE; }
         PSMT->error->throw_error_code("nested_transaction");
     } else {
         $self->begin_work();
         $self->{private_db_in_transaction} = 1;
     }
+    return TRUE;
 }
 
 sub db_transaction_commit {
