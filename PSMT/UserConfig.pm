@@ -87,7 +87,6 @@ sub _read_user {
     my ($self) = @_;
     my $uname = PSMT->user->get_uid();
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('profiles READ');
     my $sth = $dbh->prepare('SELECT * FROM profiles WHERE uname = ?');
     $sth->execute($uname);
     my ($ref, %def);
@@ -116,7 +115,6 @@ sub _read_user {
 sub _read_defaults {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('setting READ');
     my $sth = $dbh->prepare('SELECT * FROM setting');
     $sth->execute();
     my $ref;

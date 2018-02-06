@@ -46,7 +46,6 @@ sub RecentUpdate {
          ORDER BY docinfo.uptime DESC
         ';
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ', 'docinfo READ');
     my $sth = $dbh->prepare($sql);
     $sth->execute($days);
     my $dret = $sth->fetchall_hashref('docid');
@@ -84,7 +83,6 @@ sub SearchDoc {
     if ($#data == -1) {return undef; }
     $sql .= ' GROUP BY docreg.docid';
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ', 'docinfo READ', 'label_doc READ');
     my $sth = $dbh->prepare($sql);
     $sth->execute(@data);
     if ($sth->rows() == 0) {return undef; }

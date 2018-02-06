@@ -136,7 +136,6 @@ sub ListFileInExt {
     my ($self, $ext) = @_;
     my @fids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE fileext = ?');
     $sth->execute($ext);
     my $ref;
@@ -149,7 +148,6 @@ sub ListFileInExt {
 sub GetDocInfo {
     my ($self, $docid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ');
     my $sth = $dbh->prepare('SELECT * FROM docreg WHERE docid = ?');
     $sth->execute($docid);
     if ($sth->rows != 1) {return undef; }
@@ -173,7 +171,6 @@ sub GetDocsInfo {
     PSMT::Access->ListDocsRestrict(@$docid);
     PSMT::Label->ListLabelOnDocs(@$docid);
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ');
     my $stmp = '(' . ('?, ' x $#$docid) . '?)';
     my $sth = $dbh->prepare('SELECT * FROM docreg WHERE docid IN ' . $stmp);
     $sth->execute(@$docid);
@@ -207,7 +204,6 @@ sub GetDocsInfo {
 sub GetAllDocCount {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ');
     my $sth = $dbh->prepare('SELECT MAX(docid) AS docid_count FROM docreg');
     $sth->execute();
     if ($sth->rows != 1) {return 0; }
@@ -218,7 +214,6 @@ sub GetAllDocCount {
 sub HashFileToDoc {
     my ($self, $fid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $stmp = '(' . ('?, ' x $#$fid) . '?)';
     my $sth = $dbh->prepare('SELECT docid, fileid FROM docinfo WHERE fileid IN ' . $stmp);
     $sth->execute(@$fid);
@@ -236,7 +231,6 @@ sub ListFilesInDoc {
     my ($self, $docid, $is_all) = @_;
     my @flist;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth;
     if (! defined($is_all)) {$is_all = FALSE; }
     my $uname = PSMT->user->get_uid();
@@ -262,7 +256,6 @@ sub ListFilesInDocByExt {
     my @flist;
     if ((! defined($ext)) || ($ext eq '')) {return undef; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth;
     if (! defined($is_all)) {$is_all = FALSE; }
     my $uname = PSMT->user->get_uid();
@@ -286,7 +279,6 @@ sub ListFilesInDocByExt {
 sub GetDocLastPostFile {
     my ($self, $docid, $ext) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth;
     if (defined($ext)) {
         $sth = $dbh->prepare('SELECT * FROM docinfo WHERE docid = ? AND enabled = 1 AND fileext = ? ORDER BY version DESC, uptime DESC LIMIT 1');
@@ -305,7 +297,6 @@ sub GetDocsLastPostFile {
     my ($self, $docid, $ext) = @_;
     if ($#$docid < 0) {return undef; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth;
     my $stmp = '(' . ('?, ' x $#$docid) . '?)';
     if (defined($ext)) {
@@ -350,7 +341,6 @@ sub GetDocsLastPostFile {
 sub GetFullPathArray {
     my ($self, $pid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid = ?');
     my $ref;
     my %path;
@@ -369,7 +359,6 @@ sub GetFullPathFromId {
     my ($self, $pid) = @_;
     my $path;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid = ?');
     my $ref;
     while ($pid != 0) {
@@ -387,7 +376,6 @@ sub GetIdFromFullPath {
     my $pid = 0;
     my $cdir;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathname = ? AND parent = ?');
     my $ref;
     $path =~ s/\/\//\//g;
@@ -406,7 +394,6 @@ sub GetIdFromFullPath {
 sub GetIdFromName {
     my ($self, $pid, $name) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ');
     my $sth = $dbh->prepare("SELECT * FROM docreg WHERE pathid = ? AND filename = ?");
     my $ref;
     $sth->execute($pid, $name);
@@ -429,7 +416,6 @@ sub GetIdFromFullName {
 sub GetDocidFromFileid {
     my ($self, $fileid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth = $dbh->prepare('SELECT docid FROM docinfo WHERE fileid = ?');
     $sth->execute($fileid);
     if ($sth->rows != 1) {return undef; }
@@ -449,7 +435,6 @@ sub RegUserAccess {
 sub ListDocsInPath {
     my ($self, $pathid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ');
     my $sth = $dbh->prepare('SELECT docid FROM docreg WHERE pathid = ?');
     $sth->execute($pathid);
     my (@docid, @docs, $ref);
@@ -460,7 +445,6 @@ sub ListDocsInPath {
 sub ListPathIdInPath {
     my ($self, $pathid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sth = $dbh->prepare('SELECT pathid FROM path WHERE parent = ?');
     $sth->execute($pathid);
     my (@path, $ref);
@@ -484,7 +468,6 @@ sub ListPathInPath {
 sub GetFileInfoInDocs {
     my ($self, $docid, $is_all) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     if (! defined($is_all)) {$is_all = FALSE; }
     my $uname = PSMT->user->get_uid();
     if (PSMT->user->is_inadmin()) {$is_all = TRUE; }
@@ -522,7 +505,6 @@ sub GetFileInfoInDocs {
 sub ListExtInDoc {
     my ($self, $docid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth;
     $sth = $dbh->prepare('SELECT fileext FROM docinfo WHERE docid = ? AND enabled = 1 GROUP BY fileext');
     $sth->execute($docid);
@@ -534,7 +516,6 @@ sub ListExtInDoc {
 sub ListUserLoadForDoc {
     my ($self, $docid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('activity READ', 'docinfo READ');
     my $sth = $dbh->prepare('SELECT activity.* FROM activity LEFT JOIN docinfo ON activity.fileid = docinfo.fileid WHERE docid = ? ORDER BY activity.dltime DESC');
     my (@dl, $ref);
     $sth->execute($docid);
@@ -547,7 +528,6 @@ sub ListUserLoadForDoc {
 sub ListUserLoad {
     my ($self, $fileid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('activity READ');
     my $sth = $dbh->prepare('SELECT * FROM activity WHERE fileid = ? ORDER BY dltime DESC');
     my (@dl, $ref);
     $sth->execute($fileid);
@@ -560,7 +540,6 @@ sub ListUserLoad {
 sub ListUserUpForDoc {
     my ($self, $did) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth = $dbh->prepare('SELECT uname FROM docinfo WHERE docid = ? GROUP BY uname');
     $sth->execute($did);
     return $sth->fetchall_arrayref();
@@ -569,7 +548,6 @@ sub ListUserUpForDoc {
 sub IsUserUpForDoc {
     my ($self, $did) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth = $dbh->prepare('SELECT uname FROM docinfo WHERE docid = ? AND uname = ?');
     $sth->execute($did, PSMT->user->get_uid());
     if ($sth->rows() > 0) {return TRUE; }
@@ -583,7 +561,6 @@ sub IsUserUpForDoc {
 sub ListAllPath {
     my ($self, $hash, $all) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sth = $dbh->prepare('SELECT * FROM path ORDER BY pathid ASC');
     $sth->execute();
     if ($sth->rows == 0) {return undef; }
@@ -628,7 +605,6 @@ sub ListAllPath {
 sub ListNullPath {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ', 'docreg READ');
 # NOT WORKING WITH WARNING "Table 'path' was not locked with LOCK TABLES"
 #    my $sth = $dbh->prepare(
 #        qq {    SELECT pathid, pathnum, docnum
@@ -684,7 +660,6 @@ sub ListNullPath {
 sub GetPathInfo {
     my ($self, $pathid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid = ?');
     $sth->execute($pathid);
     if ($sth->rows != 1) {return undef; }
@@ -700,7 +675,6 @@ sub GetPathsInfo {
     # build cache
     PSMT::Access->ListPathsRestrict(@$pathids);
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $stmp = '(' . ('?, ' x $#$pathids) . '?)';
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathid IN ' . $stmp);
     $sth->execute(@$pathids);
@@ -751,7 +725,6 @@ sub GetFileExt {
     my ($self, $fileid) = @_;
     my $ext = 'default';
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth = $dbh->prepare('SELECT fileext FROM docinfo WHERE fileid = ?');
     $sth->execute($fileid);
     if ($sth->rows == 1) {
@@ -766,7 +739,6 @@ sub GetFileExt {
 sub GetFileInfo {
     my ($self, $fileid, $is_all) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth;
     if (! defined($is_all)) {$is_all = FALSE; }
     my $uname = PSMT->user->get_uid();
@@ -785,7 +757,6 @@ sub GetFileInfo {
 sub GetFilesInfo {
     my ($self, $fileids) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth;
     my $uname = PSMT->user->get_uid();
     my $sthstr = 'SELECT * FROM docinfo WHERE fileid IN (' . ('?, ' x $#$fileids) . '?) ';
@@ -1107,7 +1078,6 @@ sub ValidateNameInPath {
     }
     # check the same in the target path
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ', 'docreg READ');
     my $sth = $dbh->prepare('SELECT * FROM path WHERE pathname = ? AND parent = ?');
     $sth->execute($name, $pid);
     if ($sth->rows() > 0) {$errid = 'path'; }
@@ -1125,7 +1095,6 @@ sub ValidateNameInPath {
 sub GetPathIdForParent {
     my ($self, $pid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sth = $dbh->prepare('SELECT parent FROM path WHERE pathid = ?');
     $sth->execute($pid);
     if ($sth->rows() == 0) {return -1; }
@@ -1135,7 +1104,6 @@ sub GetPathIdForParent {
 sub GetPathIdForDoc {
     my ($self, $did) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ');
     my $sth = $dbh->prepare('SELECT pathid FROM docreg WHERE docid = ?');
     $sth->execute($did);
     if ($sth->rows() == 0) {return -1; }
@@ -1168,7 +1136,6 @@ sub CheckMimeIsView {
 sub CheckPathExist {
     my ($self, $pid, $name) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sth = $dbh->prepare('SELECT pathid FROM path WHERE parent = ? AND pathname = ?');
     $sth->execute($pid, $name);
     if ($sth->rows() == 0) {return -1; }
@@ -1178,7 +1145,6 @@ sub CheckPathExist {
 sub CheckDocExist {
     my ($self, $pid, $name) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ');
     my $sth = $dbh->prepare('SELECT docid FROM docreg WHERE pathid = ? AND filename = ?');
     $sth->execute($pid, $name);
     if ($sth->rows() == 0) {return -1; }
@@ -1218,7 +1184,6 @@ sub DeleteEmptyDoc {
 sub SearchPath {
     my ($self, $name, $desc, $cond) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('path READ');
     my $sthstr = 'SELECT * FROM path WHERE ';
     my @stharg;
     if (defined($name)) {
@@ -1240,7 +1205,6 @@ sub SearchPath {
 sub SearchDocFile {
     my ($self, $name, $desc, $cond) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docreg READ', 'docinfo READ');
     my $sthstr = 
         qq {  SELECT docinfo.docid AS docid, docinfo.fileid AS fileid
                 FROM docinfo
@@ -1272,7 +1236,6 @@ sub SearchDocFile {
 sub ListFileNoHash {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth = $dbh->prepare("SELECT fileid FROM docinfo WHERE CHAR_LENGTH(shahash) <> ? OR shahash IS NULL");
     $sth->execute(HASH_LEN);
     my (@ret, $ref);
@@ -1294,7 +1257,6 @@ sub AddFileHash {
 sub CheckFileHash {
     my ($self, $hash) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ');
     my $sth = $dbh->prepare('SELECT fileid FROM docinfo WHERE shahash = ?');
     $sth->execute($hash);
     if ($sth->rows() == 0) {return undef; }
@@ -1306,7 +1268,6 @@ sub CheckFileHash {
 sub ListFileHashDup {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo READ', 'docreg READ');
 # same issue, not locked for subquery
 #    my $sth = $dbh->prepare(
 #        qq{       SELECT docinfo.*, pathid, filename, secure

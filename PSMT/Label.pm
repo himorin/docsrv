@@ -43,7 +43,6 @@ sub ListAllLabel {
     my ($self) = @_;
     my %labels;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label READ');
     my $sth = $dbh->prepare('SELECT * FROM label');
     $sth->execute();
     my $ref;
@@ -54,7 +53,6 @@ sub ListAllLabel {
 sub GetLabelInfo {
     my ($self, $lid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label READ');
     my $sth = $dbh->prepare('SELECT * FROM label WHERE labelid = ?');
     $sth->execute($lid);
     if ($sth->rows() != 1) {return undef; }
@@ -85,7 +83,6 @@ sub ListLabelOnDoc {
     my ($self, $docid) = @_;
     if (exists($cache_doc{$docid})) {return $cache_doc{$docid}; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label_doc READ');
     my $sth = $dbh->prepare('SELECT labelid FROM label_doc WHERE docid = ?');
     $sth->execute($docid);
     my (@labels, $ref);
@@ -106,7 +103,6 @@ sub ListLabelOnDocs {
     }
     if ($#target < 0) {return \%cache_doc; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label_doc READ');
     my $places = '(' . ('?,' x $#target) . '?)';
     my $sth = $dbh->prepare('SELECT * FROM label_doc WHERE docid IN ' . $places);
     $sth->execute(@target);
@@ -131,7 +127,6 @@ sub CreateLabel {
 sub GetLabelLastId {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label READ');
     my $sth = $dbh->prepare('SELECT labelid FROM label ORDER BY labelid DESC LIMIT 1');
     $sth->execute();
     my $ref = $sth->fetchrow_hashref();

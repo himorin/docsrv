@@ -55,7 +55,6 @@ sub GetAttrForId {
     if (! defined($id)) {return undef; }
     my %attrs;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth = $dbh->prepare('SELECT attr, value FROM attribute WHERE target = ? AND id = ?');
     $sth->execute($curtgt, $id);
     my $ref;
@@ -69,7 +68,6 @@ sub GetIdForAttr {
     if (! defined($attr)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND attr = ? GROUP BY id');
     $sth->execute($curtgt, $attr);
     my $ref;
@@ -82,7 +80,6 @@ sub GetIdForValue {
     if (! defined($value)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND value = ? GROUP BY id');
     $sth->execute($curtgt, $value);
     my $ref;
@@ -95,7 +92,6 @@ sub GetIdForPair {
     if (! defined($attr)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth;
     if (defined($value)) {
       $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND attr = ? AND value = ? GROUP BY id');
@@ -114,7 +110,6 @@ sub GetValueForAttr {
     if (! defined($attr)) {return undef; }
     my @values;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth = $dbh->prepare('SELECT value FROM attribute WHERE target = ? AND attr = ? GROUP BY value');
     $sth->execute($curtgt, $attr);
     my $ref;
@@ -169,7 +164,6 @@ sub UpdateAttrForId {
 sub ListExistAttr {
     my ($self, $id) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth;
     if (defined($id)) {
         $sth = $dbh->prepare('SELECT attr FROM attribute WHERE target = ? AND id = ? GROUP BY attr');

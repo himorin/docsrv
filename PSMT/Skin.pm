@@ -98,7 +98,6 @@ sub UpdateIcon {
 sub GetIconInfo {
     my ($self, $class, $target) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('disp_skin READ');
     my $sth = $dbh->prepare('SELECT * FROM disp_skin WHERE name = ?');
     $sth->execute($class . '.' . $target);
     if ($sth->rows() != 1) {return undef; }
@@ -110,7 +109,6 @@ sub GetIconInfo {
 sub ListEntriesForHeader {
     my ($self, $head, $enable) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('disp_skin READ');
     my $len = length($head);
     if ($len == 0) {return undef; }
     my ($sth, %ret, $ref);
