@@ -62,18 +62,15 @@ sub GetLabelInfo {
 sub AddNewLabel {
     my ($self, $name, $desc) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label WRITE');
     my $sth = $dbh->prepare('INSERT INTO label (name, description) VALUES (?, ?)');
     if ($sth->execute($name, $desc) == 0) {return 0; }
     my $lid = $dbh->db_last_key('label', 'labelid');
-    $dbh->db_unlock_tables();
     return $lid;
 }
 
 sub UpdateLabel {
     my ($self, $lid, $name, $desc) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label WRITE');
     my $sth = $dbh->prepare('UPDATE label SET name = ?, description = ? WHERE labelid = ?');
     if ($sth->execute($name, $desc, $lid) == 0) {return FALSE; }
     return TRUE;
@@ -116,11 +113,9 @@ sub ListLabelOnDocs {
 sub CreateLabel {
     my ($self, $name, $description) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label WRITE');
     my $sth = $dbh->prepare('INSERT label (name, description) VALUES (?, ?)');
     if ($sth->execute($name, $description) == 0) {return 0; }
     my $labelid = $dbh->db_last_key('label', 'labelid');
-    $dbh->db_unlock_tables();
     return $labelid;
 }
 
@@ -137,7 +132,7 @@ sub GetLabelLastId {
 sub ModLabelOnDoc {
     my ($self, $docid, $labelid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('label_doc WRITE');
+    $dbh->db_transaction_start();
     my $last_id = $self->GetLabelLastId();
     my %labels;
     foreach (@$labelid) {$labels{$_} = 1; }
@@ -158,6 +153,7 @@ sub ModLabelOnDoc {
             $sth->execute($_, $docid);
         }
     }
+    $dbh->db_transaction_commit();
     return TRUE;
 }
 
