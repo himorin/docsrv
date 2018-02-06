@@ -103,7 +103,6 @@ use PSMT::FullSearchMroonga;
     EditFileAccess
 
     ValidateNameInPath
-    MoveNewFile
     SaveToDav
     CheckMimeIsView
 
@@ -794,12 +793,12 @@ sub RegNewDoc {
 }
 
 sub RegNewFile {
-    my ($self, $ext, $docid, $desc, $is_add, $hash, $daddrs, $ver, $uname) = @_;
-    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $hash, $daddrs, $ver, $uname);
+    my ($self, $ext, $docid, $desc, $is_add, $fsrc, $hash, $daddrs, $ver, $uname) = @_;
+    return $self->RegNewFileTime($ext, $docid, $desc, $is_add, -1, $fsrc, $hash, $daddrs, $ver, $uname);
 }
 
 sub RegNewFileTime {
-    my ($self, $ext, $docid, $desc, $is_add, $uptime, $hash, $daddrs, $ver, $uname) = @_;
+    my ($self, $ext, $docid, $desc, $is_add, $uptime, $fsrc, $hash, $daddrs, $ver, $uname) = @_;
     if (! defined($is_add)) {$is_add = TRUE; } # Adding mode
     if (! $self->_check_version_value($ver)) {return undef; }
     my $fileid = undef;
@@ -807,16 +806,19 @@ sub RegNewFileTime {
     my $srcip = PSMT::Util->IpAddr();
     my $hashcnt = 0;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('docinfo WRITE');
+    $dbh->db_transaction_start();
     my $sth;
+    $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ?');
     while (! defined($fileid)) {
         $fileid = $self->GetHashString($docid . $uname . $srcip . $desc . $hashcnt);
-        $sth = $dbh->prepare('SELECT * FROM docinfo WHERE fileid = ?');
         $sth->execute($fileid);
         if ($sth->rows != 0) {
             $fileid = undef;
             $hashcnt += 1;
-            if ($hashcnt > 20) {return undef; }
+            if ($hashcnt > 20) {
+                $dbh->db_transaction_rollback();
+                return undef;
+            }
         }
     }
     $ext = lc($ext);
@@ -827,7 +829,22 @@ sub RegNewFileTime {
         $sth = $dbh->prepare('INSERT INTO docinfo (fileid, fileext, docid, uptime, uname, srcip, description, shahash, version) VALUES (?, ?, ?, from_unixtime(?), ?, ?, ?, ?, ?)');
         $sth->execute($fileid, $ext, $docid, $uptime, $uname, $srcip, $desc, $hash, $ver);
     }
-    $dbh->db_unlock_tables();
+    if ($sth->rows != 1) {
+        $dbh->db_transaction_rollback();
+        return undef;
+    }
+    # move real file
+    my $newpath = $self->GetFilePath($fileid);
+    eval {
+        File::Path::mkpath($newpath);
+    };
+    if ($@) {
+        PSMT::Error->throw_error_user('file_move_failed');
+    }
+    rename($fsrc, $newpath . $fileid);
+    my $fidx_obj = new PSMT::FullSearchMroonga(TRUE);
+    $fidx_obj->AddNewFile($fileid);
+    $dbh->db_transaction_commit();
     if ($is_add == TRUE) {PSMT->email()->NewFileInDoc($docid, $fileid, $daddrs); }
     else {PSMT->email()->NewDocInPath($docid, $fileid, $daddrs); }
     return $fileid;
@@ -992,24 +1009,6 @@ sub EditFileAccess {
     if ($sth->execute(($is_enabled ? 1 : 0), $fid) == 0) {
         PSMT::Error->throw_error_code('update_info_failed');
     }
-}
-
-sub MoveNewFile {
-    my ($self, $src, $fid) = @_;
-    my $newpath = $self->GetFilePath($fid);
-    eval {
-        File::Path::mkpath($newpath);
-    };
-    if ($@) {
-        PSMT::Error->throw_error_user('file_move_failed');
-    }
-    rename($src, $newpath . $fid);
-    # file reg finished, unlock WRITE temporary, if we need do READ again
-    my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fullindex WRITE');
-    my $fidx_obj = new PSMT::FullSearchMroonga(TRUE);
-    $fidx_obj->AddNewFile($fid);
-    return TRUE;
 }
 
 sub SaveToDav {
