@@ -115,20 +115,28 @@ sub is_infav_path {
 
 sub MakeFavDoc {
     my ($self, $docid) = @_;
-    if ($self->is_infav_doc($docid, TRUE) == TRUE) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('favorite WRITE');
+    $dbh->db_transaction_start();
+    if ($self->is_infav_doc($docid, TRUE) == TRUE) {
+        $dbh->db_transaction_rollback();
+        return ;
+    }
     my $sth = $dbh->prepare('INSERT INTO favorite (docid, uname) VALUES (?, ?)');
     $sth->execute($docid, $conf{'uid'});
+    $dbh->db_transaction_commit();
 }
 
 sub RemoveFavDoc {
     my ($self, $docid) = @_;
-    if ($self->is_infav_doc($docid, TRUE) == FALSE) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('favorite WRITE');
+    $dbh->db_transaction_start();
+    if ($self->is_infav_doc($docid, TRUE) == FALSE) {
+        $dbh->db_transaction_rollback();
+        return ;
+    }
     my $sth = $dbh->prepare('DELETE FROM favorite WHERE docid = ? AND uname = ?');
     $sth->execute($docid, $conf{'uid'});
+    $dbh->db_transaction_commit();
 }
 
 sub ListFavsDoc {
@@ -146,20 +154,28 @@ sub ListFavsDoc {
 
 sub MakeFavPath {
     my ($self, $pid) = @_;
-    if ($self->is_infav_path($pid, TRUE) == TRUE) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fav_path WRITE');
+    $dbh->db_transaction_start();
+    if ($self->is_infav_path($pid, TRUE) == TRUE) {
+        $dbh->db_transaction_rollback();
+        return ;
+    }
     my $sth = $dbh->prepare('INSERT INTO fav_path (pathid, uname) VALUES (?, ?)');
     $sth->execute($pid, $conf{'uid'});
+    $dbh->db_transaction_commit();
 }
 
 sub RemoveFavPath {
     my ($self, $pid) = @_;
-    if ($self->is_infav_path($pid, TRUE) == FALSE) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fav_path WRITE');
+    $dbh->db_transaction_start();
+    if ($self->is_infav_path($pid, TRUE) == FALSE) {
+        $dbh->db_transaction_rollback();
+        return ;
+    }
     my $sth = $dbh->prepare('DELETE FROM fav_path WHERE pathid = ? AND uname = ?');
     $sth->execute($pid, $conf{'uid'});
+    $dbh->db_transaction_commit();
 }
 
 sub ListFavsPath {
