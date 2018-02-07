@@ -53,7 +53,7 @@ if ($type eq 'allpath') {
     $hash = PSMT::File->ListUserLoadForDoc($iid);
     FilterIP($hash);
 } elsif ($type eq 'loadfile') {
-    $hash = PSMT::File->ListUserLoad($iid);
+    $hash = PSMT::File->ListUserLoadForFile($iid);
     FilterIP($hash);
 } else {PSMT::Error->throw_error_user('invalid_param'); }
 if (! defined($hash)) {PSMT::Error->throw_error_user('invalid_param'); }

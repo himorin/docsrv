@@ -35,7 +35,7 @@ use PSMT::FullSearchMroonga;
     ListPathInPath
     ListPathIdInPath
     ListExtInDoc
-    ListUserLoad
+    ListUserLoadForFile
     ListUserLoadForDoc
     ListFileInExt
 
@@ -544,7 +544,7 @@ sub ListUserLoadForDoc {
     return \@dl;
 }
 
-sub ListUserLoad {
+sub ListUserLoadForFile {
     my ($self, $fileid) = @_;
     my $dbh = PSMT->dbh;
     $dbh->db_lock_tables('activity READ');
