@@ -35,7 +35,7 @@ use PSMT::FullSearchMroonga;
     ListPathInPath
     ListPathIdInPath
     ListExtInDoc
-    ListUserLoad
+    ListUserLoadForFile
     ListUserLoadForDoc
     ListFileInExt
 
@@ -522,7 +522,7 @@ sub ListUserLoadForDoc {
     return \@dl;
 }
 
-sub ListUserLoad {
+sub ListUserLoadForFile {
     my ($self, $fileid) = @_;
     my $dbh = PSMT->dbh;
     my $sth = $dbh->prepare('SELECT * FROM activity WHERE fileid = ? ORDER BY dltime DESC');
