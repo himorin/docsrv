@@ -32,6 +32,7 @@ if (defined($pid)) {
         # first check pid is valid; if valid clear path
         $pathinfo = PSMT::File->GetPathInfo($pid);
         if (defined($pathinfo)) {$path = undef; }
+        else {PSMT::Error->throw_error_user('invalid_path_id'); }
     }
 }
 if (defined($path_info) && (! defined($path)) && (! defined($pid))) {
