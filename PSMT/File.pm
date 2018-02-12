@@ -755,7 +755,7 @@ sub RegNewDoc {
     my $sth = $dbh->prepare('INSERT INTO docreg (pathid, filename, description, secure) VALUES (?, ?, ?, ?)');
     if ($sth->execute($pathid, $name, $desc, $secure) == 0) {
         $dbh->db_transaction_rollback();
-        return $docid;
+        return 0; # on error return docid = 0 (invalid number)
     }
     $docid = $dbh->db_last_key('docreg', 'docid');
     $dbh->db_transaction_commit();
