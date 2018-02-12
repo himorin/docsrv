@@ -184,6 +184,7 @@ use constant DB_UNLOCK_ABORT => 1;
 # SHA hash
 use constant HASH_SIZE => 512;
 use constant HASH_LEN  => 86;
+use constant HASH_MAX_TRIAL => 20;
 
 # installation locations
 # parent

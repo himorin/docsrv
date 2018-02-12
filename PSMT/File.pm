@@ -801,7 +801,7 @@ sub RegNewFileTime {
         if ($sth->rows != 0) {
             $fileid = undef;
             $hashcnt += 1;
-            if ($hashcnt > 20) {
+            if ($hashcnt > HASH_MAX_TRIAL) {
                 $dbh->db_transaction_rollback();
                 if (defined($perr)) {$$perr = 'hash_generation_failed'; }
                 return undef;
