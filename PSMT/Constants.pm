@@ -44,6 +44,7 @@ use Cwd;
 
   HASH_SIZE
   HASH_LEN
+  HASH_MAX_TRIAL
 );
 
 use constant TRUE         => 1;
