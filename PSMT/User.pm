@@ -92,7 +92,6 @@ sub is_infav_doc {
     my ($self, $docid, $no_path) = @_;
     if (! defined($no_path)) {$no_path = FALSE; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('favorite READ');
     my $sth = $dbh->prepare('SELECT docid FROM favorite WHERE docid = ? AND uname = ?');
     $sth->execute($docid, $conf{'uid'});
     if ($sth->rows() > 0) {return TRUE; }
@@ -104,7 +103,6 @@ sub is_infav_path {
     my ($self, $pid, $no_rec) = @_;
     if (! defined($no_rec)) {$no_rec = FALSE; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fav_path READ');
     my $sth = $dbh->prepare('SELECT pathid FROM fav_path WHERE pathid = ? AND uname = ?');
     while ($pid != 0) {
         $sth->execute($pid, $conf{'uid'});
@@ -117,27 +115,34 @@ sub is_infav_path {
 
 sub MakeFavDoc {
     my ($self, $docid) = @_;
-    if ($self->is_infav_doc($docid, TRUE) == TRUE) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('favorite WRITE');
+    $dbh->db_transaction_start();
+    if ($self->is_infav_doc($docid, TRUE) == TRUE) {
+        $dbh->db_transaction_rollback();
+        return ;
+    }
     my $sth = $dbh->prepare('INSERT INTO favorite (docid, uname) VALUES (?, ?)');
     $sth->execute($docid, $conf{'uid'});
+    $dbh->db_transaction_commit();
 }
 
 sub RemoveFavDoc {
     my ($self, $docid) = @_;
-    if ($self->is_infav_doc($docid, TRUE) == FALSE) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('favorite WRITE');
+    $dbh->db_transaction_start();
+    if ($self->is_infav_doc($docid, TRUE) == FALSE) {
+        $dbh->db_transaction_rollback();
+        return ;
+    }
     my $sth = $dbh->prepare('DELETE FROM favorite WHERE docid = ? AND uname = ?');
     $sth->execute($docid, $conf{'uid'});
+    $dbh->db_transaction_commit();
 }
 
 sub ListFavsDoc {
     my ($self) = @_;
     my @docs;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('favorite READ');
     my $sth = $dbh->prepare('SELECT docid FROM favorite WHERE uname = ?');
     $sth->execute($conf{'uid'});
     my $ref;
@@ -149,27 +154,34 @@ sub ListFavsDoc {
 
 sub MakeFavPath {
     my ($self, $pid) = @_;
-    if ($self->is_infav_path($pid, TRUE) == TRUE) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fav_path WRITE');
+    $dbh->db_transaction_start();
+    if ($self->is_infav_path($pid, TRUE) == TRUE) {
+        $dbh->db_transaction_rollback();
+        return ;
+    }
     my $sth = $dbh->prepare('INSERT INTO fav_path (pathid, uname) VALUES (?, ?)');
     $sth->execute($pid, $conf{'uid'});
+    $dbh->db_transaction_commit();
 }
 
 sub RemoveFavPath {
     my ($self, $pid) = @_;
-    if ($self->is_infav_path($pid, TRUE) == FALSE) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fav_path WRITE');
+    $dbh->db_transaction_start();
+    if ($self->is_infav_path($pid, TRUE) == FALSE) {
+        $dbh->db_transaction_rollback();
+        return ;
+    }
     my $sth = $dbh->prepare('DELETE FROM fav_path WHERE pathid = ? AND uname = ?');
     $sth->execute($pid, $conf{'uid'});
+    $dbh->db_transaction_commit();
 }
 
 sub ListFavsPath {
     my ($self) = @_;
     my @path;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fav_path READ');
     my $sth = $dbh->prepare('SELECT pathid FROM fav_path WHERE uname = ?');
     $sth->execute($conf{'uid'});
     my $ref;

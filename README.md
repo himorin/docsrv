@@ -37,6 +37,7 @@ You need the following softwares.
 
 * Hash directories will be created by software
 * DAV area will be used as temporary storage, too
+* Hash directories and DAV area need to be in the same logical space
 
 ## Apache Alias for query path
 

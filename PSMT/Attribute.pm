@@ -55,7 +55,6 @@ sub GetAttrForId {
     if (! defined($id)) {return undef; }
     my %attrs;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth = $dbh->prepare('SELECT attr, value FROM attribute WHERE target = ? AND id = ?');
     $sth->execute($curtgt, $id);
     my $ref;
@@ -69,7 +68,6 @@ sub GetIdForAttr {
     if (! defined($attr)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND attr = ? GROUP BY id');
     $sth->execute($curtgt, $attr);
     my $ref;
@@ -82,7 +80,6 @@ sub GetIdForValue {
     if (! defined($value)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND value = ? GROUP BY id');
     $sth->execute($curtgt, $value);
     my $ref;
@@ -95,7 +92,6 @@ sub GetIdForPair {
     if (! defined($attr)) {return undef; }
     my @ids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth;
     if (defined($value)) {
       $sth = $dbh->prepare('SELECT id FROM attribute WHERE target = ? AND attr = ? AND value = ? GROUP BY id');
@@ -114,7 +110,6 @@ sub GetValueForAttr {
     if (! defined($attr)) {return undef; }
     my @values;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth = $dbh->prepare('SELECT value FROM attribute WHERE target = ? AND attr = ? GROUP BY value');
     $sth->execute($curtgt, $attr);
     my $ref;
@@ -127,18 +122,27 @@ sub AddAttrForId {
     if (! defined($attr)) {return FALSE; }
     # for value, if undef, insert null
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute WRITE');
+    # start transaction, need commit after
+    $dbh->db_transaction_start();
     my $sth = $dbh->prepare('SELECT * FROM attribute WHERE target = ? AND id = ? AND attr = ?');
     $sth->execute($curtgt, $id, $attr);
-    if ($sth->rows() > 0) {return FALSE; }
+    if ($sth->rows() > 0) {
+        # condition mismatch, end transaction and return
+        $dbh->db_transaction_rollback();
+        return FALSE;
+    }
+    # in transaction, will not fail operation, but just for a catch
+    my $succ = TRUE;
     if (defined($value)) {
         $sth = $dbh->prepare('INSERT attribute (id, target, attr, value) VALUES (?, ?, ?, ?)');
-        if ($sth->execute($id, $curtgt, $attr, $value) == 0) {return FALSE; }
+        if ($sth->execute($id, $curtgt, $attr, $value) == 0) {$succ = FALSE; }
     } else {
         $sth = $dbh->prepare('INSERT attribute (id, target, attr) VALUES (?, ?, ?)');
-        if ($sth->execute($id, $curtgt, $attr) == 0) {return FALSE; }
+        if ($sth->execute($id, $curtgt, $attr) == 0) {$succ = FALSE; }
     }
-    return TRUE;
+    # commit transaction, no intermediate return
+    $dbh->db_transaction_commit();
+    return $succ;
 }
 
 # if oldvalue or newvalue is '', consider as NULL
@@ -147,29 +151,42 @@ sub UpdateAttrForId {
     # if oldvalue is undefined, two values are undefined -> ERROR
     if (! defined($oldvalue)) {return FALSE; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute WRITE');
+    # start transaction, need commit after
+    $dbh->db_transaction_start();
     # First, check old value
     my $sth = $dbh->prepare('SELECT value FROM attribute WHERE target = ? AND id = ? AND attr = ?');
     $sth->execute($curtgt, $id, $attr);
-    if ($sth->rows != 1) {return FALSE; }
+    my $cond = TRUE;
+    if ($sth->rows != 1) {
+        # condition mismatch, return
+        $dbh->db_transaction_rollback();
+        return FALSE;
+    }
     my $ref = $sth->fetchrow_hashref();
-    if ($oldvalue eq '') {if ($ref->{value} ne undef) {return FALSE; } } 
-    else {if ($ref->{value} ne $oldvalue) {return FALSE; } }
+    if ($oldvalue eq '') {if ($ref->{value} ne undef) {$cond = FALSE; } } 
+    else {if ($ref->{value} ne $oldvalue) {$cond = FALSE; } }
+    # condition mismatch, return
+    if (! $cond) {
+        $dbh->db_transaction_rollback();
+        return FALSE;
+    }
     # Second, update value to new
+    my $succ = TRUE;
     if (defined($newvalue)) {
         $sth = $dbh->prepare('UPDATE attribute SET value = ? WHERE id = ? AND target = ? AND attr = ?');
-        if ($sth->execute($newvalue, $id, $curtgt, $attr) == 0) {return FALSE; }
+        if ($sth->execute($newvalue, $id, $curtgt, $attr) == 0) {$succ = FALSE; }
     } else {
         $sth = $dbh->prepare('UPDATE attribute SET value = NULL WHERE id = ? AND target = ? AND attr = ?');
-        if ($sth->execute($id, $curtgt, $attr) == 0) {return FALSE; }
+        if ($sth->execute($id, $curtgt, $attr) == 0) {$succ = FALSE; }
     }
+    # commit transaction, no intermediate return
+    $dbh->db_transaction_commit();
     return TRUE;
 }
 
 sub ListExistAttr {
     my ($self, $id) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('attribute READ');
     my $sth;
     if (defined($id)) {
         $sth = $dbh->prepare('SELECT attr FROM attribute WHERE target = ? AND id = ? GROUP BY attr');

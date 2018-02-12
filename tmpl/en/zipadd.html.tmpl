@@ -163,8 +163,8 @@ after upload (This will check only uploaded attribute configuration file, but no
       ELSIF item.error == 'invalid_path' %]Invalid [% terms.path %] name[%
       ELSIF item.error == 'path_db_doc' %][% terms.path %] or [% terms.document %] in the same name already exist[%
       ELSIF item.error == 'invalid_doc' %]Invalid [% terms.document %] name[%
-      ELSIF item.error == 'fail_add_file' %]Adding [% terms.file %] to [% terms.document %] failed[%
-      ELSIF item.error == 'fail_store_file' %]Failed on storing [% terms.file %][%
+      ELSIF item.error == 'file_register_failed' %]Adding [% terms.file %] to [% terms.document %] failed[%
+      ELSIF item.error == 'file_store_failed' %]Failed on storing [% terms.file %][%
       ELSE %][% item.error %][% END %]</td>
 </tr>
 [% END %]

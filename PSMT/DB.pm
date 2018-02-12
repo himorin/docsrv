@@ -73,13 +73,15 @@ sub db_last_key {
 }
 
 sub db_transaction_start {
-    my ($self) = @_;
+    my ($self, $can_nest) = @_;
     if ($self->{private_db_in_transaction}) {
+        if (defined($can_nest)) {return FALSE; }
         PSMT->error->throw_error_code("nested_transaction");
     } else {
         $self->begin_work();
         $self->{private_db_in_transaction} = 1;
     }
+    return TRUE;
 }
 
 sub db_transaction_commit {
@@ -93,8 +95,9 @@ sub db_transaction_commit {
 }
 
 sub db_transaction_rollback {
-    my ($self) = @_;
+    my ($self, $no_throw) = @_;
     if (! $self->{private_db_in_transaction}) {
+        return if defined($no_throw);
         PSMT->error->throw_error_code("not_in_transaction");
     } else {
         $self->rollback();

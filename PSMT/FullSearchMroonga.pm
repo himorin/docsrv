@@ -39,7 +39,6 @@ sub ExecSearch {
     my ($self, $phrase) = @_;
     my @fids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fullindex READ', 'docinfo READ');
     my $sth = $dbh->prepare('SELECT fullindex.fileid AS fileid FROM fullindex INNER JOIN docinfo ON fullindex.fileid = docinfo.fileid WHERE MATCH (fullindex.content) AGAINST (?) AND docinfo.enabled = 1');
     $sth->execute($phrase);
     my $ref;
@@ -51,7 +50,6 @@ sub ExecSearchHash {
     my ($self, $phrase) = @_;
     my %fids;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fullindex READ', 'docinfo READ');
     my $sth = $dbh->prepare('SELECT fullindex.fileid AS fileid, docinfo.docid as docid FROM fullindex INNER JOIN docinfo ON fullindex.fileid = docinfo.fileid WHERE MATCH (fullindex.content) AGAINST (?) AND docinfo.enabled = 1');
     $sth->execute($phrase);
     if ($sth->rows() == 0) {return undef; }
@@ -91,7 +89,6 @@ sub AddNewFile {
 sub GetFileInfo {
     my ($self, $fid) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fullindex READ');
     my $sth = $dbh->prepare('SELECT fileid FROM fullindex WHERE fileid = ?');
     $sth->execute($fid);
     if ($sth->rows() != 1) {return undef; }
@@ -113,7 +110,6 @@ sub _add_text {
     my ($self, $fid, $text) = @_;
     if (! defined($text)) {return ; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('fullindex WRITE');
     my $sth = $dbh->prepare('SELECT fileid FROM fullindex WHERE fileid = ?');
     $sth->execute($fid);
     if ($sth->rows() != 1) {

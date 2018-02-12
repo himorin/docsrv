@@ -78,7 +78,6 @@ sub CheckIconExist {
 sub UpdateIcon {
     my ($self, $class, $target, $tip, $file, $enable) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('disp_skin WRITE');
     if (defined($self->GetIconInfo($class, $target))) {
         my $sth = $dbh->prepare('UPDATE disp_skin SET value = ?, tiphelp = ?, enabled = ? WHERE name = ?');
         if ($sth->execute($file, $tip, $enable, $class . '.' . $target) == 0) {
@@ -92,13 +91,11 @@ sub UpdateIcon {
             PSMT::error->throw_error_code('invalid_parameter');
         }
     }
-    $dbh->db_unlock_tables();
 }
 
 sub GetIconInfo {
     my ($self, $class, $target) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('disp_skin READ');
     my $sth = $dbh->prepare('SELECT * FROM disp_skin WHERE name = ?');
     $sth->execute($class . '.' . $target);
     if ($sth->rows() != 1) {return undef; }
@@ -110,7 +107,6 @@ sub GetIconInfo {
 sub ListEntriesForHeader {
     my ($self, $head, $enable) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('disp_skin READ');
     my $len = length($head);
     if ($len == 0) {return undef; }
     my ($sth, %ret, $ref);

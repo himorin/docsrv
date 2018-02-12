@@ -138,7 +138,6 @@ sub ListPathRestrict {
     my ($self, $pathid) = @_;
     if (exists($cache_path{$pathid})) {return $cache_path{$pathid}; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('access_path READ');
     my $sth = $dbh->prepare('SELECT gname FROM access_path WHERE pathid = ?');
     $sth->execute($pathid);
     my ($ref, @glist);
@@ -159,7 +158,6 @@ sub ListPathsRestrict {
     }
     if ($#target < 0) {return \%cache_path; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('access_path READ');
     my $places = '(' . ('?,' x $#target) . '?)';
     my $sth = $dbh->prepare('SELECT * FROM access_path WHERE pathid IN ' . $places);
     $sth->execute(@target);
@@ -194,7 +192,6 @@ sub ListDocRestrict {
     my ($self, $docid) = @_;
     if (exists($cache_doc{$docid})) {return $cache_doc{$docid}; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('access_doc READ');
     my $sth = $dbh->prepare('SELECT gname FROM access_doc WHERE docid = ?');
     $sth->execute($docid);
     my ($ref, @glist);
@@ -215,7 +212,6 @@ sub ListDocsRestrict {
     }
     if ($#target < 0) {return \%cache_doc; }
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('access_doc READ');
     my $places = '(' . ('?,' x $#target) . '?)';
     my $sth = $dbh->prepare('SELECT * FROM access_doc WHERE docid IN ' . $places);
     $sth->execute(@target);
@@ -284,8 +280,8 @@ sub _SetAccessGroup {
     foreach (@{PSMT->ldap->GetAvailGroups}) {$gconf{$_} = 0; }
     # check group valid (via ldap)
     foreach (@$group) {$gconf{$_} = 1; }
-    # grant lock for table
-    $dbh->db_lock_tables("access_$cat WRITE");
+    # start transaction, need commit after
+    my $need_commit = $dbh->db_transaction_start(TRUE);
     # check current
     my $sth = $dbh->prepare('SELECT gname FROM access_' . $cat . ' WHERE ' . $cat . 'id = ?');
     my $ref;
@@ -309,6 +305,8 @@ sub _SetAccessGroup {
             $sth->execute($id, $_);
         }
     }
+    # commit transaction, no intermediate return
+    if ($need_commit) {$dbh->db_transaction_commit(); }
     return TRUE;
 }
 

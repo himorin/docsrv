@@ -281,20 +281,13 @@ foreach (@$flist) {
         };
     }
     # need to deal with uname
+    my $errid;
     $cfid = PSMT::File->RegNewFileTime($cext, $cdid, $cdcnf->{filedesc}, FALSE, 
-        $cdcnf->{uptime}, $_->{shahash}, undef, $cdcnf->{version},
-        $cdcnf->{uname});
+        $cdcnf->{uptime}, $_->{stored}, $_->{shahash}, undef, $cdcnf->{version},
+        $cdcnf->{uname}, \$errid);
     if (! defined($cfid)) {
-        &AddUpfailed($_, 'doc', 'fail_add_file');
+        &AddUpfailed($_, 'doc', $errid);
         next;
-    } # what to do?
-#    if (! defined($cfid)) {
-#        PSMT::Error->throw_error_user('file_register_failed');
-#    }
-    if (PSMT::File->MoveNewFile($_->{stored}, $cfid) != TRUE) {
-        &AddUpfailed($_, 'doc', 'fail_store_file');
-        next;
-#        PSMT::Error->throw_error_user('file_register_failed');
     }
     $_->{did} = $cdid;
     $_->{fid} = $cfid;

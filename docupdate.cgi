@@ -54,12 +54,11 @@ if ($obj_cgi->request_method() eq 'POST') {
         PSMT::Error->throw_error_user('invalid_file_source');
     }
 
-    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, TRUE, $chash, $demail, $version);
+    my $errid;
+    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, TRUE, $src, $chash, 
+                                     $demail, $version, undef, \$errid);
     if (! defined($fid)) {
-        PSMT::Error->throw_error_user('file_register_failed');
-    }
-    if (PSMT::File->MoveNewFile($src, $fid) != TRUE) {
-        PSMT::Error->throw_error_user('file_register_failed');
+        PSMT::Error->throw_error_user($errid);
     }
 
     $obj->template->set_vars('added', $fid);

@@ -80,12 +80,11 @@ if ($obj_cgi->request_method() eq 'POST') {
     }
 
     # second register new file to doc
-    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, FALSE, $chash, $demail, $version);
+    my $errid;
+    my $fid = PSMT::File->RegNewFile($ext, $did, $desc, FALSE, $src, $chash, 
+                                     $demail, $version, undef, \$errid);
     if (! defined($fid)) {
-        PSMT::Error->throw_error_user('file_register_failed');
-    }
-    if (PSMT::File->MoveNewFile($src, $fid) != TRUE) {
-        PSMT::Error->throw_error_user('file_register_failed');
+        PSMT::Error->throw_error_user($errid);
     }
     PSMT::Label->ModLabelOnDoc($did, \@labels);
 

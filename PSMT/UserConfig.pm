@@ -56,7 +56,6 @@ sub ParamReset {
     if ($config{$param}->{is_default} == TRUE) {return TRUE; }
     my $uname = PSMT->user->get_uid();
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('profiles WRITE');
     my $sth = $dbh->prepare('DELETE FROM profiles WHERE uname = ? AND name = ?');
     if ($sth->execute($uname, $param) == 0) {return FALSE; }
     return TRUE;
@@ -66,7 +65,6 @@ sub ParamUpdate {
     my ($self, $param, $value) = @_;
     my $uname = PSMT->user->get_uid();
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('profiles WRITE');
     if ($config{$param}->{is_default} == TRUE) {
         # add
         my $sth = $dbh->prepare('INSERT INTO profiles (uname, name, value) VALUES (?, ?, ?)');
@@ -87,7 +85,6 @@ sub _read_user {
     my ($self) = @_;
     my $uname = PSMT->user->get_uid();
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('profiles READ');
     my $sth = $dbh->prepare('SELECT * FROM profiles WHERE uname = ?');
     $sth->execute($uname);
     my ($ref, %def);
@@ -116,7 +113,6 @@ sub _read_user {
 sub _read_defaults {
     my ($self) = @_;
     my $dbh = PSMT->dbh;
-    $dbh->db_lock_tables('setting READ');
     my $sth = $dbh->prepare('SELECT * FROM setting');
     $sth->execute();
     my $ref;

@@ -51,7 +51,7 @@ sub _throw_error {
     my $fmt = '';
     foreach (@formats) {if ($_ eq $ext) {$fmt = $ext; } }
     if ($fmt eq '') {$fmt = $formats[0]; }
-    PSMT->dbh->db_unlock_tables(PSMT::Constants::DB_UNLOCK_ABORT);
+    PSMT->dbh->db_transaction_rollback(TRUE);
     PSMT->template->set_vars('error', $err_id);
     PSMT->template->process($fname, $fmt, PSMT->template->vars);
     exit;
