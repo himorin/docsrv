@@ -152,8 +152,8 @@
       ELSIF item.error == 'invalid_path' %]無効な [% terms.path %] 名[%
       ELSIF item.error == 'path_db_doc' %]既存の [% terms.path %] か [% terms.document %] と同名[%
       ELSIF item.error == 'invalid_doc' %]無効な [% terms.document %] 名[%
-      ELSIF item.error == 'fail_add_file' %][% terms.document %] への [% terms.file %] の追加失敗[%
-      ELSIF item.error == 'fail_store_file' %][% terms.file %] 保存失敗[%
+      ELSIF item.error == 'file_register_failed' %][% terms.document %] への [% terms.file %] の追加失敗[%
+      ELSIF item.error == 'file_store_failed' %][% terms.file %] 保存失敗[%
       ELSE %][% item.error %][% END %]</td>
 </tr>
 [% END %]
