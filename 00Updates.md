@@ -3,6 +3,8 @@
 ## 0.6.1
 
 * Added version field to file
+* Switched from DB lock to transaction
+* Make DB call for the same prepared statement into handling multiple at once
 
 # 0.6
 
