@@ -1,9 +1,8 @@
 #! /usr/bin/perl
 
-use PSMT;
-
 use strict;
-
+use lib '.';
+use PSMT;
 
 PSMT->config()->update_file();
 my $conf = PSMT->config()->GetHash();

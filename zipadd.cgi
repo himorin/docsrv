@@ -1,6 +1,7 @@
 #! /usr/bin/perl
 
 use strict;
+use lib '.';
 
 use File::Temp qw/ tempfile tempdir /;                                          
 use Encode;

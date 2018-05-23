@@ -1,6 +1,7 @@
 #! /usr/bin/perl
 
 use strict;
+use lib '.';
 use Digest::SHA;
 
 use PSMT;

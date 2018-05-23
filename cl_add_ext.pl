@@ -1,6 +1,7 @@
 #! /usr/bin/perl
 
 use strict;
+use lib '.';
 
 use PSMT;
 use PSMT::File;
