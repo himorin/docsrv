@@ -22,7 +22,7 @@ if ((! defined($obj->config())) || (! defined($obj->user()))) {
 # favorites
 my $favs = PSMT->user->ListFavsDoc();
 my $favdocs = PSMT::File->GetDocsInfo($favs);
-foreach (keys($favdocs)) {
+foreach (keys(%$favdocs)) {
     $favdocs->{$_}->{full_path} = PSMT::File->GetFullPathFromId($favdocs->{$_}->{pathid});
 }
 

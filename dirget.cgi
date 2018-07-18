@@ -65,7 +65,7 @@ while ($#lpid > -1) {
     $ch = PSMT::File->ListPathIdInPath($cpid);
     push(@lpid, @$ch);
     $ch = PSMT::File->ListDocsInPath($cpid);
-    foreach (keys($ch)) {
+    foreach (keys(%$ch)) {
         # per doc: get last fid, check security flag, check group restriction
         #          get full path + ext, get storage path
         $chid = $ch->{$_};
